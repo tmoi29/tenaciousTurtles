@@ -36,7 +36,7 @@ Refined location finding
 - If the IP address is inaccurate, use user input
 
 =======================================================
-moiT, liuL -- 2017-12-20 13:12
+moiT, liuL -- 2017-12-21 13:12
 
 Worked on the component map and integrated AJAX
 
