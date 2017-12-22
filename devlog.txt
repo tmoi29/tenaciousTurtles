@@ -13,7 +13,7 @@ moiT -- 2017-12-14 13:14
 Filled out team registration form
 
 =======================================================
-moiT, ionkinaK, LiuL, SenK -- 2017-12-15 13:00
+moiT, ionkinaK, liuL, senK -- 2017-12-15 13:00
 -----------------------
 Discussed project idea:
 
@@ -23,3 +23,21 @@ WELP
 - If we have time, integrate autrocomplete search from Nutritionix
 
 =======================================================
+moiT, ionkinaK, liuL, senK -- 2017-12-18 12:57
+
+Worked on presentation and split up talking points
+
+=======================================================
+moiT, ionkinaK, liuL, senK -- 2017-12-20 13:06
+
+Refined location finding
+- Use JS to find zipcode if the user has GPS
+- If not, use Freegeoip to get the IP address to get zipcode
+- If the IP address is inaccurate, use user input
+
+=======================================================
+moiT, liuL -- 2017-12-20 13:12
+
+Worked on the component map and integrated AJAX
+
+
