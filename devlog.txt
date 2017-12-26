@@ -40,4 +40,14 @@ moiT, liuL -- 2017-12-21 13:12
 
 Worked on the component map and integrated AJAX
 
+=======================================================
+ionkinaK, senK -- 2017-12-21 13:12
+
+Worked on the site map and design doc
+
+=======================================================
+ionkinaK -- 2017-12-25 23:17
+
+-Created app.py and index.html
+-Worked on navbar
 
