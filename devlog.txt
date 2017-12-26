@@ -48,6 +48,12 @@ Worked on the site map and design doc
 =======================================================
 ionkinaK -- 2017-12-25 23:17
 
--Created app.py and index.html
+-Created app.py and layout.html
 -Worked on navbar
 
+=======================================================
+ionkinaK -- 2017-12-26 2:32
+
+-Finished layout.html
+-Added logo to navbar
+-Worked on login and create account pages

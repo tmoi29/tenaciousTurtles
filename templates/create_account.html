@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+.form-login {
+    width: 300px;
+    background-color: #FFF;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 15px;
+    border-color:#d2d2d2;
+    box-shadow:0 1px 0 #cfcfcf;
+}
+</style>
+
+
+{% endblock %}
+
+{% block body %}
+<br> <br> <br> <br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-5 col-md-3">
+            <div class="form-login">
+            <h2>Welpcome</h2>
+            <input type="text" id="new userName" class="form-control input-sm chat-input" placeholder="Pick a username" />
+            </br>
+            <input type="text" id="new Password" class="form-control input-sm chat-input" placeholder="Pick a password" /> <br>
+            <input type="text" id="repeat Password" class="form-control input-sm chat-input" placeholder="Repeat your password" />
+            </br>
+            <div class="wrapper">
+            <span class="group-btn">
+	      <a href="#" class="btn btn-primary btn-md">login <i class="fa fa-sign-in"></i></a>
+            </span>
+            </div>
+            </div>
+
+	    </div>
+    </div>
+</div>
+
+{% endblock %}
