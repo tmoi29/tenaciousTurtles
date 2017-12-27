@@ -57,3 +57,9 @@ ionkinaK -- 2017-12-26 2:32
 -Finished layout.html
 -Added logo to navbar
 -Worked on login and create account pages
+=======================================================
+ionkinaK -- 2017-12-26 22:29
+
+-Improved index.html by adding an image slider and 
+changing the logo
+

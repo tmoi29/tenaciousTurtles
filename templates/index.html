@@ -1,1 +1,38 @@
 {% extends "layout.html" %}
+{% block head %}
+<style>
+#welpcarousel
+.carousel-inner{
+z-index: -1;
+width:100%;
+
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div id="welpcarousel" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#welpcarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#welpcarousel" data-slide-to="1"></li>
+    <li data-target="#welpcarousel" data-slide-to="2"></li>
+  </ol>
+<center>
+<div class="carousel-inner" role="listbox">
+  <div class="item active">
+    <img src="static/img/index1.jpeg">
+    <div class="carousel-caption">
+      <h1> Always at Your Service.</h1>
+      </div>
+    </div> <!-- end active -->
+    <div class="item">
+      <img src="static/img/index2.jpeg">
+    </div>
+    <div class="item">
+      <img src="static/img/index3.jpeg">
+    </div>
+  </div>
+</div> <!-- end slider -->
+
+{% endblock %}
