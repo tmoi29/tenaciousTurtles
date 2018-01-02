@@ -1,0 +1,11 @@
+import urllib2, json
+
+base="freegeoip.net/json"
+
+
+def access_url():
+    data = urllib2.urlopen(base)
+    d = json.loads(data.read())
+    return d
+
+print access_url()

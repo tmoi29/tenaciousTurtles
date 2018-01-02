@@ -28,6 +28,14 @@ moiT, ionkinaK, liuL, senK -- 2017-12-18 12:57
 Worked on presentation and split up talking points
 
 =======================================================
+ionkinaK, liuL -- 2017-12-19 13:03
+
+Presented design pitch
+Feedback:
+- Checkup on validity of FreeGeoIP
+- Try Google Maps?
+
+=======================================================
 moiT, ionkinaK, liuL, senK -- 2017-12-20 13:06
 
 Refined location finding
