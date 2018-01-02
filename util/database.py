@@ -48,4 +48,3 @@ if (__name__ == "__main__"):
     if (debug):
         add_account("john smith", "abc123")
         add_account("joe doe", "johnNeedsToChangeHisPassword")
-        add_review()
