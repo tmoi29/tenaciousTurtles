@@ -22,6 +22,15 @@ color: #014E85;
 font-size: 1.15em;
 }
 
+#LOGO {
+Z-index: 100;
+max-width:150px; 
+margin-top: -10px; 
+margin-left:-15px;
+table-layout: fixed;
+border-collapse: collapse;
+z-index: 2; position:relative;
+}
 
 .navbar-inverse .navbar-nav>li>a {
     color: #014E85;
@@ -44,8 +53,7 @@ background-color: #CEE7F8;
 <nav class="navbar navbar-inverse">
 <div class="navbar-header">
 <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
-<img style="max-width:150px; margin-top: -10px; margin-left:-15px;"
-             src="static/img/logo.png"> 
+<img id="LOGO" src="static/img/logo.png"> 
     </a>
 </div>
 
