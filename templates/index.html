@@ -34,6 +34,7 @@ color: black;
 </style>
 
 
+
 {% endblock %}
 
 {% block body %}
@@ -54,7 +55,7 @@ color: black;
       <h1> Hungry?</h1> <br>
 
       <form>
-	<input type="text" placeholder="Zipcode">
+	<input type="text" placeholder="Zipcode" id="test-input">
 	</form>
       </div>
       </div>
@@ -90,6 +91,23 @@ color: black;
   </div>
 </div> <!-- end slider -->
 
+<script>
+
+
+var textInput = document.getElementById('test-input');
+
+textInput.onkeydown = function (e) {
+
+    if (typeof textInput.value != "undefined" || textInput.value != null){
+    console.log('Input Value:', textInput.value);
+     console.log("removing carousel attribute...");
+     var a = document.getElementById("welpcarousel")
+    console.log("a...=");
+    console.log(a);
+     a.removeAttribute("data-ride");
+}
+};
+</script>
 
 
 {% endblock %}
