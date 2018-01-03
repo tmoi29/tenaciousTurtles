@@ -20,6 +20,16 @@ def add_account(username, password):
     db.commit()
     db.close()
 
+def authenticate(username, password):
+    db = sqlite3.connect("database.db")
+    c  = db.cursor()
+    saved_passwords = c.execute('SELECT password FROM accounts WHERE username="{}";'.format(username))
+    ret = False
+    for saved_password in saved_passwords:
+        ret = saved_password[0] == password
+    db.close()
+    return ret
+
 def add_review(restaurant, user, rating, reviewTitle, reviewContent):
     db = sqlite3.connect("database.db")
     c  = db.cursor()
@@ -30,28 +40,26 @@ def add_review(restaurant, user, rating, reviewTitle, reviewContent):
 def get_review(restaurant):
     db = sqlite3.connect("database.db")
     c  = db.cursor()
-    c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
+    reviews = c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
+    for review in reviews:
+        print review
     db.close()
 
-def authenticate(username, password):
-    db = sqlite3.connect("database.db")
-    c  = db.cursor()
-    saved_passwords = c.execute('SELECT password FROM accounts WHERE username="{}";'.format(username))
-    for saved_password in saved_passwords:
-        print saved_password
-    db.close()
+
     
 
 if (__name__ == "__main__"):
-    init = True
+    init = False
     debug = True
 
     if (init):
         initialize()
         add_account("john smith", "abc123")
         add_account("joe doe", "johnNeedsToChangeHisPassword")
+        add_review(1, "john smith", 5, "Nice", "filler text goes here")
+        get_review(1)
         
     if (debug):
-        authenticate("john smith", "abc123")
-        authenticate("john smith", "what")
-        authenticate("joe smith", "abc123")
+        print authenticate("john smith", "abc123")
+        print authenticate("john smith", "what")
+        print authenticate("joe smith", "abc123")
