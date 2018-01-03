@@ -71,3 +71,12 @@ ionkinaK -- 2017-12-26 22:29
 -Improved index.html by adding an image slider and 
 changing the logo
 
+=======================================================
+ionkinaK -- 2010-01-02 21:01
+
+-Adjust text form on index.html (user can now type
+over the image)
+-Added text to each carousel slide
+-Updated images
+
+
