@@ -13,7 +13,7 @@ def initialize():
 def add_account(username, password):
     db = sqlite3.connect("database.db")
     c  = db.cursor()
-
+    
     #add error handling for duplicate username
     
     c.execute('INSERT INTO accounts VALUES("{}", "{}")'.format(username, password))
@@ -23,7 +23,6 @@ def add_account(username, password):
 def add_review(restaurant, user, rating, reviewTitle, reviewContent):
     db = sqlite3.connect("database.db")
     c  = db.cursor()
-
     c.execute('INSERT INTO reviews VALUES({}, "{}", {}, "{}", "{}" )'.format(restaurant, user, rating, reviewTitle, reviewContent))
     db.commit()
     db.close()
@@ -31,11 +30,16 @@ def add_review(restaurant, user, rating, reviewTitle, reviewContent):
 def get_review(restaurant):
     db = sqlite3.connect("database.db")
     c  = db.cursor()
-
-    c.execute("SELECT * FROM reviews WHERE restaurant = {}".format(restaurant))
-    db.commit()
+    c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
     db.close()
-    
+
+def authenticate(username, password):
+    db = sqlite3.connect("database.db")
+    c  = db.cursor()
+    saved_passwords = c.execute('SELECT password FROM accounts WHERE username="{}";'.format(username))
+    for saved_password in saved_passwords:
+        print saved_password
+    db.close()
     
 
 if (__name__ == "__main__"):
@@ -44,7 +48,10 @@ if (__name__ == "__main__"):
 
     if (init):
         initialize()
-        
-    if (debug):
         add_account("john smith", "abc123")
         add_account("joe doe", "johnNeedsToChangeHisPassword")
+        
+    if (debug):
+        authenticate("john smith", "abc123")
+        authenticate("john smith", "what")
+        authenticate("joe smith", "abc123")
