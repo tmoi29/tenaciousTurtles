@@ -72,11 +72,16 @@ ionkinaK -- 2017-12-26 22:29
 changing the logo
 
 =======================================================
-ionkinaK -- 2010-01-02 21:01
+ionkinaK -- 2018-01-02 21:01
 
 -Adjust text form on index.html (user can now type
 over the image)
 -Added text to each carousel slide
 -Updated images
 
+=======================================================
+liuY -- 2018-01-03 13:17
+-Work on database
+  -accounts table completed
+  -reviews table now accepts new reviews
 
