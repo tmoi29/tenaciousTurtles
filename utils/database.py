@@ -38,28 +38,45 @@ def add_review(restaurant, user, rating, reviewTitle, reviewContent):
     db.close()
 
 def get_review(restaurant):
+    '''
+    Gets all reviews of a restaurant
+
+    Arg:
+        restaurant (int): ID number of restaurant based on Zomato.
+    Ret:
+        list of lists: each sublist contains one review, items in order of restaurant id(int), username (str), rating (int), review title(str), review content(str).
+    '''
     db = sqlite3.connect("database.db")
     c  = db.cursor()
     reviews = c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
+    ret = []
     for review in reviews:
-        print review
+        rev = []
+        for item in review:
+            rev.append(item)
+        ret.append(rev)
     db.close()
+    return ret
 
 
     
 
 if (__name__ == "__main__"):
     init = False
-    debug = True
+    debug = False
 
     if (init):
         initialize()
         add_account("john smith", "abc123")
         add_account("joe doe", "johnNeedsToChangeHisPassword")
         add_review(1, "john smith", 5, "Nice", "filler text goes here")
-        get_review(1)
+        add_review(2, "john smith", 3, "pls no", "filler")
+        add_review(1, "joe doe", 4, "ok", "hope this works")
+        
         
     if (debug):
         print authenticate("john smith", "abc123")
         print authenticate("john smith", "what")
         print authenticate("joe smith", "abc123")
+        print get_review(1)
+        print get_review(2)
