@@ -3,6 +3,20 @@ from flask import redirect, url_for, request, session, flash
 
 
 def add_account(username, pass1, pass2):
+    """
+    Add an account
+
+    Args:
+        username (str): username, will not accept duplicates
+        pass1 (str): first password entered
+        pass2 (str): second password entered
+
+    Ret:
+        If username exists or passwords don't match
+            -Redirects you back to page
+        Else
+            -Adds entry to database
+    """
     db = sqlite3.connect("data/database.db")
     c  = db.cursor()
 
@@ -29,7 +43,6 @@ def add_account(username, pass1, pass2):
         db.close()
         return redirect(url_for('login'))
     
-
 def authenticate(username, password):
     db = sqlite3.connect("data/database.db")
     c  = db.cursor()
@@ -61,28 +74,43 @@ def add_review(restaurant, user, rating, reviewTitle, reviewContent):
     db.close()
 
 def get_review(restaurant):
+    """
+    Gets all reviews of a restaurant
+
+    Arg:
+        restaurant (int): ID number of restaurant based on Zomato.
+    Ret:
+        list of lists: each sublist contains one review, items in order of restaurant id(int), username (str), rating (int), review title(str), review content(str).
+    """
     db = sqlite3.connect("data/database.db")
     c  = db.cursor()
     reviews = c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
+    ret = []
     for review in reviews:
-        print review
-        db.close()
-
-
-    
+        rev = []
+        for item in review:
+            rev.append(item)
+        ret.append(rev)
+    db.close()
+    return ret
 
 if (__name__ == "__main__"):
-    init = False
+    init = True
     debug = True
 
     if (init):
         initialize()
-        add_account("john smith", "abc123")
-        add_account("joe doe", "johnNeedsToChangeHisPassword")
+        print add_account("john smith", "abc123")
+        print add_account("joe doe", "johnNeedsToChangeHisPassword")
+        print add_account("john smith", "should not happen")
         add_review(1, "john smith", 5, "Nice", "filler text goes here")
-        get_review(1)
+        add_review(2, "john smith", 3, "pls no", "filler")
+        add_review(1, "joe doe", 4, "ok", "hope this works")
+        
         
     if (debug):
         print authenticate("john smith", "abc123")
         print authenticate("john smith", "what")
         print authenticate("joe smith", "abc123")
+        print get_review(1)
+        print get_review(2)
