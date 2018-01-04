@@ -11,14 +11,28 @@ def initialize():
 
 
 def add_account(username, password):
+    """
+    Add an account
+
+    Args:
+        username (str): username, will not accept duplicates
+        password (str): password
+
+    Ret:
+        bool: True on success, False on failure due to duplicate username
+    """
     db = sqlite3.connect("database.db")
     c  = db.cursor()
     
-    #add error handling for duplicate username
-    
-    c.execute('INSERT INTO accounts VALUES("{}", "{}")'.format(username, password))
-    db.commit()
+    existing_username = c.execute('SELECT username FROM accounts WHERE username="{}";'.format(username))
+    ret = True
+    for name in existing_username:
+        ret = False
+    if (ret):
+        c.execute('INSERT INTO accounts VALUES("{}", "{}")'.format(username, password))
+        db.commit()
     db.close()
+    return ret
 
 def authenticate(username, password):
     db = sqlite3.connect("database.db")
@@ -38,14 +52,14 @@ def add_review(restaurant, user, rating, reviewTitle, reviewContent):
     db.close()
 
 def get_review(restaurant):
-    '''
+    """
     Gets all reviews of a restaurant
 
     Arg:
         restaurant (int): ID number of restaurant based on Zomato.
     Ret:
         list of lists: each sublist contains one review, items in order of restaurant id(int), username (str), rating (int), review title(str), review content(str).
-    '''
+    """
     db = sqlite3.connect("database.db")
     c  = db.cursor()
     reviews = c.execute("SELECT * FROM reviews WHERE restaurant = {};".format(restaurant))
@@ -58,17 +72,15 @@ def get_review(restaurant):
     db.close()
     return ret
 
-
-    
-
 if (__name__ == "__main__"):
-    init = False
-    debug = False
+    init = True
+    debug = True
 
     if (init):
         initialize()
-        add_account("john smith", "abc123")
-        add_account("joe doe", "johnNeedsToChangeHisPassword")
+        print add_account("john smith", "abc123")
+        print add_account("joe doe", "johnNeedsToChangeHisPassword")
+        print add_account("john smith", "should not happen")
         add_review(1, "john smith", 5, "Nice", "filler text goes here")
         add_review(2, "john smith", 3, "pls no", "filler")
         add_review(1, "joe doe", 4, "ok", "hope this works")
