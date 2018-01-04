@@ -72,12 +72,6 @@ ionkinaK -- 2017-12-26 22:29
 changing the logo
 
 =======================================================
-moiT -- 2018-01-02 13:15
-
--Added freegeoip.py
--Can look up user's zip code
-
-=======================================================
 ionkinaK -- 2018-01-02 21:01
 
 -Adjust text form on index.html (user can now type
@@ -85,27 +79,9 @@ over the image)
 -Added text to each carousel slide
 -Updated images
 
-
 =======================================================
 liuY -- 2018-01-03 13:17
-
 -Work on database
   -accounts table completed
   -reviews table now accepts new reviews
-
-=======================================================
-moiT -- 2018-01-03 13:20
-
--Found tags to scrape from for zomato suggested restaurants
-
-=======================================================
-moiT -- 2018-01-03 15:58
-
--Added hashed passwords
--Fixed authenticate() and create_account() to flash errors and redirect pages
--Fixed login and create account forms
--Added logout function in app.py
--Added sessions
--Moved database and cleaned up repo
-
 
