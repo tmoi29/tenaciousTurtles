@@ -79,4 +79,45 @@ over the image)
 -Added text to each carousel slide
 -Updated images
 
+=======================================================
+khyberS -- 2018-01-05 02:47:52
 
+Wrote most of the front-end JS to load restaurants
+    from Zomato,
+        incl. their reviews and ratings,
+        using CORS-enabled AJAX calls for lower latency
+        (no page refresh or double AJAX call,
+        server to API and server to browser).
+    It can use either GPS if hardware-permitting and user-allowed,
+        zipcode if use enters it,
+        or IP address as a default.
+    It makes heavy use of Promises to handle asynchronous AJAX calls.
+    It exports a Promise<{latitude, longitude}> getLocation() function,
+        which returns a Promise of the current location,
+        using GPS is able, allowed, and not explicitly disabled
+            (using getLocation.dontUseGps()).
+        or using the IP address,
+            which uses FreeGeoIP,
+            which willl always work if connected to the Internet.
+    It exports a newRestaurants() constructor,
+        which makes a "Restaurants" object,
+        which contains the method:
+            Promise<RestaurantL3> next(),
+                which returns a Promise to the next RestaurantL3
+                    (as specified by the Zomato API)
+                sorted by distance
+                and using the current location and a set radius
+                until all the restaurants are exhausted,
+                in which case the radius is increased
+                and a new search API call is made to Zomato.
+        and the method:
+            Promise<bool> addNextTo(
+                    HTMLElement parent,
+                    BiConsumer<HTMLDivElement, RestaurantL3> restaurantToDiv),
+                which appends a new HTMLDivElement to parent
+                and fills that new div element using
+                the next() restaurant
+                and the supplied restaurantToDiv function.
+    It's not completely tested, however,
+        and the element IDs for the buttons, restaurantList, and zipcode field
+        are not encoded correctly yet.
