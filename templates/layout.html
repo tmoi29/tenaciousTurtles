@@ -20,6 +20,7 @@ border-color:#70A7D8;
 background-color:#70A7D8;
 color: #014E85;
 font-size: 1.15em;
+height: 70px;
 }
 
 #LOGO {
@@ -34,12 +35,20 @@ z-index: 2; position:relative;
 
 .navbar-inverse .navbar-nav>li>a {
     color: #014E85;
+    font-size: 1.2em;
+    margin-top: 10px;
 }
 
 body{
 background-color: #CEE7F8;
 }
 
+
+.navbar-nav{
+margin: 0px;
+}
+
+}
 
 </style>
 {% block head %}
@@ -52,7 +61,7 @@ background-color: #CEE7F8;
 
 <nav class="navbar navbar-inverse">
 <div class="navbar-header">
-<a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+<a class="navbar-brand" rel="home" href="/" title="Buy Sell Rent Everyting">
 <img id="LOGO" src="static/img/logo.png"> 
     </a>
 </div>
@@ -62,9 +71,9 @@ background-color: #CEE7F8;
         <li><a href="/">Home</a></li>
         {% if not login %}
 	<li><a href="/login">Login</a></li>
-        <li><a href="/create_account">Create Account</a></li>
+        <li><a href="/crt_acct">Create Account</a></li>
 	{% else %}
-	<li> <a href="#">Log out </a> </li>
+	<li> <a href="/logout">Log out </a> </li>
 	{% endif %}
 	</ul>
       </div>

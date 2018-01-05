@@ -29,9 +29,45 @@ form {
 color: black;
 }
 
+.panel {
+ box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.panel-body{
+text-align: left;
+height: 300px;
+padding: 0px;
+background-color: #white;
+color: #0C2856;
+font-size: 2em;
+}
+
+.row{
+padding: 50px;
+
+}
+
+h1{
+font-size: 4em;
+color:#0C2856
+}
+
+.img-responsive{
+max-width: 100%;
+max-height: 100%;
+}
+
+.panel:hover {
+    margin-top: -20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 2px;
+    transition: 0.5s;
+}
+
 
 
 </style>
+
+
 
 
 {% endblock %}
@@ -54,7 +90,7 @@ color: black;
       <h1> Hungry?</h1> <br>
 
       <form>
-	<input type="text" placeholder="Zipcode">
+	<input type="text" placeholder="Zipcode" id="test-input">
 	</form>
       </div>
       </div>
@@ -89,6 +125,115 @@ color: black;
  </div>
   </div>
 </div> <!-- end slider -->
+
+<script>
+
+
+var textInput = document.getElementById('test-input');
+
+textInput.onkeydown = function (e) {
+
+    if (typeof textInput.value != "undefined" || textInput.value != null){
+    console.log('Input Value:', textInput.value);
+     console.log("removing carousel attribute...");
+     var a = document.getElementById("welpcarousel")
+    console.log("a...=");
+    console.log(a);
+     a.removeAttribute("data-ride");
+}
+};
+</script>
+<br> <br>
+<center> <h1> The Best Restaurants In Your City </h1>
+
+<!-- insert jinja for loop with restaurant info here -->
+
+<div class="row">
+
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+</div>
+
+<div class="row">
+
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+
+	      Restaurant Name
+		
+            </div>
+        </div>
+    </div>    
 
 
 
