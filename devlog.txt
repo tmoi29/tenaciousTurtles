@@ -108,4 +108,11 @@ moiT -- 2018-01-03 15:58
 -Added sessions
 -Moved database and cleaned up repo
 
+=======================================================
+ionkinaK -- 2018-01-04 20:09
+
+-Added responsive panels that will contain recommended
+restaurants in the user's city.
+
+=======================================================
 
