@@ -1,4 +1,10 @@
 tenaciousTurtles - moiT, ionkinaK, LiuL, SenK
+
+      ___
+ ,,  // \\
+(_,\/ \_/ \
+  \ \_/_\_/>
+  /_/  /_/
  ______   ______   __   __   __       ______   _______
 /_____/\ /_____/\ /_/\ /_/\ /_/\     /_____/\ /______/\
 \:::_ \ \\::::_\/_\:\ \\ \ \\:\ \    \:::_ \ \\::::__\/__
@@ -65,6 +71,7 @@ ionkinaK -- 2017-12-26 2:32
 -Finished layout.html
 -Added logo to navbar
 -Worked on login and create account pages
+
 =======================================================
 ionkinaK -- 2017-12-26 22:29
 
@@ -85,7 +92,6 @@ over the image)
 -Added text to each carousel slide
 -Updated images
 
-
 =======================================================
 liuY -- 2018-01-03 13:17
 
@@ -97,6 +103,12 @@ liuY -- 2018-01-03 13:17
 moiT -- 2018-01-03 13:20
 
 -Found tags to scrape from for zomato suggested restaurants
+
+=======================================================
+ionkinaK -- 2018-01-03 13:21
+
+-Added js function to prevent carousel from moving
+when the user is typing.
 
 =======================================================
 moiT -- 2018-01-03 15:58
