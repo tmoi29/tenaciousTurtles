@@ -121,6 +121,12 @@ moiT -- 2018-01-03 15:58
 -Moved database and cleaned up repo
 
 =======================================================
+liuY -- 2018-01-04 15:50
+
+-Finished functions regarding adding and getting reviews
+-Added docstrings to functions whose usage is not apparent by signature
+
+=======================================================
 ionkinaK -- 2018-01-04 20:09
 
 -Added responsive panels that will contain recommended
