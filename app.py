@@ -50,7 +50,7 @@ def crt_acct():
     
     # user didn't enter form
     else:
-        return render_template("create_acct.html", login = False)
+        return render_template("create_account.html", login = False)
     
 #logout
 @app.route('/logout', methods=['GET', 'POST'])

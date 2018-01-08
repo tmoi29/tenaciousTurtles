@@ -1,86 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
   <head>
-    <title> Welp </title>
-    <meta charset="utf-8"> 
+    <title>Welp</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<style>
-.navbar-inverse{
-margin-bottom: 0;
-border-radius:0;
-padding:0;
-border-color:#70A7D8;
-background-color:#70A7D8;
-color: #014E85;
-font-size: 1.15em;
-height: 70px;
-}
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-#LOGO {
-Z-index: 100;
-max-width:150px; 
-margin-top: -10px; 
-margin-left:-15px;
-table-layout: fixed;
-border-collapse: collapse;
-z-index: 2; position:relative;
-}
-
-.navbar-inverse .navbar-nav>li>a {
-    color: #014E85;
-    font-size: 1.2em;
-    margin-top: 10px;
-}
-
-body{
-background-color: #CEE7F8;
-}
-
-
-.navbar-nav{
-margin: 0px;
-}
-
-}
-
-</style>
-{% block head %}
-{% endblock %}
-
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    {% block head %}
+    {% endblock %}
   </head>
+
   <body>
-
-
-
-<nav class="navbar navbar-inverse">
-<div class="navbar-header">
-<a class="navbar-brand" rel="home" href="/" title="Buy Sell Rent Everyting">
-<img id="LOGO" src="img/logo.png">
-    </a>
-</div>
-
-<div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/">Home</a></li>
-        {% if not login %}
-	<li><a href="/login">Login</a></li>
-        <li><a href="/crt_acct">Create Account</a></li>
-	{% else %}
-	<li> <a href="/logout">Log out </a> </li>
-	{% endif %}
-	</ul>
+    <nav class="navbar navbar-inverse">
+      <div class="navbar-header">
+        <a class="navbar-brand" rel="home" href="/" title="Buy Sell Rent Everyting">
+          <img id="logo" src="img/logo.png">
+        </a>
       </div>
-</nav>
 
-{% block body %}
-{% endblock %}
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Home</a></li>
+          {% if not login %}
+            <li><a href="/login">Login</a></li>
+            <li><a href="/crt_acct">Create Account</a></li>
+          {% else %}
+            <li><a href="/logout">Log out </a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
 
-    </body>
+    {% block body %}
+    {% endblock %}
+
+  </body>
 </html>

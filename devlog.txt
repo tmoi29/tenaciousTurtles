@@ -190,3 +190,8 @@ khyberS -- 2018-01-07 20:08:39
 Cleaned up index.html and refacted CSS into welp.css and JS in welp.js.
 
 =======================================================
+khyberS -- 2018-01-07 20:18:03
+
+Factored out CSS for other HTML files and cleaned them up a little.
+
+=======================================================

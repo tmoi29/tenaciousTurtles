@@ -1,0 +1,34 @@
+.navbar-inverse {
+    margin-bottom: 0;
+    border-radius: 0;
+    padding: 0;
+    border-color: #70A7D8;
+    background-color: #70A7D8;
+    color: #014E85;
+    font-size: 1.15em;
+    height: 70px;
+}
+
+#logo {
+    max-width: 150px;
+    margin-top: -10px;
+    margin-left: -15px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    z-index: 2;
+    position: relative;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #014E85;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+body {
+    background-color: #CEE7F8;
+}
+
+.navbar-nav {
+    margin: 0;
+}
