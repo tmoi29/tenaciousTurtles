@@ -216,3 +216,11 @@ Cleaned up app.py and used my util stuff
 from previous projects to make it more secure.
 
 =======================================================
+khyberS -- 2018-01-08 15:06:54
+
+Fixed all the DB accesses in database.py susceptible to SQL injection.
+
+Wrapped db = sqlite3.connect() calls in with statements,
+so that db.close() is always called on exceptions and returns.
+
+=======================================================

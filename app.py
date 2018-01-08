@@ -47,7 +47,9 @@ def login():
     # type: () -> Response
     session[UID_KEY] = True  # TODO
     form = request.form
-    return database.authenticate(form['username'], form['password'])
+    if not database.authenticate(form['username'], form['password']):
+        return reroute_to(login_page)
+    return reroute_to(index)
 
 
 @app.route('/create_account')
@@ -64,7 +66,9 @@ def create_account_page():
 def create_account():
     # type: () -> Response
     form = request.form
-    return database.add_account(form['username'], form['password1'], form['password2'])
+    if not database.add_account(form['username'], form['password1'], form['password2']):
+        return reroute_to(create_account_page)
+    return reroute_to(login)
 
 
 @app.route('/logout')
