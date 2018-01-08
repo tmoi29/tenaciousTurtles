@@ -230,3 +230,13 @@ Implemented zipCodeLocation(zipCode) in welp.js
 using the Google Maps Geocoding API.
 
 =======================================================
+khyberS -- 2018-01-08 15:23:41
+
+Changed STRING columns to TEXT in setup_db.py.
+
+Deleted freegeoip.py since it's implemented in used in welp.js.
+
+Added requirements.txt with dependencies that can be installed
+by running pip install -r requirements.txt.
+
+=======================================================
