@@ -185,3 +185,8 @@ Now all we need to do is finish the function to get latitude and longitude
     so that it makes the restaurant data look nicer.
 
 =======================================================
+khyberS -- 2018-01-07 20:08:39
+
+Cleaned up index.html and refacted CSS into welp.css and JS in welp.js.
+
+=======================================================

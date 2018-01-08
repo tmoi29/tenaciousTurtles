@@ -1,0 +1,57 @@
+.header-text .hidden-xs {
+    position: absolute;
+    right: 50%;
+}
+
+.header-text {
+    position: absolute;
+    top: 20%;
+    left: 1.8%;
+    right: auto;
+    width: 96.66666666666666%;
+    color: #fff;
+    font-size: 3em;
+}
+
+.header-text h1 {
+    display: block;
+    color: white;
+    font-size: 2em;
+}
+
+form {
+    color: black;
+}
+
+.panel {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.panel-body {
+    text-align: left;
+    height: 300px;
+    padding: 0;
+    background-color: white;
+    color: #0C2856;
+    font-size: 2em;
+}
+
+.row {
+    padding: 50px;
+}
+
+h1 {
+    font-size: 4em;
+    color: #0C2856
+}
+
+.img-responsive {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.panel:hover {
+    margin-top: -20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 2px;
+    transition: 0.5s;
+}

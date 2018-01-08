@@ -2,7 +2,7 @@ from flask import Flask, url_for, render_template, redirect, url_for, request, s
 from utils import database, freegeoip
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 #for sessions
 app.secret_key = os.urandom(32)

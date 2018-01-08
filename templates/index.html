@@ -1,240 +1,164 @@
 {% extends "layout.html" %}
 {% block head %}
-<style>
-
-.header-text hidden-xs{
-
-position: absolute;
-right:50%;
-
-}
-.header-text {
-    position: absolute;
-    top: 20%;
-    left: 1.8%;
-    right: auto;
-    width: 96.66666666666666%;
-    color: #fff;
-    font-size: 3em;
-}
-
-.header-text h1 {
-    display:block;
-    color: #FFFFFF;
-
-    font-size: 2em;
-}
-
-form {
-color: black;
-}
-
-.panel {
- box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.panel-body{
-text-align: left;
-height: 300px;
-padding: 0px;
-background-color: #white;
-color: #0C2856;
-font-size: 2em;
-}
-
-.row{
-padding: 50px;
-
-}
-
-h1{
-font-size: 4em;
-color:#0C2856
-}
-
-.img-responsive{
-max-width: 100%;
-max-height: 100%;
-}
-
-.panel:hover {
-    margin-top: -20px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 2px;
-    transition: 0.5s;
-}
-
-
-
-</style>
-
-
-
-
+  <link rel="stylesheet" type="text/css" href="css/welp.css">
+  <script src="js/welp.js"></script>
 {% endblock %}
 
 {% block body %}
 
-<div id="welpcarousel" class="carousel slide" data-ride="carousel" data-pause="hover">
-  <ol class="carousel-indicators">
-    <li data-target="#welpcarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#welpcarousel" data-slide-to="1"></li>
-    <li data-target="#welpcarousel" data-slide-to="2"></li>
-  </ol>
-<center>
-<div class="carousel-inner" role="listbox">
-  <div class="item active">
-    <img id="top-header" src="static/img/hungry.jpeg">
-    <div class="header-text hidden-xs">
-      <div class="col-md-12 text-center">
-	 
-      <h1> Hungry?</h1> <br>
+  <div id="welpcarousel" class="carousel slide" data-ride="carousel" data-pause="hover">
+    <ol class="carousel-indicators">
+      <li data-target="#welpcarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#welpcarousel" data-slide-to="1"></li>
+      <li data-target="#welpcarousel" data-slide-to="2"></li>
+    </ol>
+    <center>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img id="top-header" src="img/hungry.jpeg">
+          <div class="header-text hidden-xs">
+            <div class="col-md-12 text-center">
 
-      <form>
-	<input type="text" placeholder="Zipcode" id="test-input">
-	</form>
+              <h1> Hungry?</h1> <br>
+
+              <form>
+                <input type="text" placeholder="Zipcode" id="zipCode">
+              </form>
+            </div>
+          </div>
+        </div> <!-- end active -->
+        <div class="item">
+          <img id="top-header2" src="img/thirsty.jpeg">
+          <div class="header-text hidden-xs">
+            <div class="col-md-12 text-center">
+
+              <h1> Thirsty?</h1> <br>
+
+              <form>
+                <input type="text" placeholder="Zipcode">
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="item">
+          <img id="top-header3" src="img/index1.jpeg">
+          <div class="header-text hidden-xs">
+            <div class="col-md-12 text-center">
+
+              <h1> We've got just the thing. </h1><br>
+
+              <form>
+                <input type="text" placeholder="Zipcode">
+              </form>
+            </div>
+          </div>
+
+        </div>
       </div>
+    </center>
+  </div> <!-- end slider -->
+
+  <br> <br>
+  <center>
+    <h1> The Best Restaurants In Your City </h1>
+  </center>
+
+  <!-- insert jinja for loop with restaurant info here -->
+
+  <div class="row">
+
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <img class="img-responsive"
+               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
+
+          Restaurant Name
+
+        </div>
       </div>
-    </div> <!-- end active -->
-    <div class="item">
-      <img  id="top-header2" src="static/img/thirsty.jpeg">
-<div class="header-text hidden-xs">
-      <div class="col-md-12 text-center">
-	 
-      <h1> Thirsty?</h1> <br>
-
- <form>
-        <input type="text" placeholder="Zipcode">
-        </form>
-</div>
-</div>
-
     </div>
-    <div class="item">
-      <img  id="top-header3" src="static/img/index1.jpeg">
-<div class="header-text hidden-xs">
-      <div class="col-md-12 text-center">
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <img class="img-responsive"
+               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
-      <h1> We've got just the thing. </h1><br>
+          Restaurant Name
 
- <form>
-        <input type="text" placeholder="Zipcode">
-        </form>
-</div>
-</div>   
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <img class="img-responsive"
+               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
- </div>
+          Restaurant Name
+
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-3">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <img class="img-responsive"
+               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
+
+          Restaurant Name
+
+        </div>
+      </div>
+    </div>
   </div>
-</div> <!-- end slider -->
 
-<script>
+  <div class="row"></div>
 
+  <div class="col-xs-3">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <img class="img-responsive"
+             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
-var textInput = document.getElementById('test-input');
+        Restaurant Name
 
-textInput.onkeydown = function (e) {
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <img class="img-responsive"
+             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
-    if (typeof textInput.value != "undefined" || textInput.value != null){
-    console.log('Input Value:', textInput.value);
-     console.log("removing carousel attribute...");
-     var a = document.getElementById("welpcarousel")
-    console.log("a...=");
-    console.log(a);
-     a.removeAttribute("data-ride");
-}
-};
-</script>
-<br> <br>
-<center> <h1> The Best Restaurants In Your City </h1>
+        Restaurant Name
 
-<!-- insert jinja for loop with restaurant info here -->
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <img class="img-responsive"
+             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
-<div class="row">
+        Restaurant Name
 
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <img class="img-responsive"
+             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
 
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
+        Restaurant Name
 
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-</div>
-
-<div class="row">
-
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-    <div class="col-xs-3">
-        <div class="panel panel-default">
-            <div class="panel-body">
-              <img class="img-responsive" src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">   
-
-	      Restaurant Name
-		
-            </div>
-        </div>
-    </div>    
-
-
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
