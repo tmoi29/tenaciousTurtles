@@ -268,70 +268,70 @@
                 promise.attached = [];
                 promises[promise.index] = promise;
                 promise.then(restaurants => {
-                    console.log("resolving: ");
-                    console.log(promise);
-                    console.log("");
-                    
-                    // remove self from promises
-                    promises.splice(promise.index, 1);
-                    for (let i = promise.index; i < promises.length; i++) {
-                        promises[i].index--;
-                    }
-                    
-                    console.log(promises.map(e => e.firstRestaurantNum));
-                    
-                    if (restaurants.length === 0) {
-                        // in case radius hasn't been updated yet, update it
-                        if (radius === searchRadius) {
-                            nextRadius();
-                        }
+                        console.log("resolving: ");
+                        console.log(promise);
+                        console.log("");
                         
-                        // since this promise is being re-run after the other ones,
-                        // their firstRestaurantNum needs to be updated
+                        // remove self from promises
+                        promises.splice(promise.index, 1);
                         for (let i = promise.index; i < promises.length; i++) {
-                            promises[i].firstRestaurantNum -= count;
+                            promises[i].index--;
                         }
                         
-                        // try again w/ next parameters (which should have already been advanced)
-                        searchAndResolve(firstRestaurantNum);
-                        return;
-                    }
-                    
-                    const resolveResolves = function() {
-                        const numResolving = Math.min(resolves.length, restaurants.length);
-                        const resolving = resolves.splice(0, numResolving);
-                        // splice off in one call to avoid race condition
-                        // hopefully a native method is atomic
-                        // resolve as many as possible
-                        let i = 0;
-                        for (; i < numResolving; i++) {
-                            if (i === 0) {
-                                console.log(promise);
-                                console.log("resolving " + resolving[i].restaurantNum + " to " + resolving.last().restaurantNum);
-                                console.log("restaurants " + restaurants[i].originalNum + " to " + restaurants.last().originalNum);
-                                console.log("");
+                        console.log(promises.map(e => e.firstRestaurantNum));
+                        
+                        if (restaurants.length === 0) {
+                            // in case radius hasn't been updated yet, update it
+                            if (radius === searchRadius) {
+                                nextRadius();
                             }
-                            restaurants[i].num = resolving[i].restaurantNum;
-                            resolving[i](restaurants[i]);
+                            
+                            // since this promise is being re-run after the other ones,
+                            // their firstRestaurantNum needs to be updated
+                            for (let i = promise.index; i < promises.length; i++) {
+                                promises[i].firstRestaurantNum -= count;
+                            }
+                            
+                            // try again w/ next parameters (which should have already been advanced)
+                            searchAndResolve(firstRestaurantNum);
+                            return;
                         }
-                        // if not enough resolves waiting,
-                        // add rest of restaurants to restaurantStack in reverse
-                        restaurantStack.addAll(restaurants.slice(i).reverse());
                         
-                        console.log("resolving attached (from " + promise.firstRestaurantNum + ")");
-                        promise.attached.forEach(resolver => resolver());
-                    };
-                    
-                    const lastPromise = promises[promise.index - 1];
-                    if (lastPromise) {
-                        console.log("attaching " + promise.firstRestaurantNum + " onto " + lastPromise.firstRestaurantNum);
-                        // if there is a previous promise, attach to that one
-                        // this ensures that all the restaurants return in order
-                        lastPromise.attached.push(resolveResolves);
-                    } else {
-                        resolveResolves();
-                    }
-                })
+                        const resolveResolves = function() {
+                            const numResolving = Math.min(resolves.length, restaurants.length);
+                            const resolving = resolves.splice(0, numResolving);
+                            // splice off in one call to avoid race condition
+                            // hopefully a native method is atomic
+                            // resolve as many as possible
+                            let i = 0;
+                            for (; i < numResolving; i++) {
+                                if (i === 0) {
+                                    console.log(promise);
+                                    console.log("resolving " + resolving[i].restaurantNum + " to " + resolving.last().restaurantNum);
+                                    console.log("restaurants " + restaurants[i].originalNum + " to " + restaurants.last().originalNum);
+                                    console.log("");
+                                }
+                                restaurants[i].num = resolving[i].restaurantNum;
+                                resolving[i](restaurants[i]);
+                            }
+                            // if not enough resolves waiting,
+                            // add rest of restaurants to restaurantStack in reverse
+                            restaurantStack.addAll(restaurants.slice(i).reverse());
+                            
+                            console.log("resolving attached (from " + promise.firstRestaurantNum + ")");
+                            promise.attached.forEach(resolver => resolver());
+                        };
+                        
+                        const lastPromise = promises[promise.index - 1];
+                        if (lastPromise) {
+                            console.log("attaching " + promise.firstRestaurantNum + " onto " + lastPromise.firstRestaurantNum);
+                            // if there is a previous promise, attach to that one
+                            // this ensures that all the restaurants return in order
+                            lastPromise.attached.push(resolveResolves);
+                        } else {
+                            resolveResolves();
+                        }
+                    })
                     .catch(error => {
                         console.log(error);
                         numFails++;
@@ -488,7 +488,17 @@
         });
         
         const zipCodeLocation = function(zipCode) {
-            // TODO need to use another API to convert zipCode to lat, long
+            return fetch("maps.googleapis.com/maps/api/geocode/json?address=" + zipCode)
+                .then(response => response.json())
+                .then(json => {
+                    const location = json.geometry.location;
+                    console.log("location for " + zipCode);
+                    console.log(location);
+                    return {
+                        latitude: location.lat,
+                        longitude: location.lng,
+                    };
+                });
         };
         
         const restaurants = ZomatoModule.newRestaurants(() => {

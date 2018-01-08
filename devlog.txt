@@ -224,3 +224,9 @@ Wrapped db = sqlite3.connect() calls in with statements,
 so that db.close() is always called on exceptions and returns.
 
 =======================================================
+khyberS -- 2018-01-08 15:11:21
+
+Implemented zipCodeLocation(zipCode) in welp.js
+using the Google Maps Geocoding API.
+
+=======================================================
