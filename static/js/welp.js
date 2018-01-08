@@ -111,8 +111,23 @@
             this.useGps(false);
         };
         
+        const zipCodeLocation = function(zipCode) {
+            return fetch("maps.googleapis.com/maps/api/geocode/json?address=" + zipCode)
+                .then(response => response.json())
+                .then(json => {
+                    const location = json.geometry.location;
+                    console.log("location for " + zipCode);
+                    console.log(location);
+                    return {
+                        latitude: location.lat,
+                        longitude: location.lng,
+                    };
+                });
+        };
+        
         return {
             getLocation: getLocation,
+            zipCodeLocation: zipCodeLocation,
         };
         
     };
@@ -464,61 +479,7 @@
         
     };
     
-    const RestaurantPageModule = function(LocationModule, ZomatoModule) {
-        
-        const zipCodeField = $("#zipCode")[0];
-        const zipCodeEnterButton = $("#enterZipCode")[0];
-        const locateButton = $("#locate")[0];
-        const moreRestaurantsButton = $("#moreRestaurants")[0];
-        const restaurantListDiv = $("#restaurants")[0];
-        
-        console.log([zipCodeField, zipCodeEnterButton, locateButton, moreRestaurantsButton, restaurantListDiv]);
-        
-        let useZipCode = false;
-        let lastLocation = null;
-        
-        zipCodeEnterButton.addEventListener("click", event => {
-            useZipCode = true;
-            LocationModule.getLocation.dontUseGps();
-        });
-        
-        locateButton.addEventListener("click", event => {
-            useZipCode = false;
-            LocationModule.getLocation.useGps();
-        });
-        
-        const zipCodeLocation = function(zipCode) {
-            return fetch("maps.googleapis.com/maps/api/geocode/json?address=" + zipCode)
-                .then(response => response.json())
-                .then(json => {
-                    const location = json.geometry.location;
-                    console.log("location for " + zipCode);
-                    console.log(location);
-                    return {
-                        latitude: location.lat,
-                        longitude: location.lng,
-                    };
-                });
-        };
-        
-        const restaurants = ZomatoModule.newRestaurants(() => {
-            return new Promise(resolve => {
-                if (useZipCode) {
-                    if (lastLocation) {
-                        resolve(lastLocation);
-                        return;
-                    }
-                    const zipCodeText = zipCodeField.innerText;
-                    if (zipCodeText && zipCodeText.length === 5) {
-                        zipCodeLocation(zipCodeText)
-                            .then(coords => resolve(coords));
-                        return;
-                    }
-                }
-                return LocationModule.getLocation()
-                    .then(coords => resolve(coords));
-            });
-        });
+    const RestaurantListModule = function() {
         
         const newRestaurantCol = function(restaurantToDiv) {
             
@@ -648,6 +609,54 @@
             };
         };
         
+        return {
+            newRestaurantList: newRestaurantList,
+        };
+        
+    };
+    
+    const RestaurantPageModule = function(LocationModule, ZomatoModule, RestaurantListModule) {
+        
+        const zipCodeField = $("#zipCode")[0];
+        const zipCodeEnterButton = $("#enterZipCode")[0];
+        const locateButton = $("#locate")[0];
+        const moreRestaurantsButton = $("#moreRestaurants")[0];
+        const restaurantListDiv = $("#restaurants")[0];
+        
+        console.log([zipCodeField, zipCodeEnterButton, locateButton, moreRestaurantsButton, restaurantListDiv]);
+        
+        let useZipCode = false;
+        let lastLocation = null;
+        
+        zipCodeEnterButton.addEventListener("click", event => {
+            useZipCode = true;
+            LocationModule.getLocation.dontUseGps();
+        });
+        
+        locateButton.addEventListener("click", event => {
+            useZipCode = false;
+            LocationModule.getLocation.useGps();
+        });
+        
+        const restaurants = ZomatoModule.newRestaurants(() => {
+            return new Promise(resolve => {
+                if (useZipCode) {
+                    if (lastLocation) {
+                        resolve(lastLocation);
+                        return;
+                    }
+                    const zipCodeText = zipCodeField.innerText;
+                    if (zipCodeText && zipCodeText.length === 5) {
+                        LocationModule.zipCodeLocation(zipCodeText)
+                            .then(coords => resolve(coords));
+                        return;
+                    }
+                }
+                return LocationModule.getLocation()
+                    .then(coords => resolve(coords));
+            });
+        });
+        
         /**
          * Add Zomato restaurant data to a div.
          *
@@ -676,7 +685,7 @@
             img.src = restaurant.thumb; // restaurant.featured_image;
         };
         
-        const restaurantList = newRestaurantList(restaurantToDiv, null, null, 4)
+        const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
             .appendTo(restaurantListDiv);
         
         const addRestaurant = function() {
@@ -697,6 +706,7 @@
     (function main() {
         const locationModule = LocationModule();
         const zomatoModule = ZomatoModule(locationModule, "3332e206cdbcedf5e11ebdf84dec2b8c");
+        const restaurantListModule = RestaurantListModule();
         
         const test = function() {
             const restaurants = zomatoModule.newRestaurants();
@@ -714,7 +724,8 @@
         };
         
         $(() => {
-            const restaurantPageModule = RestaurantPageModule(locationModule, zomatoModule);
+            const restaurantPageModule =
+                RestaurantPageModule(locationModule, zomatoModule, restaurantListModule);
             
             // test();
         });

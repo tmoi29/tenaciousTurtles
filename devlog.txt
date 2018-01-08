@@ -240,3 +240,13 @@ Added requirements.txt with dependencies that can be installed
 by running pip install -r requirements.txt.
 
 =======================================================
+khyberS -- 2018-01-08 15:37:16
+
+Refactored welp.js:
+
+    Moved newRestaurantCol(), newRestaurantRow(), and newRestaurantList()
+    to a new RestaurantListModule() that returns only newRestaurantList().
+
+    Moved zipCodeLocation() to LocationModule(), where it's returned.
+
+=======================================================
