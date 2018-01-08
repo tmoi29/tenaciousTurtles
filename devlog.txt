@@ -168,3 +168,14 @@ Wrote most of the front-end JS to load restaurants
     It's not completely tested, however,
         and the element IDs for the buttons, restaurantList, and zipcode field
         are not encoded correctly yet.
+
+=======================================================
+khyberS -- 2018-01-07 18:52:47
+
+Fixed all the bugs in my JS code for getting restaurant data.
+Now all we need to do is finish the function to get latitude and longitude
+    from a zipcode (see zipCodeLocation(zipCode) on line 476),
+    and finish restaurantToDiv(div, restaurant) on line 505,
+    so that it makes the restaurant data look nicer.
+
+=======================================================
