@@ -210,3 +210,9 @@ There's also a More Restaurants button that
 adds the next restaurant to the list/row.
 
 =======================================================
+khyberS -- 2018-01-08 11:24:57
+
+Cleaned up app.py and used my util stuff
+from previous projects to make it more secure.
+
+=======================================================

@@ -29,9 +29,9 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/">Home</a></li>
-          {% if not login %}
+          {% if not is_logged_in() %}
             <li><a href="/login">Login</a></li>
-            <li><a href="/crt_acct">Create Account</a></li>
+            <li><a href="/create_account">Create Account</a></li>
           {% else %}
             <li><a href="/logout">Log out </a></li>
           {% endif %}

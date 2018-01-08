@@ -1,68 +1,81 @@
-from flask import Flask, url_for, render_template, redirect, url_for, request, session, flash
-from utils import database, freegeoip
 import os
+
+from flask import Flask, Response, render_template, request, session
+
+from util.flask.flask_utils import form_contains, post_only, preconditions, reroute_to, \
+    session_contains
+from util.flask.flask_utils_types import Router
+from util.flask.template_context import add_template_context, context
+from utils import database
 
 app = Flask(__name__, static_url_path='')
 
-#for sessions
-app.secret_key = os.urandom(32)
+UID_KEY = 'uid'
 
-@app.route('/')
+is_logged_in = session_contains(UID_KEY)
+is_logged_in.func_name = 'is_logged_in'
+context[is_logged_in.func_name] = is_logged_in
+
+is_not_logged_in = ~is_logged_in
+is_not_logged_in.func_name = 'is_not_logged_in'
+context[is_not_logged_in.func_name] = is_not_logged_in
+
+
+@app.reroute_from('/')
+@app.route('/index')
 def index():
-    loggedIn = False
-    if session.get('username'):
-        loggedIn = True
-    return render_template("index.html", login = loggedIn)
+    # type: () -> Response
+    return render_template('index.html', logged_in=is_logged_in())
 
-@app.route('/login', methods=['GET', 'POST'])
 
+@app.route('/login')
+def login_page():
+    # type: () -> Response
+    if is_logged_in():
+        return reroute_to(index)
+    return render_template('login.html')
+
+
+logged_in = preconditions(login_page, is_logged_in)  # type: Router
+not_logged_in = preconditions(index, is_not_logged_in)  # type: Router
+
+
+@app.route('/login_auth', methods=['get', 'post'])
+@not_logged_in
+@preconditions(login_page, post_only, form_contains('username', 'password'))
 def login():
-    # if user already logged in, redirect to homepage
-    if session.get('username'):
-        flash("Whoops! You're already signed in.")
-        return redirect(url_for('index')) #something
-    
-    # user entered login form
-    elif request.form.get('login'):
-        user = request.form.get('user')
-        passw = request.form.get('passw')
-        return database.authenticate(user,passw)
-    
-    # user didn't enter form
-    else:
-        return render_template('login.html', login = False)
+    # type: () -> Response
+    session[UID_KEY] = True  # TODO
+    form = request.form
+    return database.authenticate(form['username'], form['password'])
 
 
-@app.route('/crt_acct', methods=['GET', 'POST'])
-def crt_acct():
-    # if user already logged in, redirect to homepage(base.html)
-    if session.get('username'):
-        flash("Whoops! You're already signed in.")
-        return redirect(url_for('index')) #something
-    
-    # user entered create account form
-    elif request.form.get('crt_acct'):
-        user = request.form.get('user')
-        print user
-        passw1 = request.form.get('pass1')
-        passw2 = request.form.get('pass2')
-        return database.add_account(user,passw1,passw2)
-    
-    # user didn't enter form
-    else:
-        return render_template("create_account.html", login = False)
-    
-#logout
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/create_account')
+@not_logged_in
+def create_account_page():
+    # type: () -> Response
+    return render_template('create_account.html')
+
+
+@app.route('/create_account_auth', methods=['get', 'post'])
+@not_logged_in
+@preconditions(create_account_page, post_only,
+               form_contains('username', 'password1', 'password2'))
+def create_account():
+    # type: () -> Response
+    form = request.form
+    return database.add_account(form['username'], form['password1'], form['password2'])
+
+
+@app.route('/logout')
+@logged_in
 def logout():
-    if not session.get('username'):
-        flash("Yikes! You're not logged in")
-        return redirect(url_for('login'))
-    else:
-        flash("Yay! You've successfully logged out")
-        session.pop('username')
-        return redirect(url_for('login'))
+    # type: () -> Response
+    del session[UID_KEY]
+    return reroute_to(index)
 
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(32)
+    add_template_context(app)
     app.run(debug=True)
