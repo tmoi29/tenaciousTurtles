@@ -195,3 +195,18 @@ khyberS -- 2018-01-07 20:18:03
 Factored out CSS for other HTML files and cleaned them up a little.
 
 =======================================================
+khyberS -- 2018-01-08 00:13:36
+
+Moved zipcode box outside of carousel to make things much simpler.
+Ideally, we would have the zipcode box on top of the carousel,
+but not a part of it.
+
+Fixed welp.js so that it adds the 20 first (closest) restaurants
+in a similar style to the placeholder restaurants we had before,
+showing the name, rating, and picture
+(a lot of restaurants don't have any picture).
+
+There's also a More Restaurants button that
+adds the next restaurant to the list/row.
+
+=======================================================

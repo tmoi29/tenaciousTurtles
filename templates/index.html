@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="../static/css/index.css">
+  <link rel="stylesheet" type="text/css" href="css/index.css">
   <script src="js/welp.js"></script>
 {% endblock %}
 
@@ -18,12 +18,7 @@
           <img id="top-header" src="img/hungry.jpeg">
           <div class="header-text hidden-xs">
             <div class="col-md-12 text-center">
-
               <h1> Hungry?</h1> <br>
-
-              <form>
-                <input type="text" placeholder="Zipcode" id="zipCode">
-              </form>
             </div>
           </div>
         </div> <!-- end active -->
@@ -31,26 +26,15 @@
           <img id="top-header2" src="img/thirsty.jpeg">
           <div class="header-text hidden-xs">
             <div class="col-md-12 text-center">
-
               <h1> Thirsty?</h1> <br>
-
-              <form>
-                <input type="text" placeholder="Zipcode">
-              </form>
             </div>
           </div>
-
         </div>
         <div class="item">
           <img id="top-header3" src="img/index1.jpeg">
           <div class="header-text hidden-xs">
             <div class="col-md-12 text-center">
-
               <h1> We've got just the thing. </h1><br>
-
-              <form>
-                <input type="text" placeholder="Zipcode">
-              </form>
             </div>
           </div>
 
@@ -59,6 +43,14 @@
     </center>
   </div> <!-- end slider -->
 
+  <center>
+    <form>
+      <input type="text" placeholder="Zipcode" id="zipCode">
+      <input type="submit" value="Use Zipcode" id="enterZipCode">
+    </form>
+    <button id="locate">Locate</button>
+  </center>
+
   <br> <br>
   <center>
     <h1> The Best Restaurants In Your City </h1>
@@ -66,99 +58,100 @@
 
   <!-- insert jinja for loop with restaurant info here -->
 
-  <div class="row">
+  <div id="restaurants"></div>
+  <button id="moreRestaurants">More Restaurants</button>
 
-    <div class="col-xs-3">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img class="img-responsive"
-               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-          Restaurant Name
-
-        </div>
-      </div>
-    </div>
-    <div class="col-xs-3">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img class="img-responsive"
-               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-          Restaurant Name
-
-        </div>
-      </div>
-    </div>
-    <div class="col-xs-3">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img class="img-responsive"
-               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-          Restaurant Name
-
-        </div>
-      </div>
-    </div>
-    <div class="col-xs-3">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img class="img-responsive"
-               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-          Restaurant Name
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row"></div>
-
-  <div class="col-xs-3">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <img class="img-responsive"
-             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-        Restaurant Name
-
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-3">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <img class="img-responsive"
-             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-        Restaurant Name
-
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-3">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <img class="img-responsive"
-             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-        Restaurant Name
-
-      </div>
-    </div>
-  </div>
-  <div class="col-xs-3">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <img class="img-responsive"
-             src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">
-
-        Restaurant Name
-
-      </div>
-    </div>
-  </div>
-
+  {#  <div class="row">#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#  </div>#}
+  {##}
+  {#  <div class="row">#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#    <div class="col-xs-3">#}
+  {#      <div class="panel panel-default">#}
+  {#        <div class="panel-body">#}
+  {#          <img class="img-responsive"#}
+  {#               src="https://www.seejapan.co.uk/images/default-source/default-album/izakaya_3_dl.jpg?sfvrsn=0">#}
+  {##}
+  {#          Restaurant Name#}
+  {##}
+  {#        </div>#}
+  {#      </div>#}
+  {#    </div>#}
+  {#  </div>#}
 {% endblock %}

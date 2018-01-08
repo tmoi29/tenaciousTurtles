@@ -11,6 +11,24 @@
         return this[this.length - 1];
     };
     
+    const newDiv = function() {
+        return document.createElement("div");
+    };
+    
+    HTMLElement.prototype.withId = function(id) {
+        if (id) {
+            this.id = id;
+        }
+        return this;
+    };
+    
+    HTMLElement.prototype.withClass = function(klass) {
+        if (klass) {
+            this.classList.add(klass);
+        }
+        return this;
+    };
+    
     const Range = function(start, end) {
         this.forEach = function(func) {
             for (let i = start; i < end; i++) {
@@ -120,7 +138,6 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    window.data = data;
                     return data;
                 });
         };
@@ -251,70 +268,70 @@
                 promise.attached = [];
                 promises[promise.index] = promise;
                 promise.then(restaurants => {
-                        console.log("resolving: ");
-                        console.log(promise);
-                        console.log("");
+                    console.log("resolving: ");
+                    console.log(promise);
+                    console.log("");
+                    
+                    // remove self from promises
+                    promises.splice(promise.index, 1);
+                    for (let i = promise.index; i < promises.length; i++) {
+                        promises[i].index--;
+                    }
+                    
+                    console.log(promises.map(e => e.firstRestaurantNum));
+                    
+                    if (restaurants.length === 0) {
+                        // in case radius hasn't been updated yet, update it
+                        if (radius === searchRadius) {
+                            nextRadius();
+                        }
                         
-                        // remove self from promises
-                        promises.splice(promise.index, 1);
+                        // since this promise is being re-run after the other ones,
+                        // their firstRestaurantNum needs to be updated
                         for (let i = promise.index; i < promises.length; i++) {
-                            promises[i].index--;
+                            promises[i].firstRestaurantNum -= count;
                         }
                         
-                        console.log(promises.map(e => e.firstRestaurantNum));
-                        
-                        if (restaurants.length === 0) {
-                            // in case radius hasn't been updated yet, update it
-                            if (radius === searchRadius) {
-                                nextRadius();
+                        // try again w/ next parameters (which should have already been advanced)
+                        searchAndResolve(firstRestaurantNum);
+                        return;
+                    }
+                    
+                    const resolveResolves = function() {
+                        const numResolving = Math.min(resolves.length, restaurants.length);
+                        const resolving = resolves.splice(0, numResolving);
+                        // splice off in one call to avoid race condition
+                        // hopefully a native method is atomic
+                        // resolve as many as possible
+                        let i = 0;
+                        for (; i < numResolving; i++) {
+                            if (i === 0) {
+                                console.log(promise);
+                                console.log("resolving " + resolving[i].restaurantNum + " to " + resolving.last().restaurantNum);
+                                console.log("restaurants " + restaurants[i].originalNum + " to " + restaurants.last().originalNum);
+                                console.log("");
                             }
-                            
-                            // since this promise is being re-run after the other ones,
-                            // their firstRestaurantNum needs to be updated
-                            for (let i = promise.index; i < promises.length; i++) {
-                                promises[i].firstRestaurantNum -= count;
-                            }
-                            
-                            // try again w/ next parameters (which should have already been advanced)
-                            searchAndResolve(firstRestaurantNum);
-                            return;
+                            restaurants[i].num = resolving[i].restaurantNum;
+                            resolving[i](restaurants[i]);
                         }
+                        // if not enough resolves waiting,
+                        // add rest of restaurants to restaurantStack in reverse
+                        restaurantStack.addAll(restaurants.slice(i).reverse());
                         
-                        const resolveResolves = function() {
-                            const numResolving = Math.min(resolves.length, restaurants.length);
-                            const resolving = resolves.splice(0, numResolving);
-                            // splice off in one call to avoid race condition
-                            // hopefully a native method is atomic
-                            // resolve as many as possible
-                            let i = 0;
-                            for (; i < numResolving; i++) {
-                                if (i === 0) {
-                                    console.log(promise);
-                                    console.log("resolving " + resolving[i].restaurantNum + " to " + resolving.last().restaurantNum);
-                                    console.log("restaurants " + restaurants[i].originalNum + " to " + restaurants.last().originalNum);
-                                    console.log("");
-                                }
-                                restaurants[i].num = resolving[i].restaurantNum;
-                                resolving[i](restaurants[i]);
-                            }
-                            // if not enough resolves waiting,
-                            // add rest of restaurants to restaurantStack in reverse
-                            restaurantStack.addAll(restaurants.slice(i).reverse());
-                            
-                            console.log("resolving attached (from " + promise.firstRestaurantNum + ")");
-                            promise.attached.forEach(resolver => resolver());
-                        };
-                        
-                        const lastPromise = promises[promise.index - 1];
-                        if (lastPromise) {
-                            console.log("attaching " + promise.firstRestaurantNum + " onto " + lastPromise.firstRestaurantNum);
-                            // if there is a previous promise, attach to that one
-                            // this ensures that all the restaurants return in order
-                            lastPromise.attached.push(resolveResolves);
-                        } else {
-                            resolveResolves();
-                        }
-                    })
+                        console.log("resolving attached (from " + promise.firstRestaurantNum + ")");
+                        promise.attached.forEach(resolver => resolver());
+                    };
+                    
+                    const lastPromise = promises[promise.index - 1];
+                    if (lastPromise) {
+                        console.log("attaching " + promise.firstRestaurantNum + " onto " + lastPromise.firstRestaurantNum);
+                        // if there is a previous promise, attach to that one
+                        // this ensures that all the restaurants return in order
+                        lastPromise.attached.push(resolveResolves);
+                    } else {
+                        resolveResolves();
+                    }
+                })
                     .catch(error => {
                         console.log(error);
                         numFails++;
@@ -335,31 +352,60 @@
                 return last && last.hasOwnProperty("hasMoreRestaurants") && !last.hasMoreRestaurants;
             };
             
+            const nextImmediately = function() {
+                if (numFails >= maxFails) {
+                    return Promise.reject(new Error("0 restaurants found " + numFails + " in a row"));
+                }
+                if (restaurantNum >= maxStart) {
+                    return Promise.reject(new Error("No more restaurants at location available"));
+                }
+                const savedRestaurantNum = restaurantNum;
+                restaurantNum++;
+                
+                if (restaurantStack.length > 0) {
+                    const restaurant = restaurantStack.pop();
+                    restaurant.num = savedRestaurantNum;
+                    return Promise.resolve(restaurant);
+                }
+                
+                if (promises.length === 0 || promises.last().firstRestaurantNum + count <= savedRestaurantNum) {
+                    searchAndResolve(savedRestaurantNum);
+                }
+                
+                return new Promise(resolve => {
+                    resolve.restaurantNum = savedRestaurantNum;
+                    resolves.push(resolve);
+                });
+            };
+            
             return {
                 
-                next: function() {
-                    if (numFails >= maxFails) {
-                        return Promise.reject(new Error("0 restaurants found " + numFails + " in a row"));
-                    }
-                    if (restaurantNum >= maxStart) {
-                        return Promise.reject(new Error("No more restaurants at location available"));
-                    }
-                    const savedRestaurantNum = restaurantNum;
-                    restaurantNum++;
-                    
-                    if (restaurantStack.length > 0) {
-                        const restaurant = restaurantStack.pop();
-                        restaurant.num = savedRestaurantNum;
-                        return Promise.resolve(restaurant);
+                next: function(numPrefetch = count >> 1) {
+                    if (!this.hasMore()) {
+                        return Promise.resolve(null);
                     }
                     
-                    if (promises.length === 0 || promises.last().firstRestaurantNum + count <= savedRestaurantNum) {
-                        searchAndResolve(savedRestaurantNum);
+                    numPrefetch++;
+                    numPrefetch -= numPrefetched;
+                    if (numPrefetch >= 0) {
+                        const numSearches = Math.ceil(numPrefetch / count);
+                        for (let i = 0; i < numSearches; i++) {
+                            searchAndResolve(i * count + restaurantNum);
+                            numPrefetched += count;
+                        }
                     }
                     
-                    return new Promise(resolve => {
-                        resolve.restaurantNum = savedRestaurantNum;
-                        resolves.push(resolve);
+                    numPrefetched--;
+                    return new Promise((resolve, reject) => {
+                        nextImmediately()
+                            .then(restaurant => {
+                                resolve(restaurant);
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                resolve(null);
+                                reject(error);
+                            });
                     });
                 },
                 
@@ -377,10 +423,6 @@
                     }
                     const restaurantToDiv = restaurantToDivFunc;
                     
-                    if (!this.hasMore()) {
-                        return Promise.resolve(false);
-                    }
-                    
                     if (parentLastChildHasNoMoreRestaurants(parent)) {
                         return Promise.resolve(false);
                     }
@@ -393,19 +435,8 @@
                         restaurantToDiv(div, restaurant);
                     };
                     
-                    numPrefetch++;
-                    numPrefetch -= numPrefetched;
-                    if (numPrefetch >= 0) {
-                        const numSearches = Math.ceil(numPrefetch / count);
-                        for (let i = 0; i < numSearches; i++) {
-                            searchAndResolve(i * count + restaurantNum);
-                            numPrefetched += count;
-                        }
-                    }
-                    
-                    numPrefetched--;
                     return new Promise((resolve, reject) => {
-                        this.next()
+                        this.next(numPrefetch)
                             .then(restaurant => {
                                 addRestaurantDivToParent(parent, restaurant);
                                 resolve(true);
@@ -425,17 +456,6 @@
             
         };
         
-        const exampleRestaurantsUsage = function() {
-            const restaurants = newRestaurants();
-            // either
-            const element = $("#id");
-            restaurants.next()
-                .then(restaurant => element.innerText = JSON.stringify(restaurant))
-                .catch(error => element.innerText = "No more restaurants found");
-            // or
-            restaurants.addNextTo(document.body);
-        };
-        
         return {
             getRestaurant: getRestaurant,
             getReviews: getReviews,
@@ -444,21 +464,15 @@
         
     };
     
-    const MainPageModule = function(LocationModule, ZomatoModule) {
+    const RestaurantPageModule = function(LocationModule, ZomatoModule) {
         
-        const zipCodeFieldId = "#zipCode"; // TODO
-        const zipCodeEnterButtonId = "#enterZipCode"; // TODO
-        const locateButtonId = "#locate"; // TODO
-        const moreRestaurantsButtonId = "#moreRestaurants"; // TODO
-        const restaurantListId = "#restaurants"; // TODO
+        const zipCodeField = $("#zipCode")[0];
+        const zipCodeEnterButton = $("#enterZipCode")[0];
+        const locateButton = $("#locate")[0];
+        const moreRestaurantsButton = $("#moreRestaurants")[0];
+        const restaurantListDiv = $("#restaurants")[0];
         
-        const zipCodeField = $(zipCodeFieldId)[0];
-        const zipCodeEnterButton = $(zipCodeEnterButtonId)[0];
-        const locateButton = $(locateButtonId)[0];
-        const moreRestaurantsButton = $(moreRestaurantsButtonId)[0];
-        const restaurantList = $(restaurantListId)[0];
-        
-        console.log([zipCodeField, zipCodeEnterButton, locateButton, moreRestaurantsButton, restaurantList]);
+        console.log([zipCodeField, zipCodeEnterButton, locateButton, moreRestaurantsButton, restaurantListDiv]);
         
         let useZipCode = false;
         let lastLocation = null;
@@ -496,6 +510,134 @@
             });
         });
         
+        const newRestaurantCol = function(restaurantToDiv) {
+            
+            const col = newDiv().withClass("col-xs-3");
+            const panel = newDiv().withClass("panel").withClass("panel-default");
+            const body = newDiv().withClass("panel-body");
+            const div = newDiv();
+            
+            let ownRestaurant = null;
+            
+            col.appendChild(panel);
+            panel.appendChild(body);
+            body.appendChild(div);
+            
+            return {
+                
+                appendTo: function(parent) {
+                    parent.appendChild(col);
+                    return this;
+                },
+                
+                setRestaurant: function(restaurant) {
+                    ownRestaurant = restaurant;
+                    restaurantToDiv(div, restaurant);
+                },
+                
+                getRestaurant: function() {
+                    return ownRestaurant;
+                },
+                
+            };
+            
+        };
+        
+        const newRestaurantRow = function(restaurantToDiv, width) {
+            
+            const row = newDiv().withClass("row");
+            const cols = [];
+            
+            return {
+                
+                appendTo: function(parent) {
+                    parent.appendChild(row);
+                    return this;
+                },
+                
+                getRestaurant: function(i) {
+                    return cols[i].getRestaurant();
+                },
+                
+                setRestaurant: function(i, restaurant) {
+                    cols[i].setRestaurant(restaurant);
+                },
+                
+                addRestaurant: function(restaurant) {
+                    if (cols.length === width) {
+                        return false;
+                    }
+                    const col = newRestaurantCol(restaurantToDiv).appendTo(row);
+                    col.setRestaurant(restaurant);
+                    cols.push(col);
+                    return true;
+                },
+                
+            };
+            
+        };
+        
+        const newRestaurantList = function(restaurantToDiv, id, klass, width = 4) {
+            
+            const div = newDiv().withId(id).withClass(klass);
+            const rows = [];
+            
+            let i = 0;
+            let j = 0;
+            let noMoreRestaurants = false;
+            
+            const getRow = function(restaurantNum) {
+                return rows[Math.trunc(restaurantNum / width)];
+            };
+            
+            return {
+                
+                appendTo: function(parent) {
+                    parent.appendChild(div);
+                    return this;
+                },
+                
+                appendChild: function(child) {
+                    this.addRestaurant(child);
+                },
+                
+                addRestaurant: function(restaurant) {
+                    if (noMoreRestaurants) {
+                        return false;
+                    }
+                    if (restaurant === null) {
+                        noMoreRestaurants = true;
+                        const center = document.createElement("center");
+                        div.appendChild(center);
+                        const p = document.createElement("p");
+                        center.appendChild(p);
+                        p.innerText = "No More Restaurants Available";
+                        return false;
+                    }
+                    
+                    if (j === 0) {
+                        rows.push(newRestaurantRow(restaurantToDiv, width).appendTo(div));
+                    }
+                    rows[i].addRestaurant(restaurant);
+                    j++;
+                    if (j === width) {
+                        i++;
+                        j = 0;
+                    }
+                    return true;
+                },
+                
+                getRestaurant: function(restaurantNum) {
+                    return getRow(restaurantNum).getRestaurant(restaurantNum % width);
+                },
+                
+                setRestaurant: function(restaurantNum, restaurant) {
+                    getRow(restaurantNum).setRestaurant(restaurantNum % width, restaurant);
+                },
+                
+            };
+        };
+        
         /**
          * Add Zomato restaurant data to a div.
          *
@@ -503,31 +645,42 @@
          * @param {RestaurantL3} restaurant RestaurantL3 (from Zomato) restaurant data
          */
         const restaurantToDiv = function(div, restaurant) {
-            const p = document.createElement("div");
-            // TODO finish this function
-            div.appendChild(p);
-            if (restaurant == null) {
-                p.innerText = "No more restaurants available";
-            } else {
-                p.innerText = restaurant.name;
-            }
             console.log(restaurant);
+            
+            // TODO make this better and fancier
+            
+            const name = document.createElement("p");
+            div.appendChild(name);
+            name.innerText = (restaurant.num + 1) + ". " + restaurant.name;
+            
+            const rating = document.createElement("p");
+            div.appendChild(rating);
+            rating.innerText = "Rating: " +
+                (restaurant.user_rating.rating_text === "Not rated"
+                        ? "N/A"
+                        : restaurant.user_rating.aggregate_rating
+                );
+            
+            const img = document.createElement("img");
+            div.appendChild(img);
+            img.src = restaurant.thumb; // restaurant.featured_image;
         };
         
-        moreRestaurantsButton.addEventListener("click", event => {
-            restaurants.addNextTo(restaurantList, restaurantToDiv);
-        });
+        const restaurantList = newRestaurantList(restaurantToDiv, null, null, 4)
+            .appendTo(restaurantListDiv);
         
-        zipCodeField.addEventListener("keydown", event => {
-            if ("value" in zipCodeField && zipCodeField.value) {
-                console.log("Input Value:", zipCodeField.value);
-                console.log("removing carousel attribute...");
-                const carousel = $("#welpcarousel")[0];
-                console.log("a...=");
-                console.log(carousel);
-                carousel.removeAttribute("data-ride");
-            }
-        });
+        const addRestaurant = function() {
+            restaurants.next()
+                .then(restaurant => {
+                    restaurantList.addRestaurant(restaurant);
+                });
+        };
+        
+        const numInitialRestaurants = 20;
+        
+        new Range(0, numInitialRestaurants).forEach(addRestaurant);
+        
+        moreRestaurantsButton.addEventListener("click", addRestaurant);
         
     };
     
@@ -551,7 +704,7 @@
         };
         
         $(() => {
-            const mainPageModule = MainPageModule(locationModule, zomatoModule);
+            const restaurantPageModule = RestaurantPageModule(locationModule, zomatoModule);
             
             // test();
         });
