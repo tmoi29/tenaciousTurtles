@@ -50,6 +50,8 @@
         
         const hasGps = "geolocation" in navigator;
         
+        const shouldSendCoords = false; // don't send coords back to server for now
+        
         const newCoords = function(latitude, longitude) {
             return {
                 latitude: latitude,
@@ -58,6 +60,9 @@
         };
         
         const sendCoords = function(coords) {
+            if (!shouldSendCoords) {
+                return;
+            }
             $.ajax({
                 url: "/location", // TODO
                 type: "POST",
@@ -494,6 +499,10 @@
             panel.appendChild(body);
             body.appendChild(div);
             
+            col.getRestaurant = function() {
+                return ownRestaurant;
+            };
+            
             return {
                 
                 appendTo: function(parent) {
@@ -510,6 +519,15 @@
                     return ownRestaurant;
                 },
                 
+                addEventListeners: function(listeners) {
+                    for (const eventType in listeners) {
+                        if (listeners.hasOwnProperty(eventType)) {
+                            col.addEventListener(eventType, listeners[eventType]);
+                        }
+                    }
+                    return this;
+                },
+                
             };
             
         };
@@ -518,6 +536,8 @@
             
             const row = newDiv().withClass("row");
             const cols = [];
+            
+            let eventListeners = null;
             
             return {
                 
@@ -538,10 +558,17 @@
                     if (cols.length === width) {
                         return false;
                     }
-                    const col = newRestaurantCol(restaurantToDiv).appendTo(row);
+                    const col = newRestaurantCol(restaurantToDiv)
+                        .appendTo(row)
+                        .addEventListeners(eventListeners);
                     col.setRestaurant(restaurant);
                     cols.push(col);
                     return true;
+                },
+                
+                withEventListeners: function(listeners) {
+                    eventListeners = listeners;
+                    return this;
                 },
                 
             };
@@ -556,6 +583,8 @@
             let i = 0;
             let j = 0;
             let noMoreRestaurants = false;
+            
+            let eventListeners = null;
             
             const getRow = function(restaurantNum) {
                 return rows[Math.trunc(restaurantNum / width)];
@@ -587,7 +616,11 @@
                     }
                     
                     if (j === 0) {
-                        rows.push(newRestaurantRow(restaurantToDiv, width).appendTo(div));
+                        rows.push(
+                            newRestaurantRow(restaurantToDiv, width)
+                                .appendTo(div)
+                                .withEventListeners(eventListeners)
+                        );
                     }
                     rows[i].addRestaurant(restaurant);
                     j++;
@@ -606,6 +639,22 @@
                     getRow(restaurantNum).setRestaurant(restaurantNum % width, restaurant);
                 },
                 
+                forEach: function(restaurantConsumer) {
+                    const maxI = i;
+                    // noinspection UnnecessaryLocalVariableJS
+                    const maxJ = j;
+                    for (let i = 0; i < maxI; i++) {
+                        for (let j = 0; j < maxJ; j++) {
+                            restaurantConsumer(this.getRestaurant(i), i);
+                        }
+                    }
+                },
+                
+                withEventListeners: function(listeners) {
+                    eventListeners = listeners;
+                    return this;
+                },
+                
             };
         };
         
@@ -615,15 +664,60 @@
         
     };
     
-    const RestaurantPageModule = function(LocationModule, ZomatoModule, RestaurantListModule) {
+    const RestaurantReviewPageModule = function(ZomatoModule) {
+        
+        const url = "/reviews"; // FIXME
+        
+        const fillReviewPage = function(window) {
+            const restaurant = window.restaurant;
+            const restaurantId = restaurant.id;
+            
+            console.log(restaurant);
+            
+            ZomatoModule.getReviews(restaurantId)
+                .then(rewiews => {
+                    rewiews.user_reviews
+                        .map(review => review.review)
+                        .forEach(review => {
+                            const rating = review.rating;
+                            const text = review.review_text;
+                            console.log(rating);
+                            console.log(text);
+                            // TODO
+                        });
+                });
+            
+            // TODO depends on how we want it to look
+        };
+        
+        const openRestaurantReviewsInNewPage = function(restaurant) {
+            const newPage = window.open(url);
+            newPage.restaurant = restaurant;
+            newPage.$ = newPage.jQuery = $; // import jQuery
+            newPage.$(() => {
+                fillReviewPage(newPage);
+            });
+            return newPage;
+        };
+        
+        return {
+            openRestaurantReviewsInNewPage: openRestaurantReviewsInNewPage,
+        };
+        
+    };
+    
+    const RestaurantsPageModule = function( //
+        LocationModule,
+        ZomatoModule,
+        RestaurantListModule,
+        RestaurantReviewPageModule, //
+    ) {
         
         const zipCodeField = $("#zipCode")[0];
         const zipCodeEnterButton = $("#enterZipCode")[0];
         const locateButton = $("#locate")[0];
         const moreRestaurantsButton = $("#moreRestaurants")[0];
         const restaurantListDiv = $("#restaurants")[0];
-        
-        console.log([zipCodeField, zipCodeEnterButton, locateButton, moreRestaurantsButton, restaurantListDiv]);
         
         let useZipCode = false;
         let lastLocation = null;
@@ -664,6 +758,9 @@
          * @param {RestaurantL3} restaurant RestaurantL3 (from Zomato) restaurant data
          */
         const restaurantToDiv = function(div, restaurant) {
+            div.withClass("klass");
+            console.log(div.classList);
+            console.log(div);
             console.log(restaurant);
             
             // TODO make this better and fancier
@@ -686,7 +783,14 @@
         };
         
         const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
-            .appendTo(restaurantListDiv);
+            .appendTo(restaurantListDiv)
+            .withEventListeners({
+                click: function(event) {
+                    console.log(event);
+                    console.log(this);
+                    RestaurantReviewPageModule.openRestaurantReviewsInNewPage(this.getRestaurant());
+                },
+            });
         
         const addRestaurant = function() {
             restaurants.next()
@@ -707,6 +811,7 @@
         const locationModule = LocationModule();
         const zomatoModule = ZomatoModule(locationModule, "3332e206cdbcedf5e11ebdf84dec2b8c");
         const restaurantListModule = RestaurantListModule();
+        const restaurantReviewPageModule = RestaurantReviewPageModule(zomatoModule);
         
         const test = function() {
             const restaurants = zomatoModule.newRestaurants();
@@ -724,9 +829,11 @@
         };
         
         $(() => {
-            const restaurantPageModule =
-                RestaurantPageModule(locationModule, zomatoModule, restaurantListModule);
-            
+            const restaurantsPageModule = RestaurantsPageModule(
+                locationModule,
+                zomatoModule,
+                restaurantListModule,
+                restaurantReviewPageModule);
             // test();
         });
     })();

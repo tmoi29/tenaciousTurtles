@@ -250,3 +250,23 @@ Refactored welp.js:
     Moved zipCodeLocation() to LocationModule(), where it's returned.
 
 =======================================================
+khyberS -- 2018-01-09 11:12:21
+
+Turned off sending the server coordinates for now since I don't think it's useful.
+
+Added a method to newRestaurantList: withEventListeners(listeners),
+which takes an object like {click: function(event) {}} of event listeners
+to add to each restaurant element.
+
+Added a click listener to each restaurant element that opens a new page
+(currently /reviews) using window.open(url),
+sends it the restaurant data by accessing its DOM,
+and loads the reviews for that restaurant from Zomato once the page has loaded.
+
+The /reviews page isn't implemented in Flask yet, so we need to do that.
+The JS will also request reviews for that restaurant from our own database
+that users added on our website.
+
+Set the class of the div element in restaurantToDiv() to make sure it works.
+
+=======================================================
