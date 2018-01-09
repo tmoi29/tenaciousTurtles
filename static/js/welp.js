@@ -491,6 +491,7 @@
             const col = newDiv().withClass("col-xs-3");
             const panel = newDiv().withClass("panel").withClass("panel-default");
             const body = newDiv().withClass("panel-body");
+            const div = newDiv();
             
             let ownRestaurant = null;
             
