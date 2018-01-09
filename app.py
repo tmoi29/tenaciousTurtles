@@ -78,6 +78,11 @@ def logout():
     del session[UID_KEY]
     return reroute_to(index)
 
+@app.route('/rest_info')
+@not_logged_in
+def info():
+    # type: () -> Response
+    return render_template('information.html')
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
