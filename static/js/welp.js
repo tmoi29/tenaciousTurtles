@@ -491,7 +491,6 @@
             const col = newDiv().withClass("col-xs-3");
             const panel = newDiv().withClass("panel").withClass("panel-default");
             const body = newDiv().withClass("panel-body");
-            const div = newDiv();
             
             let ownRestaurant = null;
             
@@ -777,9 +776,11 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-            const img = document.createElement("img");
-            div.appendChild(img);
-            img.src = restaurant.thumb; // restaurant.featured_image;
+            var imgg = document.createElement("img").withClass("rest_img");
+            div.appendChild(imgg);
+	    //	    imgg.classList.add("rest_img");
+	    //	    imgg.className = "rest_img";
+            imgg.src = restaurant.thumb; // restaurant.featured_image;
         };
         
         const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
