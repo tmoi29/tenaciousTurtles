@@ -315,6 +315,18 @@ improve the user experience
 -to do: do something about the "" img.thumbs.
 
 =======================================================
+ionkinaK -- 2018-01-10 11:03
+
+-Worked on using ajax to retreive images from Getty
+-These images will be replacements for restaurants
+that have no thumbnails
+-They will be based on the cuisine
+-To do: 
+    * Replace hard-coded phrase parameter with
+cuisines
+    * Work on the callback fxn
+=======================================================
+
 khyberS -- 2018-01-10 12:39:29
 
 Renamed information.html, etc. to restaurant_info.html, etc.
@@ -329,15 +341,4 @@ Added the HTTP header Cache-Control: public to the Zomato requests
 so that the browser can cache identical requests
 beyond the lifetime of the webpage.
 
-=======================================================
-ionkinaK -- 2018-01-10 11:03
-
--Worked on using ajax to retreive images from Getty
--These images will be replacements for restaurants
-that have no thumbnails
--They will be based on the cuisine
--To do: 
-    * Replace hard-coded phrase parameter with
-cuisines
-    * Work on the callback fxn
 =======================================================
