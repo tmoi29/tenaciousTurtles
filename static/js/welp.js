@@ -685,7 +685,10 @@
                             const text = review.review_text;
                             console.log(rating);
                             console.log(text);
-                            // TODO
+
+			    //TODO improve how this looks
+			    reviews = document.getElementById("reviews");
+			    reviews.innerHTML += "<br>" + "Rating: " rating + "<br>" + text;
                         });
                 });
             

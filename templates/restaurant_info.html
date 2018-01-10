@@ -37,7 +37,16 @@
             </div>
           </div>
           <div class="panel-footer">
-            REVIEWS BEGIN HERE
+            USER REVIEWS BEGIN HERE
+	    {% for review in user_reviews %}
+	    Rating: {{review[2]}}
+	    <h4>{{review[3]}} by {{review[2]}}</h4>
+	    {{review[4]}}
+	    {% endfor %}
+	    
+	    WELP REVIEWS BEGIN HERE
+	    <div id="reviews">
+	    </div>
           </div>
         </div>
       </div>
