@@ -777,6 +777,21 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
+	    var key = "ezjbdsc8bxnwdd4979b8jvrz";
+	    var headers = {'Api-Key':key}
+	    $.ajax({
+		    dataType: "json",
+		    url: "https://api.gettyimages.com/v3/search/images",
+		    headers: headers,
+		    data: {  'phrase':"pizza", 'sort_order':"most_popular"},
+		    function(d) {
+			console.log(d);
+			console.log(JSON.parse(d)['images'][0]['display_sizes'][0]['uri']);
+			d = JSON.parse(d);
+		    }
+		}); 
+	       
+	    
 	    var img_div = document.createElement("div").withClass("image-holder");
 	    console.log("restaurant.thumb");
 	    console.log(restaurant.thumb);

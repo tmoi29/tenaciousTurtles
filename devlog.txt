@@ -314,3 +314,14 @@ improve the user experience
 -Improved design of panels
 -to do: do something about the "" img.thumbs. 
 =======================================================
+ionkinaK -- 2018-01-10 11:03
+
+-Worked on using ajax to retreive images from Getty
+-These images will be replacements for restaurants
+that have no thumbnails
+-They will be based on the cuisine
+-To do: 
+    * Replace hard-coded phrase parameter with
+cuisines
+    * Work on the callback fxn
+=======================================================
