@@ -315,6 +315,18 @@ improve the user experience
 -to do: do something about the "" img.thumbs.
 
 =======================================================
+ionkinaK -- 2018-01-10 11:03
+
+-Worked on using ajax to retreive images from Getty
+-These images will be replacements for restaurants
+that have no thumbnails
+-They will be based on the cuisine
+-To do: 
+    * Replace hard-coded phrase parameter with
+cuisines
+    * Work on the callback fxn
+=======================================================
+
 khyberS -- 2018-01-10 12:39:29
 
 Renamed information.html, etc. to restaurant_info.html, etc.
@@ -330,14 +342,13 @@ so that the browser can cache identical requests
 beyond the lifetime of the webpage.
 
 =======================================================
-ionkinaK -- 2018-01-10 11:03
+khyberS -- 2018-01-10 12:55:18
 
--Worked on using ajax to retreive images from Getty
--These images will be replacements for restaurants
-that have no thumbnails
--They will be based on the cuisine
--To do: 
-    * Replace hard-coded phrase parameter with
-cuisines
-    * Work on the callback fxn
+Rounded coordinates sent to Zomato to 3 decimals
+to take advantage of the browser cache,
+which can cache identical GET requests even from different pages.
+3 decimals is still pretty accurate (to within less than a block),
+but will ensure that if someone doesn't move,
+the request should be cached.
+
 =======================================================

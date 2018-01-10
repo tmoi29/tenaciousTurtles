@@ -202,9 +202,10 @@
                 q: query,
                 start: start,
                 count: count,
-                // TODO round coords to take advantage of browser cache
-                lat: coords.latitude,
-                lon: coords.longitude,
+                // round coords to take advantage of browser cache
+                // 3 decimal digits is still pretty accurate (less than a block or so)
+                lat: coords.latitude.toFixed(3),
+                lon: coords.longitude.toFixed(3),
                 radius: radius,
                 cuisines: cuisines,
                 establishment_type: establishmentType,
