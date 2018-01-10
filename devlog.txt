@@ -342,3 +342,13 @@ so that the browser can cache identical requests
 beyond the lifetime of the webpage.
 
 =======================================================
+khyberS -- 2018-01-10 12:55:18
+
+Rounded coordinates sent to Zomato to 3 decimals
+to take advantage of the browser cache,
+which can cache identical GET requests even from different pages.
+3 decimals is still pretty accurate (to within less than a block),
+but will ensure that if someone doesn't move,
+the request should be cached.
+
+=======================================================
