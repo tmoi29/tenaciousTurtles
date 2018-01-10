@@ -765,9 +765,9 @@
             
             // TODO make this better and fancier
             
-            const name = document.createElement("p");
+            const name = document.createElement("h1");
             div.appendChild(name);
-            name.innerText = (restaurant.num + 1) + ". " + restaurant.name;
+            name.innerText = restaurant.name;
             
             const rating = document.createElement("p");
             div.appendChild(rating);
@@ -777,11 +777,13 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-            var imgg = document.createElement("img").withClass("rest_img");
-            div.appendChild(imgg);
-	    //	    imgg.classList.add("rest_img");
-	    //	    imgg.className = "rest_img";
-            imgg.src = restaurant.thumb; // restaurant.featured_image;
+	    var img_div = document.createElement("div").withClass("image-holder");
+	    console.log("restaurant.thumb");
+	    console.log(restaurant.thumb);
+	    console.log("img_div");
+	    console.log(img_div);
+	    img_div.style.cssText = 'background-image: url(' + restaurant.thumb + ')';
+	    div.appendChild(img_div);
         };
         
         const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)

@@ -259,10 +259,6 @@ ionkinaK -- 2018-01-08 22:51
   * div > p selects all <p> elements where <div> is the
   parent element.
   * div + p selectes all <p> elements directly after <div>
-  * img.classList.add("classname") didn't work because
-  img var acts like a "local scope"
-  * variables defined inside a fxn are in local scope while
-  variables defined outside a fxn are global scope.
   * Element.classList: DOMTokenList of the element's class
   attribute (uses .add() and .remove())
   * className accessor/ mutator for class
@@ -275,6 +271,11 @@ lots of experimenting later, the question lingers:
   in the js fxn?
   * How can class.List.add be used in the restaurantToDiv
   fxn?
+
+2018-01-09
+Mystery solved: my cache was the culprit >:( 
+Note for future: use hard refresh!
+
 
 - Created a template for restaurant info pages:
 information.html
@@ -303,4 +304,13 @@ that users added on our website.
 
 Set the class of the div element in restaurantToDiv() to make sure it works.
 
+=======================================================
+ionkinaK -- 2018-01-10 09:50
+
+-Resized panel images by adding restaurant.thumb as a
+background image to the img_div div.
+-Placed the form over the carousel to aesthetically 
+improve the user experience 
+-Improved design of panels
+-to do: do something about the "" img.thumbs. 
 =======================================================

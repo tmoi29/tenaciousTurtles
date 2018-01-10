@@ -23,6 +23,11 @@ form {
     color: black;
 }
 
+
+.panel {
+border: none;
+}
+
 panel {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -39,6 +44,7 @@ panel {
 
 .rest_img{
 max-width: 100%;
+max-height: 100%;
 }
 
 .row {
@@ -55,4 +61,40 @@ h1 {
     margin-top: -20px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 5px 2px;
     transition: 0.5s;
+}
+
+.panel-body .image-holder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  max-width: 100%;
+  max-height: 100%;
+  background-position: 50% 80%;
+  background-repeat: no-repeat;
+}
+
+.klass > p {
+font-size: .5em;
+}
+
+.klass > h1 {
+font-size: 1em;
+margin-top: 0px;
+display: block;
+height: 65px;
+text-align: center;
+background-color: #DAF7A6;
+padding-top: 5px;
+}
+
+
+form {
+z-index: 25;
+position:absolute; 
+top: 320px;
+left: 30%;
+font-size: 2em;
+display:inline-block;
 }
