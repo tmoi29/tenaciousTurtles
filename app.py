@@ -87,8 +87,9 @@ def logout():
 def info():
     # type: () -> Response
     restaurant_id = request.form['restaurant_id']
+    db_reviews = database.get_review(restaurant_id)
     # TODO lookup reviews for restaurant in DB
-    return render_template('restaurant_info.html', welp_reviews=[], json=json)  # FIXME
+    return render_template('restaurant_info.html', user_reviews=db_reviews, json=json)  # FIXME
 
 
 if __name__ == '__main__':

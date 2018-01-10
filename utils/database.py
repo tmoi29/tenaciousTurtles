@@ -5,7 +5,7 @@ import sqlite3
 
 from flask import flash, session
 
-from utils.setup_db import initialize
+#from utils.setup_db import initialize
 
 
 def add_account(username, password1, password2):
@@ -95,14 +95,47 @@ def get_review(restaurant):
         c = db.cursor()
         reviews = c.execute('SELECT * FROM reviews WHERE restaurant = ?', [restaurant])
         return [[item for item in review] for review in reviews]
+    
+def add_favorite(user_id, restaurant_id):
+    """
+    Adds favorited restaurants for a user
+    Arg:
+        user_id (int): ID number of the user
+        restaurant_id  (int): ID number of restaurant based on Zomato
+    """
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        c.execute(
+                'INSERT INTO favorite VALUES(?, ?)',
+                [user_id, restaurant_id])
+        db.commit()
 
+def get_favorite(user_id):
+    """
+    Gets favorited restaurants for a user
+    Arg:
+        user_id (int): ID number of the user
+    Ret:
+        List of restaurant IDs that user saved
+    """
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        query = c.execute('SELECT * FROM favorite WHERE userID = ?', [user_id])
+        restaurants = query.fetchall()
+        ret = []
+        for rest in restaurants:
+            ret.append(rest[1])
+        return ret
 
 if __name__ == '__main__':
-    init = True
+    init = False
     debug = True
     
     if init:
-        initialize()
+        add_favorite(1,2)
+        add_favorite(10,11)
+        add_favorite(1,15)
+        '''
         print()
         add_account('john smith', 'abc123', 'abc123')
         print()
@@ -112,8 +145,13 @@ if __name__ == '__main__':
         add_review(1, 'john smith', 5, 'Nice', 'filler text goes here')
         add_review(2, 'john smith', 3, 'pls no', 'filler')
         add_review(1, 'joe doe', 4, 'ok', 'hope this works')
+        '''
     
     if debug:
+        print(get_favorite(1))
+        print(get_favorite(10))
+        print(get_favorite(0))
+        '''
         print()
         authenticate('john smith', 'abc123')
         print()
@@ -124,3 +162,4 @@ if __name__ == '__main__':
         get_review(1)
         print()
         get_review(2)
+        '''

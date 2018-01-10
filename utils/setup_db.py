@@ -2,7 +2,7 @@ import sqlite3
 
 
 def initialize():
-    db = sqlite3.connect("data/database.db")
+    db = sqlite3.connect("/data/database.db")
     c = db.cursor()
     
     c.execute('CREATE TABLE IF NOT EXISTS '
@@ -17,6 +17,10 @@ def initialize():
               'rating INTEGER, '
               'reviewTitle TEXT, '
               'reviewContent TEXT)')
+    c.execute('CREATE TABLE IF NOT EXISTS '
+              'favorite('
+              'userID INTEGER, '
+              'restaurant INTEGER)')
     
     db.commit()
     db.close()
