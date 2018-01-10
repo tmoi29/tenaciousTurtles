@@ -330,3 +330,14 @@ so that the browser can cache identical requests
 beyond the lifetime of the webpage.
 
 =======================================================
+ionkinaK -- 2018-01-10 11:03
+
+-Worked on using ajax to retreive images from Getty
+-These images will be replacements for restaurants
+that have no thumbnails
+-They will be based on the cuisine
+-To do: 
+    * Replace hard-coded phrase parameter with
+cuisines
+    * Work on the callback fxn
+=======================================================
