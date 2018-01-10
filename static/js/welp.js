@@ -152,7 +152,8 @@
             return fetch(url, {
                 method: "GET",
                 headers: {
-                    "user-key": apiKey,
+                    "User-Key": apiKey,
+                    "Cache-Control": "public",
                 },
             })
                 .then(response => response.json())
@@ -201,6 +202,7 @@
                 q: query,
                 start: start,
                 count: count,
+                // TODO round coords to take advantage of browser cache
                 lat: coords.latitude,
                 lon: coords.longitude,
                 radius: radius,
@@ -664,9 +666,9 @@
         
     };
     
-    const RestaurantReviewPageModule = function(ZomatoModule) {
+    const RestaurantInfoPageModule = function(ZomatoModule) {
         
-        const url = "/reviews"; // FIXME
+        const url = "/restaurant_info";
         
         const fillReviewPage = function(window) {
             const restaurant = window.restaurant;
@@ -687,11 +689,15 @@
                         });
                 });
             
+            window.welpReviews.forEach(review => {
+                // TODO
+            });
+            
             // TODO depends on how we want it to look
         };
         
-        const openRestaurantReviewsInNewPage = function(restaurant) {
-            const newPage = window.open(url);
+        const openRestaurantInfoInNewPage = function(restaurant) {
+            const newPage = window.open(url + "?restaurant_id=" + restaurant.id);
             newPage.restaurant = restaurant;
             newPage.$ = newPage.jQuery = $; // import jQuery
             newPage.$(() => {
@@ -701,7 +707,7 @@
         };
         
         return {
-            openRestaurantReviewsInNewPage: openRestaurantReviewsInNewPage,
+            openRestaurantInfoInNewPage: openRestaurantInfoInNewPage,
         };
         
     };
@@ -777,13 +783,13 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-	    var img_div = document.createElement("div").withClass("image-holder");
-	    console.log("restaurant.thumb");
-	    console.log(restaurant.thumb);
-	    console.log("img_div");
-	    console.log(img_div);
-	    img_div.style.cssText = 'background-image: url(' + restaurant.thumb + ')';
-	    div.appendChild(img_div);
+            const img_div = document.createElement("div").withClass("image-holder");
+            console.log("restaurant.thumb");
+            console.log(restaurant.thumb);
+            console.log("img_div");
+            console.log(img_div);
+            img_div.style.cssText = "background-image: url(" + restaurant.thumb + ")";
+            div.appendChild(img_div);
         };
         
         const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
@@ -792,7 +798,7 @@
                 click: function(event) {
                     console.log(event);
                     console.log(this);
-                    RestaurantReviewPageModule.openRestaurantReviewsInNewPage(this.getRestaurant());
+                    RestaurantReviewPageModule.openRestaurantInfoInNewPage(this.getRestaurant());
                 },
             });
         
@@ -811,11 +817,11 @@
         
     };
     
-    (function main() {
+    (function main(zomatoApiKey) {
         const locationModule = LocationModule();
-        const zomatoModule = ZomatoModule(locationModule, "3332e206cdbcedf5e11ebdf84dec2b8c");
+        const zomatoModule = ZomatoModule(locationModule, zomatoApiKey);
         const restaurantListModule = RestaurantListModule();
-        const restaurantReviewPageModule = RestaurantReviewPageModule(zomatoModule);
+        const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
         
         const test = function() {
             const restaurants = zomatoModule.newRestaurants();
@@ -837,9 +843,9 @@
                 locationModule,
                 zomatoModule,
                 restaurantListModule,
-                restaurantReviewPageModule);
+                restaurantInfoPageModule);
             // test();
         });
-    })();
+    })(zomatoApiKey); // access global apiKey templated into index.html, or prompt user if undefined
     
 })(window);

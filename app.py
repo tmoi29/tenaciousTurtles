@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import Flask, Response, render_template, request, session
@@ -7,6 +8,8 @@ from util.flask.flask_utils import form_contains, post_only, preconditions, rero
 from util.flask.flask_utils_types import Router
 from util.flask.template_context import add_template_context, context
 from utils import database
+
+zomato_api_key = json.loads(open('api/secrets.json').read())['zomato']['key']
 
 app = Flask(__name__, static_url_path='')
 
@@ -25,7 +28,7 @@ context[is_not_logged_in.func_name] = is_not_logged_in
 @app.route('/index')
 def index():
     # type: () -> Response
-    return render_template('index.html', logged_in=is_logged_in())
+    return render_template('index.html', logged_in=is_logged_in(), zomato_api_key=zomato_api_key)
 
 
 @app.route('/login')
@@ -78,11 +81,15 @@ def logout():
     del session[UID_KEY]
     return reroute_to(index)
 
-@app.route('/rest_info')
-@not_logged_in
+
+@app.route('/restaurant_info')
+@preconditions(index, form_contains('restaurant_id'))
 def info():
     # type: () -> Response
-    return render_template('information.html')
+    restaurant_id = request.form['restaurant_id']
+    # TODO lookup reviews for restaurant in DB
+    return render_template('restaurant_info.html', welp_reviews=[], json=json)  # FIXME
+
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)

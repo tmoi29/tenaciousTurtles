@@ -312,5 +312,21 @@ background image to the img_div div.
 -Placed the form over the carousel to aesthetically 
 improve the user experience 
 -Improved design of panels
--to do: do something about the "" img.thumbs. 
+-to do: do something about the "" img.thumbs.
+
+=======================================================
+khyberS -- 2018-01-10 12:39:29
+
+Renamed information.html, etc. to restaurant_info.html, etc.
+
+app.py now reads in the Zomato API key from api/secrets.json
+and passes it to index.html,
+where the template adds `const zomatoApiKey = {{zomato_api_key}}`
+in a <script> so that the JS can access it without exposing
+the API key in the source code.
+
+Added the HTTP header Cache-Control: public to the Zomato requests
+so that the browser can cache identical requests
+beyond the lifetime of the webpage.
+
 =======================================================
