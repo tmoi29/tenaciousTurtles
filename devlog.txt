@@ -352,3 +352,11 @@ but will ensure that if someone doesn't move,
 the request should be cached.
 
 =======================================================
+moiT -- 2018-01-10 16:52
+
+Added functions in database.py to allow user to add and get their 
+favorited restaurants
+
+app.py passes database reviews to the review pages
+
+=======================================================
