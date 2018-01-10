@@ -687,9 +687,9 @@
                             console.log(rating);
                             console.log(text);
 
-			    //TODO improve how this looks
-			    reviews = document.getElementById("reviews");
-			    reviews.innerHTML += "<br>" + "Rating: " rating + "<br>" + text;
+                            //TODO improve how this looks
+                            reviews = document.getElementById("reviews");
+                            reviews.innerHTML = reviews.innerHTML + "<br>" + "Rating: " + rating + "<br>" + text;
                         });
                 });
             
