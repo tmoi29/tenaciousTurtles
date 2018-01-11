@@ -4,12 +4,13 @@ import os
 from flask import Flask, Response, render_template, request, session
 
 from util.flask.flask_utils import form_contains, post_only, preconditions, reroute_to, \
-    session_contains
+    session_contains, query_contains
 from util.flask.flask_utils_types import Router
 from util.flask.template_context import add_template_context, context
 from utils import database
 
 zomato_api_key = json.loads(open('api/secrets.json').read())['zomato']['key']
+context['zomato_api_key'] = zomato_api_key
 
 app = Flask(__name__, static_url_path='')
 
@@ -83,13 +84,25 @@ def logout():
 
 
 @app.route('/restaurant_info')
-@preconditions(index, form_contains('restaurant_id'))
-def info():
+@preconditions(index, query_contains('restaurant_id'))
+def restaurant_info():
     # type: () -> Response
-    restaurant_id = request.form['restaurant_id']
+    restaurant_id = int(request.args['restaurant_id'])
     db_reviews = database.get_review(restaurant_id)
-    # TODO lookup reviews for restaurant in DB
-    return render_template('restaurant_info.html', user_reviews=db_reviews, json=json)  # FIXME
+    welp_reviews = [{
+        "rating": rating,
+        "rating_text": review_title,
+        "review_text": review_content,
+        "user": {
+            "name": username
+        },
+    } for restaurant_id, username, rating, review_title, review_content in db_reviews]
+    return render_template('restaurant_info.html',
+                           zomato_api_key=zomato_api_key,
+                           restaurant_id=restaurant_id,
+                           user_reviews=db_reviews,
+                           welp_reviews=welp_reviews,
+                           json=json)
 
 
 if __name__ == '__main__':

@@ -3,9 +3,12 @@
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
   <script>
-  // noinspection JSAnnotator
-  const welpReviews = {{ json.dumps(welp_reviews) }};
+      const zomatoApiKey = "{{ zomato_api_key }}";
+      const restaurantId = +{{ restaurant_id }};
+      // noinspection JSAnnotator
+      const welpReviews = {{ json.dumps(welp_reviews) }};
   </script>
+  <script src="js/welp.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -37,16 +40,17 @@
             </div>
           </div>
           <div class="panel-footer">
-            USER REVIEWS BEGIN HERE
-	    {% for review in user_reviews %}
-	    Rating: {{review[2]}}
-	    <h4>{{review[3]}} by {{review[2]}}</h4>
-	    {{review[4]}}
-	    {% endfor %}
-	    
-	    WELP REVIEWS BEGIN HERE
-	    <div id="reviews">
-	    </div>
+            <div id="reviews">
+              <div id="welpReviews">
+                {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}
+                  Rating: {{ rating }}
+                  <h4>{{ review_title }} by {{ username }}</h4>
+                  {{ review_content }}
+                {% endfor %}
+              </div>
+              <div id="zomatoReviews">
+              </div>
+            </div>
           </div>
         </div>
       </div>

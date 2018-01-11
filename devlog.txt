@@ -360,3 +360,33 @@ favorited restaurants
 app.py passes database reviews to the review pages
 
 =======================================================
+khyberS -- 2018-01-11 13:14:59
+
+Fixed the Cache-Control header not allowed error.
+It turns out Cache-Control: public can only be set by the server.
+The client can only prevent caching.
+
+Also, made sure that no infinite loop of request errors happens.
+If there are too many errors, it stops making new requests.
+
+Fixed restaurant_info() so that it reads query string args correctly.
+
+Fixed <script> tag in restaurant_info.html so that it defines
+zomatoApiKey, restaurantId, and welpReviews
+from the server for use by JS.
+
+Changed the executing structure of welp.js
+so that welp.js is included in every template that needs JS
+and the JS chooses which main function to execute
+based on the current URL.
+
+When /restaurant_info is opened from /index,
+/index passes the restaurant data to it directly,
+but if /restaurant_info is loaded on its own,
+it reloads the restaurant data from Zomato's /restaurant API
+using the restaurantId.
+
+Both RestaurantsPageModule() and RestaurantInfoPageModule()
+both return a main() method, which is run when that page is loaded.
+
+=======================================================

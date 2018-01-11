@@ -141,6 +141,9 @@
         
         const apiKey = _apiKey || prompt("Enter Zomato API key:");
         
+        const maxNumZomatoFails = 20;
+        let numZomatoFails = 0;
+        
         const getZomato = function(route, query) {
             const baseUrl = "https://developers.zomato.com/api/v2.1/";
             const url = baseUrl + route + "?"
@@ -149,14 +152,23 @@
                     .map(e => e[0] + "=" + e[1])
                     .join("&");
             console.log(url);
+            console.log("numZomatoFails: " + numZomatoFails);
+            if (numZomatoFails > maxNumZomatoFails) {
+                return Promise.reject("too many Zomato API calls failed (" + numZomatoFails + ")");
+            }
             return fetch(url, {
                 method: "GET",
                 headers: {
                     "User-Key": apiKey,
-                    "Cache-Control": "public",
+                    // this must be set by server actually
+                    // "Cache-Control": "public",
                 },
             })
                 .then(response => response.json())
+                .catch(error => {
+                    console.log(error);
+                    numZomatoFails++;
+                })
                 .then(data => {
                     console.log(data);
                     return data;
@@ -285,6 +297,10 @@
                 searchRadius = radius,
                 promisesIndex = promises.length, //
             ) {
+                console.log(numFails);
+                if (numFails >= maxFails) {
+                    return;
+                }
                 const promise = searchRestaurants(searchStart, count, searchRadius, getLocationFunc);
                 promise.firstRestaurantNum = firstRestaurantNum;
                 promise.index = promisesIndex;
@@ -437,7 +453,7 @@
                 },
                 
                 hasMore: function() {
-                    return numFails <= maxFails && restaurantNum < maxStart;
+                    return numFails < maxFails && restaurantNum < maxStart;
                 },
                 
                 addNextTo: function(parent, restaurantToDivFunc, numPrefetch = count >> 1) {
@@ -667,89 +683,33 @@
         
     };
     
-    const RestaurantInfoPageModule = function(ZomatoModule) {
-        
-        const url = "/restaurant_info";
-        
-        const fillReviewPage = function(window) {
-            const restaurant = window.restaurant;
-            const restaurantId = restaurant.id;
-            
-            console.log(restaurant);
-            
-            ZomatoModule.getReviews(restaurantId)
-                .then(rewiews => {
-                    rewiews.user_reviews
-                        .map(review => review.review)
-                        .forEach(review => {
-                            const rating = review.rating;
-                            const text = review.review_text;
-                            console.log(rating);
-                            console.log(text);
-
-                            //TODO improve how this looks
-                            reviews = document.getElementById("reviews");
-                            reviews.innerHTML = reviews.innerHTML + "<br>" + "Rating: " + rating + "<br>" + text;
-                        });
-                });
-            
-            window.welpReviews.forEach(review => {
-                // TODO
-            });
-            
-            // TODO depends on how we want it to look
-        };
-        
-        const openRestaurantInfoInNewPage = function(restaurant) {
-            const newPage = window.open(url + "?restaurant_id=" + restaurant.id);
-            newPage.restaurant = restaurant;
-            newPage.$ = newPage.jQuery = $; // import jQuery
-            newPage.$(() => {
-                fillReviewPage(newPage);
-            });
-            return newPage;
-        };
-        
-        return {
-            openRestaurantInfoInNewPage: openRestaurantInfoInNewPage,
-        };
-        
-    };
-    
     const RestaurantsPageModule = function( //
         LocationModule,
         ZomatoModule,
-        RestaurantListModule,
-        RestaurantReviewPageModule, //
+        RestaurantListModule, //
     ) {
-        
-        const zipCodeField = $("#zipCode")[0];
-        const zipCodeEnterButton = $("#enterZipCode")[0];
-        const locateButton = $("#locate")[0];
-        const moreRestaurantsButton = $("#moreRestaurants")[0];
-        const restaurantListDiv = $("#restaurants")[0];
         
         let useZipCode = false;
         let lastLocation = null;
         
-        zipCodeEnterButton.addEventListener("click", event => {
+        const onZipCodeEnter = function() {
             useZipCode = true;
             LocationModule.getLocation.dontUseGps();
-        });
+        };
         
-        locateButton.addEventListener("click", event => {
+        const onLocate = function() {
             useZipCode = false;
             LocationModule.getLocation.useGps();
-        });
+        };
         
-        const restaurants = ZomatoModule.newRestaurants(() => {
+        const getLocation = function() {
             return new Promise(resolve => {
                 if (useZipCode) {
                     if (lastLocation) {
                         resolve(lastLocation);
                         return;
                     }
-                    const zipCodeText = zipCodeField.innerText;
+                    const zipCodeText = getLocation.zipCodeField.innerText;
                     if (zipCodeText && zipCodeText.length === 5) {
                         LocationModule.zipCodeLocation(zipCodeText)
                             .then(coords => resolve(coords));
@@ -759,7 +719,10 @@
                 return LocationModule.getLocation()
                     .then(coords => resolve(coords));
             });
-        });
+        };
+        getLocation.zipCodeField = null;
+        
+        const restaurants = ZomatoModule.newRestaurants(getLocation);
         
         /**
          * Add Zomato restaurant data to a div.
@@ -787,39 +750,36 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-	    var key = "ezjbdsc8bxnwdd4979b8jvrz";
-	    var headers = {'Api-Key':key}
-	    $.ajax({
-		    dataType: "json",
-		    url: "https://api.gettyimages.com/v3/search/images",
-		    headers: headers,
-		    data: {  'phrase':"pizza", 'sort_order':"most_popular"},
-		    function(d) {
-			console.log(d);
-			console.log(JSON.parse(d)['images'][0]['display_sizes'][0]['uri']);
-			d = JSON.parse(d);
-		    }
-		});
-	    
-	    
-	    var img_div = document.createElement("div").withClass("image-holder");
-	    console.log("restaurant.thumb");
-	    console.log(restaurant.thumb);
-	    console.log("img_div");
-	    console.log(img_div);
-	    img_div.style.cssText = 'background-image: url(' + restaurant.thumb + ')';
-	    div.appendChild(img_div);
+            var key = "ezjbdsc8bxnwdd4979b8jvrz";
+            var headers = {"Api-Key": key};
+            $.ajax({
+                dataType: "json",
+                url: "https://api.gettyimages.com/v3/search/images",
+                headers: headers,
+                data: {"phrase": "pizza", "sort_order": "most_popular"},
+                function(d) {
+                    console.log(d);
+                    console.log(JSON.parse(d)["images"][0]["display_sizes"][0]["uri"]);
+                    d = JSON.parse(d);
+                }
+            });
+            
+            
+            var img_div = document.createElement("div").withClass("image-holder");
+            console.log("restaurant.thumb");
+            console.log(restaurant.thumb);
+            console.log("img_div");
+            console.log(img_div);
+            img_div.style.cssText = "background-image: url(" + restaurant.thumb + ")";
+            div.appendChild(img_div);
         };
         
-        const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
-            .appendTo(restaurantListDiv)
-            .withEventListeners({
-                click: function(event) {
-                    console.log(event);
-                    console.log(this);
-                    RestaurantReviewPageModule.openRestaurantInfoInNewPage(this.getRestaurant());
-                },
-            });
+        const openRestaurantInfoInNewPage = function(restaurant) {
+            const newPage = window.open("/restaurant_info?restaurant_id=" + restaurant.id);
+            newPage.restaurant = restaurant;
+        };
+        
+        const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4);
         
         const addRestaurant = function() {
             restaurants.next()
@@ -830,41 +790,133 @@
         
         const numInitialRestaurants = 20;
         
-        new Range(0, numInitialRestaurants).forEach(addRestaurant);
+        const main = function() {
+            $(() => {
+                const zipCodeField = $("#zipCode")[0];
+                const zipCodeEnterButton = $("#enterZipCode")[0];
+                const locateButton = $("#locate")[0];
+                const moreRestaurantsButton = $("#moreRestaurants")[0];
+                const restaurantListDiv = $("#restaurants")[0];
+                
+                getLocation.zipCodeField = zipCodeField;
+                
+                zipCodeEnterButton.addEventListener("click", onZipCodeEnter);
+                
+                locateButton.addEventListener("click", onLocate);
+                
+                restaurantList
+                    .appendTo(restaurantListDiv)
+                    .withEventListeners({
+                        click: function(event) {
+                            openRestaurantInfoInNewPage(this.getRestaurant());
+                        },
+                    });
+                
+                new Range(0, numInitialRestaurants).forEach(addRestaurant);
+                
+                moreRestaurantsButton.addEventListener("click", addRestaurant);
+            });
+        };
         
-        moreRestaurantsButton.addEventListener("click", addRestaurant);
+        return {
+            main: main,
+            restaurantList: restaurantList,
+            addRestaurant: addRestaurant,
+        };
         
     };
     
-    (function main(zomatoApiKey) {
-        const locationModule = LocationModule();
-        const zomatoModule = ZomatoModule(locationModule, zomatoApiKey);
-        const restaurantListModule = RestaurantListModule();
-        const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
+    const RestaurantInfoPageModule = function(ZomatoModule) {
         
-        const test = function() {
-            const restaurants = zomatoModule.newRestaurants();
-            window.addRestaurant = () => restaurants.addNextTo(document.body, (div, restaurant) => {
-                if (restaurant == null) {
-                    div.innerText = "No more restaurants available";
-                    return;
-                }
-                div.innerText = restaurant.num + ": " + restaurant.name + "(" + restaurant.originalNum + ")";
-            });
-            
-            for (let i = 0; i < 100; i++) {
-                addRestaurant();
+        const getRestaurant = function() {
+            if ("restaurant" in window) {
+                return Promise.resolve(window.restaurant);
             }
+            return ZomatoModule.getRestaurant(restaurantId);
         };
         
-        $(() => {
+        const reviewToDiv = function(div, review) {
+            const rating = review.rating;
+            const title = review.rating_text;
+            const text = review.review_text;
+            div.innerHTML = "<br>" + "Rating: " + rating + "; " + title + "<br>" + text;
+        };
+        
+        const addReview = function(reviewsDiv, review) {
+            const reviewDiv = newDiv();
+            reviewToDiv(reviewDiv, review);
+            reviewsDiv.appendChild(reviewDiv);
+        };
+        
+        const main = function() {
+            $(() => {
+                const zomatoReviewsDiv = document.getElementById("zomatoReviews");
+                const welpReviewsDiv = document.getElementById("welpReviews");
+                
+                welpReviews.forEach(review => addReview(welpReviewsDiv, review));
+                
+                getRestaurant()
+                    .then(restaurant => ZomatoModule.getReviews(restaurant.id))
+                    .then(reviews => reviews.user_reviews)
+                    .then(reviews => reviews.map(review => review.review))
+                    .then(reviews => {
+                        console.log(reviews);
+                        reviews.forEach(review => addReview(zomatoReviewsDiv, review));
+                    });
+            });
+        };
+        
+        return {
+            main: main,
+        };
+        
+    };
+    
+    const mains = {
+        
+        "/index": function main(zomatoApiKey) {
+            const locationModule = LocationModule();
+            const zomatoModule = ZomatoModule(locationModule, zomatoApiKey);
+            const restaurantListModule = RestaurantListModule();
+            const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
+            
+            const test = function() {
+                const restaurants = zomatoModule.newRestaurants();
+                window.addRestaurant = () => restaurants.addNextTo(document.body, (div, restaurant) => {
+                    if (restaurant == null) {
+                        div.innerText = "No more restaurants available";
+                        return;
+                    }
+                    div.innerText = restaurant.num + ": " + restaurant.name + "(" + restaurant.originalNum + ")";
+                });
+                
+                for (let i = 0; i < 100; i++) {
+                    addRestaurant();
+                }
+            };
+            // test();
+            
             const restaurantsPageModule = RestaurantsPageModule(
                 locationModule,
                 zomatoModule,
                 restaurantListModule,
                 restaurantInfoPageModule);
-            // test();
-        });
+            restaurantsPageModule.main();
+        },
+        
+        "/restaurant_info": function main(zomatoApiKey) {
+            const zomatoModule = ZomatoModule(null, zomatoApiKey);
+            const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
+            restaurantInfoPageModule.main();
+        },
+        
+    };
+    
+    (function main(zomatoApiKey) {
+        if (mains.hasOwnProperty(location.pathname)) {
+            alert(mains[location.pathname]);
+            mains[location.pathname](zomatoApiKey);
+        }
     })(zomatoApiKey); // access global apiKey templated into index.html, or prompt user if undefined
     
 })(window);

@@ -4,8 +4,8 @@ import hashlib
 import sqlite3
 
 from flask import flash, session
-
-#from utils.setup_db import initialize
+# from utils.setup_db import initialize
+from typing import Iterable, List, Tuple
 
 
 def add_account(username, password1, password2):
@@ -84,19 +84,25 @@ def add_review(restaurant, user, rating, review_title, review_content):
 
 
 def get_review(restaurant):
+    # type: (int) -> List[Tuple[int, unicode, int, unicode, unicode]]
     """
     Gets all reviews of a restaurant
     Arg:
         restaurant (int): ID number of restaurant based on Zomato.
     Ret:
-        list of lists: each sublist contains one review, items in order of restaurant id(int), username (str), rating (int), review title(str), review content(str).
+        list of lists: each sublist contains one review,
+        items in order of restaurant id(int), username (str), rating (int), review title(str), review content(str).
     """
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
-        reviews = c.execute('SELECT * FROM reviews WHERE restaurant = ?', [restaurant])
-        return [[item for item in review] for review in reviews]
-    
+        reviews = c.execute(
+                'SELECT * FROM reviews WHERE restaurant = ?',
+                [restaurant])  # type: Iterable[Tuple[int, unicode, int, unicode, unicode]]
+        return [review for review in reviews]
+
+
 def add_favorite(user_id, restaurant_id):
+    # type: (int, int) -> None
     """
     Adds favorited restaurants for a user
     Arg:
@@ -110,7 +116,9 @@ def add_favorite(user_id, restaurant_id):
                 [user_id, restaurant_id])
         db.commit()
 
+
 def get_favorite(user_id):
+    # type: (int) -> List[int]
     """
     Gets favorited restaurants for a user
     Arg:
@@ -120,21 +128,18 @@ def get_favorite(user_id):
     """
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
-        query = c.execute('SELECT * FROM favorite WHERE userID = ?', [user_id])
-        restaurants = query.fetchall()
-        ret = []
-        for rest in restaurants:
-            ret.append(rest[1])
-        return ret
+        query = c.execute('SELECT restaurant FROM favorite WHERE userID = ?', [user_id])
+        return [restaurant[0] for restaurant in query]
+
 
 if __name__ == '__main__':
     init = False
     debug = True
     
     if init:
-        add_favorite(1,2)
-        add_favorite(10,11)
-        add_favorite(1,15)
+        add_favorite(1, 2)
+        add_favorite(10, 11)
+        add_favorite(1, 15)
         '''
         print()
         add_account('john smith', 'abc123', 'abc123')

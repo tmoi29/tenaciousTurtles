@@ -17,6 +17,7 @@ def initialize():
               'rating INTEGER, '
               'reviewTitle TEXT, '
               'reviewContent TEXT)')
+    
     c.execute('CREATE TABLE IF NOT EXISTS '
               'favorite('
               'userID INTEGER, '

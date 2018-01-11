@@ -260,6 +260,12 @@ def form_contains(*fields):
     return dict_contains(KeysViewSupplier(lambda: request.form), fields, form_contains)
 
 
+def query_contains(*fields):
+    # type: (List[str]) -> Precondition
+    """Assert request.args contains all the given fields."""
+    return dict_contains(KeysViewSupplier(lambda: request.args), fields, query_contains)
+
+
 def session_contains(*keys):
     # type: (List[Any]) -> Precondition
     """Assert session contains all the given keys."""
