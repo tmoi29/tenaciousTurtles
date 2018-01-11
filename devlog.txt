@@ -390,3 +390,17 @@ Both RestaurantsPageModule() and RestaurantInfoPageModule()
 both return a main() method, which is run when that page is loaded.
 
 =======================================================
+khyberS -- 2018-01-11 15:35:43
+
+Got the Getty image API to partially work.
+It sets some of the images if Zomato doesn't supply them,
+but a bunch still return 403 Forbidden,
+and I'm not sure why.
+
+I added the getRestaurantImgUrl(restaurant) function
+above restaurantToDiv(), which returns a Promise of the imgUrl,
+either restaurant.featured_image or restaurant.thumb if they exist,
+or the imgUrl from Getty if they don't exist.
+The restaurant.cuisines field is used for the Getty phrase.
+
+=======================================================

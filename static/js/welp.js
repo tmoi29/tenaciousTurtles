@@ -724,6 +724,30 @@
         
         const restaurants = ZomatoModule.newRestaurants(getLocation);
         
+        const getRestaurantImgUrl = function(restaurant) {
+            const imgUrl = restaurant.featured_image || restaurant.thumb;
+            if (imgUrl) {
+                return Promise.resolve(imgUrl);
+            }
+            return new Promise(resolve => {
+                const key = "ezjbdsc8bxnwdd4979b8jvrz";
+                const headers = {"Api-Key": key};
+                $.ajax({
+                    dataType: "json",
+                    url: "https://api.gettyimages.com/v3/search/images",
+                    headers: headers,
+                    data: {
+                        phrase: restaurant.cuisines,
+                        sort_order: "most_popular",
+                    },
+                    success: function(data) {
+                        const imgUrl = data.images[0].display_sizes[0].uri;
+                        resolve(imgUrl);
+                    },
+                });
+            });
+        };
+        
         /**
          * Add Zomato restaurant data to a div.
          *
@@ -750,28 +774,20 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-            var key = "ezjbdsc8bxnwdd4979b8jvrz";
-            var headers = {"Api-Key": key};
-            $.ajax({
-                dataType: "json",
-                url: "https://api.gettyimages.com/v3/search/images",
-                headers: headers,
-                data: {"phrase": "pizza", "sort_order": "most_popular"},
-                function(d) {
-                    console.log(d);
-                    console.log(JSON.parse(d)["images"][0]["display_sizes"][0]["uri"]);
-                    d = JSON.parse(d);
-                }
-            });
+            const imgUrl = restaurant.featured_image || restaurant.thumb;
             
-            
-            var img_div = document.createElement("div").withClass("image-holder");
+            const imgDiv = newDiv().withClass("image-holder");
             console.log("restaurant.thumb");
             console.log(restaurant.thumb);
-            console.log("img_div");
-            console.log(img_div);
-            img_div.style.cssText = "background-image: url(" + restaurant.thumb + ")";
-            div.appendChild(img_div);
+            console.log("imgDiv");
+            console.log(imgDiv);
+            div.appendChild(imgDiv);
+            
+            getRestaurantImgUrl(restaurant)
+                .then(imgUrl => {
+                    imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
+                    console.log("set getty image: " + imgUrl);
+                });
         };
         
         const openRestaurantInfoInNewPage = function(restaurant) {
@@ -914,7 +930,6 @@
     
     (function main(zomatoApiKey) {
         if (mains.hasOwnProperty(location.pathname)) {
-            alert(mains[location.pathname]);
             mains[location.pathname](zomatoApiKey);
         }
     })(zomatoApiKey); // access global apiKey templated into index.html, or prompt user if undefined
