@@ -468,6 +468,11 @@ Fixed restaurant.cuisine to restaurant.cuisines in addInfo(),
 which I also renamed to addRestaurantInfo().
 
 =======================================================
+ionkinaK -- 2018-01-12 08:39
+
+Fixed the image size and position in restaurant_info.cs
+
+=======================================================s
 khyberS -- 2018-01-12 08:17:59
 
 Now the restaurants partially scroll into view once loaded,
