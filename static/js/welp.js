@@ -693,6 +693,7 @@
         let lastLocation = null;
         
         const onZipCodeEnter = function() {
+            console.log("Use Zip")
             useZipCode = true;
             LocationModule.getLocation.dontUseGps();
         };
@@ -710,7 +711,8 @@
                         return;
                     }
                     const zipCodeText = getLocation.zipCodeField.innerText;
-                    if (zipCodeText && zipCodeText.length === 5) {
+                    console.log(zipCodeText)
+                    if (zipCodeText && zipCodeText.length == 5) {
                         LocationModule.zipCodeLocation(zipCodeText)
                             .then(coords => resolve(coords));
                         return;
@@ -808,8 +810,8 @@
         
         const main = function() {
             $(() => {
-                const zipCodeField = $("#zipCode")[0];
-                const zipCodeEnterButton = $("#enterZipCode")[0];
+                const zipCodeField = document.getElementById("zipCode");
+                const zipCodeEnterButton = document.getElementById("enterZipCode");
                 const locateButton = $("#locate")[0];
                 const moreRestaurantsButton = $("#moreRestaurants")[0];
                 const restaurantListDiv = $("#restaurants")[0];
@@ -841,7 +843,7 @@
         };
         
     };
-    
+    //*****
     const RestaurantInfoPageModule = function(ZomatoModule) {
         
         const getRestaurant = function() {
@@ -864,6 +866,37 @@
             reviewsDiv.appendChild(reviewDiv);
         };
         
+        const addInfo = function(rest) {
+            const name = rest.name;
+            const src = rest.featured_image;
+            const address = rest.location.address;
+            const rating = rest.user_rating.aggregate_rating;
+            const price = rest.price_range;
+            const cuisine = rest.cuisine;
+            const menu = rest.menu_url;
+            
+            console.log(menu);
+            
+            const element = document.getElementById("name");
+            element.innerText = name;
+            
+            const img = document.getElementById("img");
+            img.src= src;
+            
+            const loc = document.getElementById("loc");
+            loc.innerText = address;
+            
+            const r = document.getElementById("rating");
+            r.innerText= rating;
+            
+            const cui = document.getElementById("cuisine");
+            cui.innerText= cuisine;
+            
+            const m = document.getElementById("menu");
+            m.href = menu;
+        }
+            
+        
         const main = function() {
             $(() => {
                 const zomatoReviewsDiv = document.getElementById("zomatoReviews");
@@ -872,6 +905,7 @@
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
                 getRestaurant()
+                    .then(restaurant => addInfo(restaurant))
                     .then(restaurant => ZomatoModule.getReviews(restaurant.id))
                     .then(reviews => reviews.user_reviews)
                     .then(reviews => reviews.map(review => review.review))
