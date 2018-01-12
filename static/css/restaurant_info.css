@@ -3,11 +3,13 @@ h1 {
     text-align: center;
 }
 
-#img {
-    /* this creates a big empty box if there is no picture available */
-    /*width: 500px;*/
-    /*height: 250px;*/
+
+ #img{
+
+    width: 500px !important;
+    height: 250px !important;
     box-shadow: -8px -4px 8px 1px rgba(0, 0, 0, 0.2), -8px -11px 20px 1px rgba(0, 0, 0, 0.19);
+
 }
 
 .overlay {
