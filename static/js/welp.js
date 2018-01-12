@@ -160,9 +160,8 @@
                 method: "GET",
                 headers: {
                     "User-Key": apiKey,
-                    // this must be set by server actually
-                    // "Cache-Control": "public",
                 },
+                cache: "force-cache", // fetch actually allows client to cache unconditionally
             })
                 .then(response => response.json())
                 .catch(error => {
@@ -683,9 +682,64 @@
         
     };
     
+    const GettyModule = function(_apiKey) {
+        
+        const apiKey = _apiKey || prompt("Enter Getty API key:");
+        
+        const queriesPerSecond = 5;
+        
+        let lastPromise = Promise.resolve();
+        
+        const searchImages = function(phrase, sortOrder) {
+            const url = "https://api.gettyimages.com/v3/search/images?phrase="
+                + phrase + "&sort_order=" + sortOrder;
+            console.log(url);
+            return new Promise(resolve => {
+                lastPromise = lastPromise
+                // delay each call, use queriesPerSecond - 1 to be safe
+                    .then(() => new Promise(resolve => setTimeout(resolve, 1000 / queriesPerSecond)))
+                    .then(() => {
+                        return fetch("https://api.gettyimages.com/v3/search/images/creative", {
+                            method: "GET",
+                            headers: {
+                                "Api-Key": apiKey,
+                            },
+                            // body: {
+                            //     phrase: phrase,
+                            //     sort_order: sortOrder,
+                            // },
+                            cache: "force-cache",
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(url);
+                        console.log(data);
+                        return data;
+                    })
+                    .then(data => {
+                        resolve(data.images);
+                    })
+                    .catch(console.log);
+            });
+        };
+        
+        const getImageUrl = function(phrase, sortOrder) {
+            return searchImages(phrase, sortOrder)
+                .then(images => images[0].display_sizes[0].uri);
+        };
+        
+        return {
+            searchImages: searchImages,
+            getImageUrl: getImageUrl,
+        };
+        
+    };
+    
     const RestaurantsPageModule = function( //
         LocationModule,
         ZomatoModule,
+        GettyModule,
         RestaurantListModule, //
     ) {
         
@@ -729,23 +783,7 @@
             if (imgUrl) {
                 return Promise.resolve(imgUrl);
             }
-            return new Promise(resolve => {
-                const key = "ezjbdsc8bxnwdd4979b8jvrz";
-                const headers = {"Api-Key": key};
-                $.ajax({
-                    dataType: "json",
-                    url: "https://api.gettyimages.com/v3/search/images",
-                    headers: headers,
-                    data: {
-                        phrase: restaurant.cuisines,
-                        sort_order: "most_popular",
-                    },
-                    success: function(data) {
-                        const imgUrl = data.images[0].display_sizes[0].uri;
-                        resolve(imgUrl);
-                    },
-                });
-            });
+            return GettyModule.getImageUrl(restaurant.cuisines + " Food", "best_match");
         };
         
         /**
@@ -774,8 +812,6 @@
                         : restaurant.user_rating.aggregate_rating
                 );
             
-            const imgUrl = restaurant.featured_image || restaurant.thumb;
-            
             const imgDiv = newDiv().withClass("image-holder");
             console.log("restaurant.thumb");
             console.log(restaurant.thumb);
@@ -786,7 +822,7 @@
             getRestaurantImgUrl(restaurant)
                 .then(imgUrl => {
                     imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
-                    console.log("set getty image: " + imgUrl);
+                    console.log("set image: " + imgUrl);
                 });
         };
         
@@ -890,9 +926,10 @@
     
     const mains = {
         
-        "/index": function main(zomatoApiKey) {
+        "/index": function main(zomatoApiKey, gettyApiKey) {
             const locationModule = LocationModule();
             const zomatoModule = ZomatoModule(locationModule, zomatoApiKey);
+            const gettyModule = GettyModule(gettyApiKey);
             const restaurantListModule = RestaurantListModule();
             const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
             
@@ -915,6 +952,7 @@
             const restaurantsPageModule = RestaurantsPageModule(
                 locationModule,
                 zomatoModule,
+                gettyModule,
                 restaurantListModule,
                 restaurantInfoPageModule);
             restaurantsPageModule.main();
@@ -928,10 +966,10 @@
         
     };
     
-    (function main(zomatoApiKey) {
+    (function main(zomatoApiKey, gettyApiKey) {
         if (mains.hasOwnProperty(location.pathname)) {
-            mains[location.pathname](zomatoApiKey);
+            mains[location.pathname](zomatoApiKey, gettyApiKey);
         }
-    })(zomatoApiKey); // access global apiKey templated into index.html, or prompt user if undefined
+    })(zomatoApiKey, gettyApiKey); // access global apiKey templated into index.html, or prompt user if undefined
     
 })(window);

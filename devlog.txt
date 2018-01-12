@@ -404,3 +404,22 @@ or the imgUrl from Getty if they don't exist.
 The restaurant.cuisines field is used for the Getty phrase.
 
 =======================================================
+khyberS -- 2018-01-11 21:05:43
+
+Fixed login().
+Before it logged in all usernames and passwords before checking them,
+now it works correctly.
+
+Fixed the Getty image search API calls to limit them to 5 per second
+so that no errors are returned.
+
+The Getty API key is also passed to the JS in the same way as the Zomato API key.
+Everyone must put their key in the api/secrets.json file,
+modeled after secrets_template.json.
+
+However, Getty seems to be returning images that have nothing to do
+with the search phrase, which I set (line 786 in getRestaurantImgUrl())
+to restaurant.cuisine + " Food".
+Maybe I'm making the request wrong, or maybe the Getty search isn't that good.
+
+=======================================================

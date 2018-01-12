@@ -3,14 +3,15 @@ import os
 
 from flask import Flask, Response, render_template, request, session
 
-from util.flask.flask_utils import form_contains, post_only, preconditions, reroute_to, \
-    session_contains, query_contains
+from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
+    reroute_to, session_contains
 from util.flask.flask_utils_types import Router
 from util.flask.template_context import add_template_context, context
 from utils import database
 
-zomato_api_key = json.loads(open('api/secrets.json').read())['zomato']['key']
-context['zomato_api_key'] = zomato_api_key
+api_keys = json.loads(open('api/secrets.json').read())
+zomato_api_key = api_keys['zomato']['key']
+getty_api_key = api_keys['getty']['key']
 
 app = Flask(__name__, static_url_path='')
 
@@ -29,7 +30,11 @@ context[is_not_logged_in.func_name] = is_not_logged_in
 @app.route('/index')
 def index():
     # type: () -> Response
-    return render_template('index.html', logged_in=is_logged_in(), zomato_api_key=zomato_api_key)
+    return render_template(
+            'index.html',
+            logged_in=is_logged_in(),
+            zomato_api_key=zomato_api_key,
+            getty_api_key=getty_api_key)
 
 
 @app.route('/login')
@@ -49,10 +54,10 @@ not_logged_in = preconditions(index, is_not_logged_in)  # type: Router
 @preconditions(login_page, post_only, form_contains('username', 'password'))
 def login():
     # type: () -> Response
-    session[UID_KEY] = True  # TODO
     form = request.form
     if not database.authenticate(form['username'], form['password']):
         return reroute_to(login_page)
+    session[UID_KEY] = True
     return reroute_to(index)
 
 
