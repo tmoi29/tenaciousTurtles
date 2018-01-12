@@ -493,3 +493,15 @@ Now it successfully uses the IP address
 when the GPS doesn't work or is blocked by the user.
 
 =======================================================
+khyberS -- 2018-01-12 18:36:11
+
+Added the GET or POST /google_image_search?query= API route,
+which returns a JSON array of image URLs for the query.
+Google's image search is much better than Getty's,
+and it has no rate limits, and Google is faster.
+
+I haven't incorporated it into welp.js
+to replace the Getty stuff yet.
+I'm doing that next.
+
+=======================================================

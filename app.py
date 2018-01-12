@@ -3,6 +3,7 @@ import os
 
 from flask import Flask, Response, render_template, request, session
 
+from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
     reroute_to, session_contains
 from util.flask.flask_utils_types import Router
@@ -109,6 +110,17 @@ def restaurant_info():
                            user_reviews=db_reviews,
                            welp_reviews=welp_reviews,
                            json=json)
+
+
+@app.route('/google_image_search', methods=['get', 'post'])
+def google_image_search_urls():
+    # type: () -> Response
+    arg_name = 'query'
+    if arg_name not in request.args and arg_name not in request.form:
+        return Response(status=400, mimetype='application/json')
+    query = request.args.get(arg_name) or request.form.get(arg_name)
+    img_urls = list(google_image_search.get_img_urls(query))
+    return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
 
 
 if __name__ == '__main__':
