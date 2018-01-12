@@ -486,3 +486,10 @@ meaning no large, empty box is ever shown,
 but the image, when present, is never too large.
 
 =======================================================
+khyberS -- 2018-01-12 15:30:28
+
+Fixed the geolocation and IP address location bug.
+Now it successfully uses the IP address
+when the GPS doesn't work or is blocked by the user.
+
+=======================================================

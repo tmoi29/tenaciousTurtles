@@ -81,19 +81,25 @@
         };
         
         const getGeolocation = function(onError) {
-            return new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, error => {
-                    resolve(onError());
+            return new Promise(resolve => {
+                navigator.geolocation.getCurrentPosition(position => {
+                    resolve(processLocation(position.coords));
+                }, error => {
+                    console.log(error);
+                    onError().then(resolve);
                 });
-            })
-                .then(position => processLocation(position.coords));
+            });
         };
         
         const getIpLocation = function() {
             return new Promise((resolve, reject) => {
                 $.getJSON("//freegeoip.net/json/?callback=?", resolve);
             })
-                .then(processLocation);
+                .then(processLocation)
+                .then(e => {
+                    console.log(e);
+                    return e;
+                });
         };
         
         const getLocation = function() {
