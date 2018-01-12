@@ -428,3 +428,7 @@ khyberS -- 2018-01-11 22:18:06
 Added gettyApiKey definition in restaurant_info.html.
 
 =======================================================
+ionkinaK -- 2018-01-12 00:39
+
+Improved the image positioning and behavior in the index.html 
+panels, worked on the frontend of the restaurant_information pages.

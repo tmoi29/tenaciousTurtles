@@ -1,3 +1,8 @@
+html
+{
+zoom: 100%;
+}
+
 .header-text .hidden-xs {
     position: absolute;
     right: 50%;
@@ -17,10 +22,6 @@
     display: block;
     color: white;
     font-size: 2em;
-}
-
-form {
-    color: black;
 }
 
 
@@ -63,15 +64,15 @@ h1 {
     transition: 0.5s;
 }
 
-.panel-body .image-holder {
+.panel-body .klass .image-holder {
   position: absolute;
-  top: 0;
+  top: 30%;
   left: 0;
-  bottom: 0;
-  right: 0;
-  max-width: 100%;
-  max-height: 100%;
-  background-position: 50% 80%;
+  bottom: 10%;
+  right: 0;	
+  margin: 7%;
+  background-position: center;
+  background-size: contain;
   background-repeat: no-repeat;
 }
 
@@ -83,17 +84,16 @@ font-size: .5em;
 font-size: 1em;
 margin-top: 0px;
 display: block;
-height: 65px;
 text-align: center;
 background-color: #DAF7A6;
-padding-top: 5px;
+padding: 8px;
 }
 
 
 form {
 z-index: 25;
 position:absolute; 
-top: 320px;
+top: 380px;
 left: 30%;
 font-size: 2em;
 display:inline-block;
