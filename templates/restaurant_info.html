@@ -4,6 +4,8 @@
   <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
   <script>
       const zomatoApiKey = "{{ zomato_api_key }}";
+      const gettyApiKey = "{{ getty_api_key }}";
+
       const restaurantId = +{{ restaurant_id }};
       // noinspection JSAnnotator
       const welpReviews = {{ json.dumps(welp_reviews) }};

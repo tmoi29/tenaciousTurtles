@@ -423,3 +423,8 @@ to restaurant.cuisine + " Food".
 Maybe I'm making the request wrong, or maybe the Getty search isn't that good.
 
 =======================================================
+khyberS -- 2018-01-11 22:18:06
+
+Added gettyApiKey definition in restaurant_info.html.
+
+=======================================================

@@ -104,6 +104,7 @@ def restaurant_info():
     } for restaurant_id, username, rating, review_title, review_content in db_reviews]
     return render_template('restaurant_info.html',
                            zomato_api_key=zomato_api_key,
+                           getty_api_key=getty_api_key,
                            restaurant_id=restaurant_id,
                            user_reviews=db_reviews,
                            welp_reviews=welp_reviews,
