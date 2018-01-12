@@ -146,11 +146,11 @@
         
         const getZomato = function(route, query) {
             const baseUrl = "https://developers.zomato.com/api/v2.1/";
-            const url = baseUrl + route + "?"
-                + Object.entries(query)
-                    .filter(e => e[1]) // filter out false values
-                    .map(e => e[0] + "=" + e[1])
-                    .join("&");
+            const url = baseUrl + route + "?" + $.param(query);
+            // + Object.entries(query)
+            //     .filter(e => e[1]) // filter out false values
+            //     .map(e => e[0] + "=" + e[1])
+            //     .join("&");
             console.log(url);
             console.log("numZomatoFails: " + numZomatoFails);
             if (numZomatoFails > maxNumZomatoFails) {
@@ -691,15 +691,18 @@
         let lastPromise = Promise.resolve();
         
         const searchImages = function(phrase, sortOrder) {
-            const url = "https://api.gettyimages.com/v3/search/images?phrase="
-                + phrase + "&sort_order=" + sortOrder;
+            const url = "https://api.gettyimages.com/v3/search/images?"
+                + $.param({
+                    phrase: phrase,
+                    sort_order: sortOrder,
+                });
             console.log(url);
             return new Promise(resolve => {
                 lastPromise = lastPromise
                 // delay each call, use queriesPerSecond - 1 to be safe
                     .then(() => new Promise(resolve => setTimeout(resolve, 1000 / queriesPerSecond)))
                     .then(() => {
-                        return fetch("https://api.gettyimages.com/v3/search/images/creative", {
+                        return fetch(url, {
                             method: "GET",
                             headers: {
                                 "Api-Key": apiKey,
@@ -726,7 +729,12 @@
         
         const getImageUrl = function(phrase, sortOrder) {
             return searchImages(phrase, sortOrder)
-                .then(images => images[0].display_sizes[0].uri);
+                .then(images => {
+                    if (images.length === 0) {
+                        return "";
+                    }
+                    return images[0].display_sizes[0].uri;
+                });
         };
         
         return {
@@ -747,7 +755,7 @@
         let lastLocation = null;
         
         const onZipCodeEnter = function() {
-            console.log("Use Zip")
+            console.log("Use Zip");
             useZipCode = true;
             LocationModule.getLocation.dontUseGps();
         };
@@ -765,8 +773,8 @@
                         return;
                     }
                     const zipCodeText = getLocation.zipCodeField.innerText;
-                    console.log(zipCodeText)
-                    if (zipCodeText && zipCodeText.length == 5) {
+                    console.log(zipCodeText);
+                    if (zipCodeText && zipCodeText.length === 5) {
                         LocationModule.zipCodeLocation(zipCodeText)
                             .then(coords => resolve(coords));
                         return;
@@ -785,7 +793,9 @@
             if (imgUrl) {
                 return Promise.resolve(imgUrl);
             }
-            return GettyModule.getImageUrl(restaurant.cuisines + " Food", "best_match");
+            // const phrase = restaurant.cuisines + " Food";
+            const phrase = restaurant.name;
+            return GettyModule.getImageUrl(phrase, "best_match");
         };
         
         /**
@@ -868,7 +878,16 @@
                 
                 new Range(0, numInitialRestaurants).forEach(addRestaurant);
                 
-                moreRestaurantsButton.addEventListener("click", addRestaurant);
+                moreRestaurantsButton.addEventListener("click", () => {
+                    addRestaurant();
+                    console.log("scrolling");
+                    // must wait for restaurant element to be added before scrolling
+                    // not sure how long that will be, so try three times
+                    // the closer my prediction is, the smoother the scrolling is
+                    [0, 50, 100].forEach(timeout => {
+                        setTimeout(() => moreRestaurantsButton.scrollIntoView(), timeout);
+                    });
+                });
             });
         };
         
@@ -902,14 +921,14 @@
             reviewsDiv.appendChild(reviewDiv);
         };
         
-        const addInfo = function(rest) {
-            const name = rest.name;
-            const src = rest.featured_image;
-            const address = rest.location.address;
-            const rating = rest.user_rating.aggregate_rating;
-            const price = rest.price_range;
-            const cuisine = rest.cuisine;
-            const menu = rest.menu_url;
+        const addRestaurantInfo = function(restaurant) {
+            const name = restaurant.name;
+            const src = restaurant.featured_image;
+            const address = restaurant.location.address;
+            const rating = restaurant.user_rating.aggregate_rating;
+            const price = restaurant.price_range;
+            const cuisine = restaurant.cuisines;
+            const menu = restaurant.menu_url;
             
             console.log(menu);
             
@@ -917,21 +936,20 @@
             element.innerText = name;
             
             const img = document.getElementById("img");
-            img.src= src;
+            img.src = src;
             
             const loc = document.getElementById("loc");
             loc.innerText = address;
             
             const r = document.getElementById("rating");
-            r.innerText= rating;
+            r.innerText = rating;
             
             const cui = document.getElementById("cuisine");
-            cui.innerText= cuisine;
+            cui.innerText = cuisine;
             
             const m = document.getElementById("menu");
             m.href = menu;
-        }
-            
+        };
         
         const main = function() {
             $(() => {
@@ -941,8 +959,10 @@
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
                 getRestaurant()
-                    .then(restaurant => {addInfo(restaurant);
-                            return restaurant;})
+                    .then(restaurant => {
+                        addRestaurantInfo(restaurant);
+                        return restaurant;
+                    })
                     .then(restaurant => ZomatoModule.getReviews(restaurant.id))
                     .then(reviews => reviews.user_reviews)
                     .then(reviews => reviews.map(review => review.review))

@@ -432,3 +432,39 @@ ionkinaK -- 2018-01-12 00:39
 
 Improved the image positioning and behavior in the index.html 
 panels, worked on the frontend of the restaurant_information pages.
+
+=======================================================
+khyberS -- 2018-01-12 06:10:18
+
+Made the More Restaurants button at the bottom of the page bigger,
+and now when you click on it and another row is added,
+it scrolls down automatically.
+
+Partially fixed the Getty API calls.
+Now I'm searching correctly by the restaurant.name,
+so it gets a slightly more accurate picture
+and not all the same pictures.
+However, some restaurants still don't have any pictures (from Getty),
+and the pictures still aren't too relevant.
+
+We should just scrape Google's image search.
+It's much, much better in terms of relevance,
+and often actually shows a picture of the restaurant.
+However, since google.com/search is not an API
+and isn't CORS enabled,
+we must scrape it in Python and then have the JS
+make an AJAX call to our server for it.
+
+Fixed some mistakes in the CSS.
+For the #img height and width in restaurant_info.css,
+it was entered wrong (in quotes), but I actually commented it out
+completely, since if there's no image, setting a size
+creates a big empty box, instead of just nothing if no size is specified.
+
+Added id="img" to the <img> element in restaurant_info.html,
+so that it can be selected correctly from the JS.
+
+Fixed restaurant.cuisine to restaurant.cuisines in addInfo(),
+which I also renamed to addRestaurantInfo().
+
+=======================================================
