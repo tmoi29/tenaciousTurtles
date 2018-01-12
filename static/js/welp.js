@@ -846,7 +846,7 @@
         const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4);
         
         const addRestaurant = function() {
-            restaurants.next()
+            return restaurants.next()
                 .then(restaurant => {
                     restaurantList.addRestaurant(restaurant);
                 });
@@ -876,7 +876,17 @@
                         },
                     });
                 
-                new Range(0, numInitialRestaurants).forEach(addRestaurant);
+                let first = true;
+                
+                new Range(0, numInitialRestaurants).forEach(i => {
+                    addRestaurant()
+                        .then(() => {
+                            if (first) {
+                                first = false;
+                                setTimeout(() => zipCodeField.scrollIntoView(), 100);
+                            }
+                        });
+                });
                 
                 moreRestaurantsButton.addEventListener("click", () => {
                     addRestaurant();
@@ -898,7 +908,7 @@
         };
         
     };
-    //*****
+    
     const RestaurantInfoPageModule = function(ZomatoModule) {
         
         const getRestaurant = function() {
@@ -937,6 +947,8 @@
             
             const img = document.getElementById("img");
             img.src = src;
+            img.width = 500;
+            img.heigh = 250;
             
             const loc = document.getElementById("loc");
             loc.innerText = address;

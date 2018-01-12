@@ -468,3 +468,16 @@ Fixed restaurant.cuisine to restaurant.cuisines in addInfo(),
 which I also renamed to addRestaurantInfo().
 
 =======================================================
+khyberS -- 2018-01-12 08:17:59
+
+Now the restaurants partially scroll into view once loaded,
+since before the user might not have known they loaded yet
+without scrolling down.
+
+Fixed the size of the image in /restaurant_info
+using JS instead of CSS,
+so it only sets the size if there is an image,
+meaning no large, empty box is ever shown,
+but the image, when present, is never too large.
+
+=======================================================
