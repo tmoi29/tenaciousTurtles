@@ -3,13 +3,12 @@ h1 {
     text-align: center;
 }
 
-
- #img{
-
-    width: 500px !important;
-    height: 250px !important;
+#img {
+    /* This creates a big empty box if there is no image/ */
+    /* I set the same size in JS instead only when the image exists. */
+    /*width: 500px !important;*/
+    /*height: 250px !important;*/
     box-shadow: -8px -4px 8px 1px rgba(0, 0, 0, 0.2), -8px -11px 20px 1px rgba(0, 0, 0, 0.19);
-
 }
 
 .overlay {
