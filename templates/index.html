@@ -2,7 +2,10 @@
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/index.css">
   {# define global apiKey for use in welp.js #}
-  <script>const zomatoApiKey = "{{ zomato_api_key }}";</script>
+  <script>
+      const zomatoApiKey = "{{ zomato_api_key }}";
+      const gettyApiKey = "{{ getty_api_key }}";
+  </script>
   <script src="js/welp.js"></script>
 {% endblock %}
 
