@@ -941,7 +941,8 @@
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
                 getRestaurant()
-                    .then(restaurant => addInfo(restaurant))
+                    .then(restaurant => {addInfo(restaurant);
+                            return restaurant;})
                     .then(restaurant => ZomatoModule.getReviews(restaurant.id))
                     .then(reviews => reviews.user_reviews)
                     .then(reviews => reviews.map(review => review.review))
