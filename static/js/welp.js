@@ -29,7 +29,7 @@
         return this;
     };
     
-    const Range = function(start, end) {
+    const Range = window.Range = function(start, end) {
         this.forEach = function(func) {
             for (let i = start; i < end; i++) {
                 func(i);
@@ -162,6 +162,7 @@
             if (numZomatoFails > maxNumZomatoFails) {
                 return Promise.reject("too many Zomato API calls failed (" + numZomatoFails + ")");
             }
+            
             return fetch(url, {
                 method: "GET",
                 headers: {
@@ -508,6 +509,68 @@
         
     };
     
+    const GettyModule = function(_apiKey) {
+        
+        const apiKey = _apiKey || prompt("Enter Getty API key:");
+        
+        const queriesPerSecond = 5;
+        
+        let lastPromise = Promise.resolve();
+        
+        const searchImages = function(phrase, sortOrder) {
+            const url = "https://api.gettyimages.com/v3/search/images?"
+                + $.param({
+                    phrase: phrase,
+                    sort_order: sortOrder,
+                });
+            console.log(url);
+            return new Promise(resolve => {
+                lastPromise = lastPromise
+                // delay each call, use queriesPerSecond - 1 to be safe
+                    .then(() => new Promise(resolve => setTimeout(resolve, 1000 / queriesPerSecond)))
+                    .then(() => {
+                        return fetch(url, {
+                            method: "GET",
+                            headers: {
+                                "Api-Key": apiKey,
+                            },
+                            // body: {
+                            //     phrase: phrase,
+                            //     sort_order: sortOrder,
+                            // },
+                            cache: "force-cache",
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(url);
+                        console.log(data);
+                        return data;
+                    })
+                    .then(data => {
+                        resolve(data.images);
+                    })
+                    .catch(console.log);
+            });
+        };
+        
+        const getImageUrl = function(phrase, sortOrder) {
+            return searchImages(phrase, sortOrder)
+                .then(images => {
+                    if (images.length === 0) {
+                        return "";
+                    }
+                    return images[0].display_sizes[0].uri;
+                });
+        };
+        
+        return {
+            searchImages: searchImages,
+            getImageUrl: getImageUrl,
+        };
+        
+    };
+    
     const RestaurantListModule = function() {
         
         const newRestaurantCol = function(restaurantToDiv) {
@@ -688,68 +751,6 @@
         
     };
     
-    const GettyModule = function(_apiKey) {
-        
-        const apiKey = _apiKey || prompt("Enter Getty API key:");
-        
-        const queriesPerSecond = 5;
-        
-        let lastPromise = Promise.resolve();
-        
-        const searchImages = function(phrase, sortOrder) {
-            const url = "https://api.gettyimages.com/v3/search/images?"
-                + $.param({
-                    phrase: phrase,
-                    sort_order: sortOrder,
-                });
-            console.log(url);
-            return new Promise(resolve => {
-                lastPromise = lastPromise
-                // delay each call, use queriesPerSecond - 1 to be safe
-                    .then(() => new Promise(resolve => setTimeout(resolve, 1000 / queriesPerSecond)))
-                    .then(() => {
-                        return fetch(url, {
-                            method: "GET",
-                            headers: {
-                                "Api-Key": apiKey,
-                            },
-                            // body: {
-                            //     phrase: phrase,
-                            //     sort_order: sortOrder,
-                            // },
-                            cache: "force-cache",
-                        });
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(url);
-                        console.log(data);
-                        return data;
-                    })
-                    .then(data => {
-                        resolve(data.images);
-                    })
-                    .catch(console.log);
-            });
-        };
-        
-        const getImageUrl = function(phrase, sortOrder) {
-            return searchImages(phrase, sortOrder)
-                .then(images => {
-                    if (images.length === 0) {
-                        return "";
-                    }
-                    return images[0].display_sizes[0].uri;
-                });
-        };
-        
-        return {
-            searchImages: searchImages,
-            getImageUrl: getImageUrl,
-        };
-        
-    };
-    
     const RestaurantsPageModule = function( //
         LocationModule,
         ZomatoModule,
@@ -794,6 +795,53 @@
         
         const restaurants = ZomatoModule.newRestaurants(getLocation);
         
+        const getGoogleImgUrlsOwnServer = function(query) {
+            return fetch("/google_image_search?" + $.param({query: query}))
+                .then(response => response.json());
+        };
+        
+        /*
+        Using our own Flask server is too slow
+        because Flask can't do asynchronous requests,
+        so it has to wait for the whole Google request
+        before starting the next request.
+        By using a dedicated CORS server like cors-anywhere,
+        we can still make CORS requests to google.com,
+        which doesn't allow CORS requests,
+        and at the same time, still do async requests,
+        meaning the latency is still the same,
+        but the throughput is much, much higher.
+         */
+        
+        const getGoogleImgUrlsCorsServer = function(query) {
+            return fetch("https://cors-anywhere.herokuapp.com/https://www.google.com/search?"
+            + $.param({
+                    q: query,
+                    tbm: "isch",
+                }), {
+                cache: "force-cache",
+            })
+                .then(response => response.text())
+                .then(html => {
+                    const urls = [];
+                    const fieldName = '"ou":';
+                    let i;
+                    while ((i = html.indexOf(fieldName, i)) !== -1) {
+                        i += fieldName.length;
+                        i += 1;
+                        const end = html.indexOf('"', i);
+                        const url = html.substring(i, end);
+                        urls.push(url);
+                        i = end + 1;
+                    }
+                    return urls;
+                });
+        };
+        
+        const getGoogleImgUrls = window.getGoogleImgUrls = function(query) {
+            return getGoogleImgUrlsCorsServer(query);
+        };
+        
         const getRestaurantImgUrl = function(restaurant) {
             const imgUrl = restaurant.featured_image || restaurant.thumb;
             if (imgUrl) {
@@ -801,7 +849,9 @@
             }
             // const phrase = restaurant.cuisines + " Food";
             const phrase = restaurant.name;
-            return GettyModule.getImageUrl(phrase, "best_match");
+            return getGoogleImgUrls(phrase)
+                .then(urls => urls[0]);
+            // return GettyModule.getImageUrl(phrase, "best_match");
         };
         
         /**
@@ -812,8 +862,6 @@
          */
         const restaurantToDiv = function(div, restaurant) {
             div.withClass("klass");
-            console.log(div.classList);
-            console.log(div);
             console.log(restaurant);
             
             // TODO make this better and fancier
@@ -831,10 +879,6 @@
                 );
             
             const imgDiv = newDiv().withClass("image-holder");
-            console.log("restaurant.thumb");
-            console.log(restaurant.thumb);
-            console.log("imgDiv");
-            console.log(imgDiv);
             div.appendChild(imgDiv);
             
             getRestaurantImgUrl(restaurant)

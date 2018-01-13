@@ -119,7 +119,7 @@ def google_image_search_urls():
     if arg_name not in request.args and arg_name not in request.form:
         return Response(status=400, mimetype='application/json')
     query = request.args.get(arg_name) or request.form.get(arg_name)
-    img_urls = list(google_image_search.get_img_urls(query))
+    img_urls = google_image_search.get_img_urls(query)
     return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
 
 

@@ -1,14 +1,19 @@
 from __future__ import print_function
 
 import requests
-from typing import Iterable
-
+from typing import Iterable, List
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0'
 
 
+# simple, non-persistent cache
+cache = {}
+
+
 def get_img_urls(query):
-    # type: (str) -> Iterable[str]
+    # type: (str) -> List[str]
+    if query in cache:
+        return cache[query]
     response = requests.get(
             url="https://www.google.com/search?q=" + query + "&tbm=isch",
             headers={
@@ -19,15 +24,17 @@ def get_img_urls(query):
     html = response.text  # type: unicode
     field_name = u'"ou":'
     i = 0
+    urls = []
     while True:
         i = html.find(field_name, i)
         if i == -1:
-            return
+            cache[query] = urls
+            return urls
         i += len(field_name)
         i += 1
         end = html.find('"', i)
         url = html[i:end]
-        yield url.encode('utf-8')
+        urls.append(url.encode('utf-8'))
         i = end + 1
 
 
