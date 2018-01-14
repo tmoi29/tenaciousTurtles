@@ -526,3 +526,9 @@ but we should use the cors-anywhere version,
 since it's so much faster.
 
 =======================================================
+khyberS -- 2018-01-13 22:06:55
+
+Now all the Google image URLs are tried until one works,
+because a few of them are corrupt URLs and don't display.
+
+=======================================================

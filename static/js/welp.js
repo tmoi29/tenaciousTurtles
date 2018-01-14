@@ -815,7 +815,7 @@
         
         const getGoogleImgUrlsCorsServer = function(query) {
             return fetch("https://cors-anywhere.herokuapp.com/https://www.google.com/search?"
-            + $.param({
+                + $.param({
                     q: query,
                     tbm: "isch",
                 }), {
@@ -824,12 +824,12 @@
                 .then(response => response.text())
                 .then(html => {
                     const urls = [];
-                    const fieldName = '"ou":';
+                    const fieldName = "\"ou\":";
                     let i;
                     while ((i = html.indexOf(fieldName, i)) !== -1) {
                         i += fieldName.length;
                         i += 1;
-                        const end = html.indexOf('"', i);
+                        const end = html.indexOf("\"", i);
                         const url = html.substring(i, end);
                         urls.push(url);
                         i = end + 1;
@@ -845,12 +845,11 @@
         const getRestaurantImgUrl = function(restaurant) {
             const imgUrl = restaurant.featured_image || restaurant.thumb;
             if (imgUrl) {
-                return Promise.resolve(imgUrl);
+                return Promise.resolve([imgUrl]);
             }
             // const phrase = restaurant.cuisines + " Food";
             const phrase = restaurant.name;
-            return getGoogleImgUrls(phrase)
-                .then(urls => urls[0]);
+            return getGoogleImgUrls(phrase);
             // return GettyModule.getImageUrl(phrase, "best_match");
         };
         
@@ -882,9 +881,21 @@
             div.appendChild(imgDiv);
             
             getRestaurantImgUrl(restaurant)
-                .then(imgUrl => {
-                    imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
-                    console.log("set image: " + imgUrl);
+                .then(imgUrls => {
+                    let foundImg = false;
+                    for (const imgUrl of imgUrls) {
+                        imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
+                        // if imgUrl is corrupt or something,
+                        // imgDiv.style.cssText will be an empty string ""
+                        if (imgDiv.style.cssText) {
+                            foundImg = true;
+                            break;
+                        }
+                    }
+                    if (!foundImg) {
+                        console.log("no image found for: ");
+                        console.log(imgDiv);
+                    }
                 });
         };
         
