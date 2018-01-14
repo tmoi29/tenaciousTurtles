@@ -12,7 +12,7 @@ from utils import database
 
 api_keys = json.loads(open('api/secrets.json').read())
 zomato_api_key = api_keys['zomato']['key']
-getty_api_key = api_keys['getty']['key']
+getty_api_key = api_keys.get('getty', {}).get('key')  # will be "undefined" if not in secrets.json
 
 app = Flask(__name__, static_url_path='')
 

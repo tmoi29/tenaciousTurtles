@@ -841,7 +841,6 @@
     const RestaurantsPageModule = function( //
         LocationModule,
         ZomatoModule,
-        GettyModule,
         RestaurantImageModule,
         RestaurantListModule, //
     ) {
@@ -1126,7 +1125,6 @@
         "/index": function main(apiKeys) {
             const locationModule = LocationModule();
             const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
-            const gettyModule = GettyModule(apiKeys.getty);
             const restaurantImageModule = RestaurantImageModule();
             const restaurantListModule = RestaurantListModule();
             const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
@@ -1150,7 +1148,6 @@
             const restaurantsPageModule = RestaurantsPageModule(
                 locationModule,
                 zomatoModule,
-                gettyModule,
                 restaurantImageModule,
                 restaurantListModule,
                 restaurantInfoPageModule);

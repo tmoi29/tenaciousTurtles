@@ -555,3 +555,13 @@ and keeps trying until it succeeds.
 Also refactored this Google image stuff into the RestaurantImageModule().
 
 =======================================================
+khyberS -- 2018-01-14 00:45:49
+
+Removed the Getty dependency (optional now).
+The GettyModule() still exists but is never called,
+and the API key would only be required if it's called.
+On the Python side, the code handles there being or not being
+a Getty API key in secrets.json.
+The Getty fields have been removed from secrets_template.json.
+
+=======================================================

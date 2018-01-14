@@ -6,7 +6,7 @@
 {% block preJS %}
   <script>
       apiKeys.zomato = "{{ zomato_api_key }}";
-      apiKeys.getty = "{{ getty_api_key }}";
+      apiKeys.getty = "{{ getty_api_key or "undefined" }}";
   </script>
 {% endblock %}
 
