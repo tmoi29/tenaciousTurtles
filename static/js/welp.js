@@ -29,6 +29,16 @@
         return this;
     };
     
+    FormData.of = function(fields) {
+        const form = new FormData();
+        for (const field in fields) {
+            if (fields.hasOwnProperty(field)) {
+                form.set(field, fields[field]);
+            }
+        }
+        return form;
+    };
+    
     const Range = window.Range = function(start, end) {
         this.forEach = function(func) {
             for (let i = start; i < end; i++) {
@@ -985,11 +995,17 @@
     
     const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule) {
         
+        let _restaurant = window.restaurant || {};
+        
         const getRestaurant = function() {
-            if ("restaurant" in window) {
-                return Promise.resolve(window.restaurant);
+            if (_restaurant) {
+                return Promise.resolve(_restaurant);
             }
-            return ZomatoModule.getRestaurant(restaurantId);
+            return ZomatoModule.getRestaurant(restaurantId)
+                .then(restaurant => {
+                    _restaurant = restaurant;
+                    return restaurant;
+                });
         };
         
         const reviewToDiv = function(div, review) {
@@ -1003,6 +1019,7 @@
             const reviewDiv = newDiv();
             reviewToDiv(reviewDiv, review);
             reviewsDiv.appendChild(reviewDiv);
+            return reviewDiv;
         };
         
         const addRestaurantInfo = function(restaurant) {
@@ -1054,6 +1071,38 @@
             m.href = menu;
         };
         
+        const addNewReview = function(reviewsDiv) {
+            if (!loggedIn) {
+                return; // TODO display error message
+            }
+            
+            const review = null; // TODO
+            
+            const reviewDiv = addReview(reviewsDiv, review);
+            
+            getRestaurant()
+                .then(restaurant => {
+                    return fetch("/add_review", {
+                        method: "POST",
+                        credentials: "include",
+                        mode: "same-origin",
+                        body: FormData.of({
+                            restaurant_id: restaurant.id,
+                            rating: review.rating,
+                            review_title: review.rating_text,
+                            review_content: review.review_text,
+                        })
+                    });
+                })
+                .then(response => {
+                    if (response.status !== 200) {
+                        // remove if server rejected request,
+                        // possibly b/c not logged in, although user should be
+                        reviewDiv.remove();
+                    }
+                });
+        };
+        
         const main = function() {
             $(() => {
                 const zomatoReviewsDiv = document.getElementById("zomatoReviews");
@@ -1073,6 +1122,10 @@
                         console.log(reviews);
                         reviews.forEach(review => addReview(zomatoReviewsDiv, review));
                     });
+                
+                $("#addReview").click(() => {
+                    addNewReview(welpReviewsDiv);
+                });
             });
         };
         
@@ -1168,6 +1221,12 @@
         },
         
     };
+    
+    if (typeof welpPreMain !== "undefined") {
+        if ($.isFunction(welpPreMain)) {
+            welpPreMain.call(this); // call with this scope
+        }
+    }
     
     (function main(apiKeys) {
         if (mains.hasOwnProperty(location.pathname)) {

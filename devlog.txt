@@ -565,3 +565,21 @@ a Getty API key in secrets.json.
 The Getty fields have been removed from secrets_template.json.
 
 =======================================================
+khyberS -- 2018-01-14 01:41:19
+
+Started adding code for adding a new review (all untested).
+
+Wrote the JS for sending the AJAX request to add the new review,
+and for adding the review to the DOM,
+but not for extracting the review from the form.
+It also checks if the user is logged in before adding the new review.
+
+Didn't write the HTML for the form yet.
+
+Wrote the Flask route /add_review,
+which takes the POSTed form data and calls database.add_review().
+I'm not sure if the user parameter is supposed to be the uid or username.
+Right now, I supplied the username.
+The route also checks that the user is logged in first.
+
+=======================================================

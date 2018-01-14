@@ -78,12 +78,12 @@ def add_review(restaurant, user, rating, review_title, review_content):
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
         c.execute(
-                'INSERT INTO reviews VALUES(?, ?, ?, ?, ?)',
+                'INSERT INTO reviews VALUES (?, ?, ?, ?, ?)',
                 [restaurant, user, rating, review_title, review_content])
         db.commit()
 
 
-def get_review(restaurant):
+def get_reviews(restaurant):
     # type: (int) -> List[Tuple[int, unicode, int, unicode, unicode]]
     """
     Gets all reviews of a restaurant

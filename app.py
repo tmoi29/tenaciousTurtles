@@ -2,6 +2,7 @@ import json
 import os
 
 from flask import Flask, Response, render_template, request, session
+from typing import Tuple
 
 from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
@@ -97,7 +98,7 @@ def logout():
 def restaurant_info():
     # type: () -> Response
     restaurant_id = int(request.args['restaurant_id'])
-    db_reviews = database.get_review(restaurant_id)
+    db_reviews = database.get_reviews(restaurant_id)
     welp_reviews = [{
         "rating": rating,
         "rating_text": review_title,
@@ -125,6 +126,27 @@ def google_image_search_urls():
     img_urls = google_image_search.get_img_urls(query)
     return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
 
+
+@app.route('/empty', methods=['get', 'post'])
+def empty():
+    # type: () -> Response
+    return Response(status=204, response='')  # HTTP 204 is No Content
+
+
+@app.route('/add_review', methods=['get', 'post'])
+@preconditions(empty, post_only, is_logged_in,
+               form_contains('restaurant_id', 'rating', 'review_title', 'review_content'))
+def add_reviews():
+    # type: () -> str
+    form = request.form
+    username = session[UID_KEY]
+    restaurant_id = int(form['restaurant_id'])
+    rating = float(form['rating'])
+    review_title = form['review_title']
+    review_content = form['review_content']
+    database.add_review(restaurant_id, username, rating, review_title, review_content)
+    return 'OK'
+    
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
