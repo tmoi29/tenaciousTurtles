@@ -751,49 +751,7 @@
         
     };
     
-    const RestaurantsPageModule = function( //
-        LocationModule,
-        ZomatoModule,
-        GettyModule,
-        RestaurantListModule, //
-    ) {
-        
-        let useZipCode = false;
-        let lastLocation = null;
-        
-        const onZipCodeEnter = function() {
-            console.log("Use Zip");
-            useZipCode = true;
-            LocationModule.getLocation.dontUseGps();
-        };
-        
-        const onLocate = function() {
-            useZipCode = false;
-            LocationModule.getLocation.useGps();
-        };
-        
-        const getLocation = function() {
-            return new Promise(resolve => {
-                if (useZipCode) {
-                    if (lastLocation) {
-                        resolve(lastLocation);
-                        return;
-                    }
-                    const zipCodeText = getLocation.zipCodeField.innerText;
-                    console.log(zipCodeText);
-                    if (zipCodeText && zipCodeText.length === 5) {
-                        LocationModule.zipCodeLocation(zipCodeText)
-                            .then(coords => resolve(coords));
-                        return;
-                    }
-                }
-                return LocationModule.getLocation()
-                    .then(coords => resolve(coords));
-            });
-        };
-        getLocation.zipCodeField = null;
-        
-        const restaurants = ZomatoModule.newRestaurants(getLocation);
+    const RestaurantImageModule = function() {
         
         const getGoogleImgUrlsOwnServer = function(query) {
             return fetch("/google_image_search?" + $.param({query: query}))
@@ -842,7 +800,7 @@
             return getGoogleImgUrlsCorsServer(query);
         };
         
-        const getRestaurantImgUrl = function(restaurant) {
+        const getRestaurantImgUrls = function(restaurant) {
             const imgUrl = restaurant.featured_image || restaurant.thumb;
             if (imgUrl) {
                 return Promise.resolve([imgUrl]);
@@ -852,6 +810,78 @@
             return getGoogleImgUrls(phrase);
             // return GettyModule.getImageUrl(phrase, "best_match");
         };
+        
+        const setRestaurantImgUrl = function(imgDiv, restaurant) {
+            return getRestaurantImgUrls(restaurant)
+                .then(imgUrls => {
+                    for (const imgUrl of imgUrls) {
+                        imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
+                        // if imgUrl is corrupt or something,
+                        // imgDiv.style.cssText will be an empty string ""
+                        if (imgDiv.style.cssText) {
+                            restaurant.img = imgUrl;
+                            return imgUrl;
+                        }
+                    }
+                    restaurant.img = "";
+                    console.log("no image found for: ");
+                    console.log(imgDiv);
+                    return "";
+                });
+        };
+        
+        return {
+            getGoogleImgUrls: getRestaurantImgUrls,
+            getRestaurantImgUrls: getRestaurantImgUrls,
+            setRestaurantImgUrl: setRestaurantImgUrl,
+        };
+        
+    };
+    
+    const RestaurantsPageModule = function( //
+        LocationModule,
+        ZomatoModule,
+        GettyModule,
+        RestaurantImageModule,
+        RestaurantListModule, //
+    ) {
+        
+        let useZipCode = false;
+        let lastLocation = null;
+        
+        const onZipCodeEnter = function() {
+            console.log("Use Zip");
+            useZipCode = true;
+            LocationModule.getLocation.dontUseGps();
+        };
+        
+        const onLocate = function() {
+            useZipCode = false;
+            LocationModule.getLocation.useGps();
+        };
+        
+        const getLocation = function() {
+            return new Promise(resolve => {
+                if (useZipCode) {
+                    if (lastLocation) {
+                        resolve(lastLocation);
+                        return;
+                    }
+                    const zipCodeText = getLocation.zipCodeField.innerText;
+                    console.log(zipCodeText);
+                    if (zipCodeText && zipCodeText.length === 5) {
+                        LocationModule.zipCodeLocation(zipCodeText)
+                            .then(coords => resolve(coords));
+                        return;
+                    }
+                }
+                return LocationModule.getLocation()
+                    .then(coords => resolve(coords));
+            });
+        };
+        getLocation.zipCodeField = null;
+        
+        const restaurants = ZomatoModule.newRestaurants(getLocation);
         
         /**
          * Add Zomato restaurant data to a div.
@@ -880,23 +910,7 @@
             const imgDiv = newDiv().withClass("image-holder");
             div.appendChild(imgDiv);
             
-            getRestaurantImgUrl(restaurant)
-                .then(imgUrls => {
-                    let foundImg = false;
-                    for (const imgUrl of imgUrls) {
-                        imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
-                        // if imgUrl is corrupt or something,
-                        // imgDiv.style.cssText will be an empty string ""
-                        if (imgDiv.style.cssText) {
-                            foundImg = true;
-                            break;
-                        }
-                    }
-                    if (!foundImg) {
-                        console.log("no image found for: ");
-                        console.log(imgDiv);
-                    }
-                });
+            RestaurantImageModule.setRestaurantImgUrl(imgDiv, restaurant);
         };
         
         const openRestaurantInfoInNewPage = function(restaurant) {
@@ -970,7 +984,7 @@
         
     };
     
-    const RestaurantInfoPageModule = function(ZomatoModule) {
+    const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule) {
         
         const getRestaurant = function() {
             if ("restaurant" in window) {
@@ -994,7 +1008,7 @@
         
         const addRestaurantInfo = function(restaurant) {
             const name = restaurant.name;
-            const src = restaurant.featured_image;
+            const src = restaurant.img;
             const address = restaurant.location.address;
             const rating = restaurant.user_rating.aggregate_rating;
             const price = restaurant.price_range;
@@ -1010,6 +1024,23 @@
             img.src = src;
             img.width = 500;
             img.heigh = 250;
+            
+            if (!src) {
+                RestaurantImageModule.getRestaurantImgUrls(restaurant)
+                    .then(imgUrls => {
+                        imgUrls.reverse();
+                        // keep reloading next url until successful or no more urls
+                        img.onerror = function() {
+                            const imgUrl = imgUrls.pop();
+                            if (imgUrl === undefined) {
+                                img.onerror = undefined;
+                                return;
+                            }
+                            img.src = imgUrl;
+                        };
+                        img.src = imgUrls.pop();
+                    });
+            }
             
             const loc = document.getElementById("loc");
             loc.innerText = address;
@@ -1096,6 +1127,7 @@
             const locationModule = LocationModule();
             const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
             const gettyModule = GettyModule(apiKeys.getty);
+            const restaurantImageModule = RestaurantImageModule();
             const restaurantListModule = RestaurantListModule();
             const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
             
@@ -1119,6 +1151,7 @@
                 locationModule,
                 zomatoModule,
                 gettyModule,
+                restaurantImageModule,
                 restaurantListModule,
                 restaurantInfoPageModule);
             restaurantsPageModule.main();
@@ -1126,7 +1159,9 @@
         
         "/restaurant_info": function main(apiKeys) {
             const zomatoModule = ZomatoModule(null, apiKeys.zomato);
-            const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
+            const restaurantImageModule = RestaurantImageModule();
+            const restaurantInfoPageModule =
+                RestaurantInfoPageModule(zomatoModule, restaurantImageModule);
             restaurantInfoPageModule.main();
         },
         
