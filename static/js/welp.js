@@ -1070,7 +1070,7 @@
     
     const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule) {
         
-        let _restaurant = window.restaurant || {};
+        let _restaurant = window.restaurant || undefined;
         
         const getRestaurant = function() {
             if (_restaurant) {

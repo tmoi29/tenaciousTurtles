@@ -625,3 +625,9 @@ Updated the secrets_template.json with the modified format
 and the added Google Geocoding API key.
 
 =======================================================
+khyberS -- 2018-01-14 07:31:31
+
+Fixed a bug in /restaurant_info where the restaurant data
+wasn't reloaded when the page was loaded fresh (not from /index).
+
+=======================================================
