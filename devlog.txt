@@ -532,3 +532,10 @@ Now all the Google image URLs are tried until one works,
 because a few of them are corrupt URLs and don't display.
 
 =======================================================
+khyberS -- 2018-01-14 00:02:29
+
+Made the Submit button disabled if the passwords don't match
+on the create account page.
+A message saying the passwords don't match also pops up.
+
+=======================================================

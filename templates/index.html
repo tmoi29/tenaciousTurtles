@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/index.css">
-  {# define global apiKey for use in welp.js #}
+{% endblock %}
+
+{% block preJS %}
   <script>
-      const zomatoApiKey = "{{ zomato_api_key }}";
-      const gettyApiKey = "{{ getty_api_key }}";
+      apiKeys.zomato = "{{ zomato_api_key }}";
+      apiKeys.getty = "{{ getty_api_key }}";
   </script>
-  <script src="js/welp.js"></script>
 {% endblock %}
 
 {% block body %}

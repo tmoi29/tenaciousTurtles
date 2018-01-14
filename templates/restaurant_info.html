@@ -2,15 +2,15 @@
 
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
-  <script>
-      const zomatoApiKey = "{{ zomato_api_key }}";
-      const gettyApiKey = "{{ getty_api_key }}";
+{% endblock %}
 
+{% block preJS %}
+  <script>
+      apiKeys.zomato = "{{ zomato_api_key }}";
       const restaurantId = +{{ restaurant_id }};
       // noinspection JSAnnotator
       const welpReviews = {{ json.dumps(welp_reviews) }};
   </script>
-  <script src="js/welp.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -42,7 +42,7 @@
               </ul>
             </div>
             <div class="col-md-12">
-              <p class="disclosure">  </p>
+              <p class="disclosure"></p>
             </div>
           </div>
           <div class="panel-footer">

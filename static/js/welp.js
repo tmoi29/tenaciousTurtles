@@ -1052,12 +1052,50 @@
         
     };
     
+    const CreateAccountPageModule = function() {
+        
+        const disableSubmitPasswordsIfNotMatching = function() {
+            const password1 = $("#password1");
+            const password2 = $("#password2");
+            const submitPassword = $("#submitPassword");
+            
+            const passwordsDontMatchText = newDiv();
+            passwordsDontMatchText.innerHTML = "<br><p>Passwords don't match</p>";
+            
+            const checkPasswordsMatch = function() {
+                const match = password1.val() === password2.val();
+                submitPassword.attr("disabled", !match);
+                
+                if (match) {
+                    passwordsDontMatchText.remove();
+                } else {
+                    password2.after(passwordsDontMatchText);
+                }
+            };
+            
+            $("#password1, #password2").keyup(checkPasswordsMatch);
+        };
+        
+        const main = function() {
+            
+            $(() => {
+                disableSubmitPasswordsIfNotMatching();
+            });
+            
+        };
+        
+        return {
+            main: main,
+        };
+        
+    };
+    
     const mains = {
         
-        "/index": function main(zomatoApiKey, gettyApiKey) {
+        "/index": function main(apiKeys) {
             const locationModule = LocationModule();
-            const zomatoModule = ZomatoModule(locationModule, zomatoApiKey);
-            const gettyModule = GettyModule(gettyApiKey);
+            const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
+            const gettyModule = GettyModule(apiKeys.getty);
             const restaurantListModule = RestaurantListModule();
             const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
             
@@ -1086,18 +1124,23 @@
             restaurantsPageModule.main();
         },
         
-        "/restaurant_info": function main(zomatoApiKey) {
-            const zomatoModule = ZomatoModule(null, zomatoApiKey);
+        "/restaurant_info": function main(apiKeys) {
+            const zomatoModule = ZomatoModule(null, apiKeys.zomato);
             const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
             restaurantInfoPageModule.main();
         },
         
+        "/create_account": function main() {
+            const createAccountPageModule = CreateAccountPageModule();
+            createAccountPageModule.main();
+        },
+        
     };
     
-    (function main(zomatoApiKey, gettyApiKey) {
+    (function main(apiKeys) {
         if (mains.hasOwnProperty(location.pathname)) {
-            mains[location.pathname](zomatoApiKey, gettyApiKey);
+            mains[location.pathname](apiKeys);
         }
-    })(zomatoApiKey, gettyApiKey); // access global apiKey templated into index.html, or prompt user if undefined
+    })(apiKeys); // access global apiKeys templated into index.html, or prompt user if undefined
     
 })(window);
