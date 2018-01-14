@@ -631,3 +631,10 @@ Fixed a bug in /restaurant_info where the restaurant data
 wasn't reloaded when the page was loaded fresh (not from /index).
 
 =======================================================
+khyberS -- 2018-01-14 07:32:50
+
+Added some reviews on Zomato for us to demo.
+If you type in 10282 and go to Dirty Bird's or Amore Pizza Restaurant,
+you can see the reviews I added.
+
+=======================================================
