@@ -56,9 +56,10 @@ not_logged_in = preconditions(index, is_not_logged_in)  # type: Router
 def login():
     # type: () -> Response
     form = request.form
-    if not database.authenticate(form['username'], form['password']):
+    username = form['username']
+    if not database.authenticate(username, form['password']):
         return reroute_to(login_page)
-    session[UID_KEY] = True
+    session[UID_KEY] = username
     return reroute_to(index)
 
 
@@ -76,9 +77,11 @@ def create_account_page():
 def create_account():
     # type: () -> Response
     form = request.form
-    if not database.add_account(form['username'], form['password1'], form['password2']):
+    username = form['username']
+    if not database.add_account(username, form['password1'], form['password2']):
         return reroute_to(create_account_page)
-    return reroute_to(login)
+    session[UID_KEY] = username
+    return reroute_to(index)
 
 
 @app.route('/logout')

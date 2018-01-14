@@ -539,3 +539,9 @@ on the create account page.
 A message saying the passwords don't match also pops up.
 
 =======================================================
+khyberS -- 2018-01-14 00:10:14
+
+When you create a new account, it logs you in right away
+without you having to enter your info in the login page.
+
+=======================================================
