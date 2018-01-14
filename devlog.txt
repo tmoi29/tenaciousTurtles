@@ -619,3 +619,9 @@ for the Google image search.
 It's painfully slow, but it's better than nothing.
 
 =======================================================
+khyberS -- 2018-01-14 07:12:11
+
+Updated the secrets_template.json with the modified format
+and the added Google Geocoding API key.
+
+=======================================================
