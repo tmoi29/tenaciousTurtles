@@ -3,13 +3,6 @@
   <link rel="stylesheet" type="text/css" href="css/index.css">
 {% endblock %}
 
-{% block preJS %}
-  <script>
-      apiKeys.zomato = "{{ zomato_api_key }}";
-      apiKeys.getty = "{{ getty_api_key or "undefined" }}";
-  </script>
-{% endblock %}
-
 {% block body %}
 
   <div id="welpcarousel" class="carousel slide" data-ride="carousel" data-pause="hover">
@@ -49,13 +42,15 @@
     </center>
   </div> <!-- end slider -->
 
-  <center>
-    <form>
-      <input type="text" placeholder="Zipcode" id="zipCode">
-      <input type="submit" value="Use Zipcode" id="enterZipCode">
-    </form>
-    <button id="locate">Locate</button>
-  </center>
+  <div id="location">
+    <center>
+      <form id="zipCodeForm">
+        <input type="text" placeholder="Zipcode" id="zipCode">
+        <input type="submit" value="Use Zipcode" id="enterZipCode">
+      </form>
+      <button id="locate">Use Current Location</button>
+    </center>
+  </div>
 
   <br> <br>
   <center>

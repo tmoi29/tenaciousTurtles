@@ -15,11 +15,15 @@
 
     <script>
         let welpPreMain = undefined;
-        const loggedIn = false || {{ "true" if isLoggedIn() else "false" }};
-        const apiKeys = {
+        const loggedIn = false || {{ "true" if is_logged_in() else "false" }};
+        let apiKeys = {
             zomato: undefined,
+            google: {
+                geocoding: undefined,
+            },
             getty: undefined,
         };
+        apiKeys = {{ api_keys_json|safe }};
     </script>
     {% block preJS %}
     {% endblock %}

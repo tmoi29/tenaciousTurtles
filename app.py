@@ -11,9 +11,8 @@ from util.flask.flask_utils_types import Router
 from util.flask.template_context import add_template_context, context
 from utils import database
 
-api_keys = json.loads(open('api/secrets.json').read())
-zomato_api_key = api_keys['zomato']['key']
-getty_api_key = api_keys.get('getty', {}).get('key')  # will be "undefined" if not in secrets.json
+api_keys_json = open('api/secrets.json').read()
+context['api_keys_json'] = api_keys_json
 
 app = Flask(__name__, static_url_path='')
 
@@ -34,9 +33,7 @@ def index():
     # type: () -> Response
     return render_template(
             'index.html',
-            logged_in=is_logged_in(),
-            zomato_api_key=zomato_api_key,
-            getty_api_key=getty_api_key)
+            logged_in=is_logged_in())
 
 
 @app.route('/login')
@@ -108,8 +105,6 @@ def restaurant_info():
         },
     } for restaurant_id, username, rating, review_title, review_content in db_reviews]
     return render_template('restaurant_info.html',
-                           zomato_api_key=zomato_api_key,
-                           getty_api_key=getty_api_key,
                            restaurant_id=restaurant_id,
                            user_reviews=db_reviews,
                            welp_reviews=welp_reviews,

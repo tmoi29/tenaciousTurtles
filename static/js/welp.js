@@ -11,6 +11,10 @@
         return this[this.length - 1];
     };
     
+    Array.prototype.clear = function() {
+        this.length = 0;
+    };
+    
     const newDiv = function() {
         return document.createElement("div");
     };
@@ -56,7 +60,9 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     };
     
-    const LocationModule = function() {
+    const LocationModule = function(_googleGeocodingApiKey) {
+        
+        const googleGeocodingApiKey = _googleGeocodingApiKey || prompt("Enter Google Geocoding API key:");
         
         const hasGps = "geolocation" in navigator;
         
@@ -133,10 +139,15 @@
         };
         
         const zipCodeLocation = function(zipCode) {
-            return fetch("maps.googleapis.com/maps/api/geocode/json?address=" + zipCode)
+            return fetch("https://maps.googleapis.com/maps/api/geocode/json?" + $.param({
+                address: zipCode,
+                key: googleGeocodingApiKey,
+            }), {
+                cache: "force-cache",
+            })
                 .then(response => response.json())
                 .then(json => {
-                    const location = json.geometry.location;
+                    const location = json.results[0].geometry.location;
                     console.log("location for " + zipCode);
                     console.log(location);
                     return {
@@ -674,7 +685,15 @@
         
         const newRestaurantList = function(restaurantToDiv, id, klass, width = 4) {
             
-            const div = newDiv().withId(id).withClass(klass);
+            let div = null;
+            let _parent = null;
+            
+            const initDiv = function() {
+               div = newDiv().withId(id).withClass(klass);
+            };
+            
+            initDiv();
+            
             const rows = [];
             
             let i = 0;
@@ -690,6 +709,7 @@
             return {
                 
                 appendTo: function(parent) {
+                    _parent = parent;
                     parent.appendChild(div);
                     return this;
                 },
@@ -752,6 +772,20 @@
                     return this;
                 },
                 
+                reset: function() {
+                    const parent = _parent;
+                    i = 0;
+                    j = 0;
+                    rows.clear();
+                    if (parent) {
+                        div.remove();
+                    }
+                    initDiv();
+                    if (parent) {
+                        parent.appendChild(div);
+                    }
+                },
+                
             };
         };
         
@@ -765,7 +799,8 @@
         
         const getGoogleImgUrlsOwnServer = function(query) {
             return fetch("/google_image_search?" + $.param({query: query}))
-                .then(response => response.json());
+                .then(response => response.json())
+                .catch(console.log);
         };
         
         /*
@@ -789,8 +824,16 @@
                 }), {
                 cache: "force-cache",
             })
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        return null;
+                    }
+                    return response.text();
+                })
                 .then(html => {
+                    if (html === null) {
+                        return null;
+                    }
                     const urls = [];
                     const fieldName = "\"ou\":";
                     let i;
@@ -807,7 +850,16 @@
         };
         
         const getGoogleImgUrls = window.getGoogleImgUrls = function(query) {
-            return getGoogleImgUrlsCorsServer(query);
+            return getGoogleImgUrlsCorsServer(query)
+                .then(imgUrls => {
+                    if (imgUrls !== null) {
+                        return imgUrls;
+                    }
+                    // fallback to our own CORS server
+                    // in case cors-anywhere fails
+                    // (sometimes it sends 429 (Too Many Requests)
+                    return getGoogleImgUrlsOwnServer(query);
+                });
         };
         
         const getRestaurantImgUrls = function(restaurant) {
@@ -858,39 +910,46 @@
         let useZipCode = false;
         let lastLocation = null;
         
+        const switchLocatorAndReload = function(useGps) {
+            console.log("Now using " + (useGps ? "GPS" : "Zipcode"));
+            useZipCode = !useGps;
+            LocationModule.getLocation.useGps(useGps);
+            loadInitialRestaurants(true);
+        };
+        
         const onZipCodeEnter = function() {
-            console.log("Use Zip");
-            useZipCode = true;
-            LocationModule.getLocation.dontUseGps();
+            switchLocatorAndReload(false);
         };
         
         const onLocate = function() {
-            useZipCode = false;
-            LocationModule.getLocation.useGps();
+            switchLocatorAndReload(true);
         };
         
         const getLocation = function() {
-            return new Promise(resolve => {
-                if (useZipCode) {
-                    if (lastLocation) {
-                        resolve(lastLocation);
-                        return;
-                    }
-                    const zipCodeText = getLocation.zipCodeField.innerText;
-                    console.log(zipCodeText);
-                    if (zipCodeText && zipCodeText.length === 5) {
-                        LocationModule.zipCodeLocation(zipCodeText)
-                            .then(coords => resolve(coords));
-                        return;
-                    }
+            if (useZipCode) {
+                if (lastLocation) {
+                    return Promise.resolve(lastLocation);
                 }
-                return LocationModule.getLocation()
-                    .then(coords => resolve(coords));
-            });
+                const zipCodeText = getLocation.zipCodeField.value;
+                if (zipCodeText && zipCodeText.length === 5) {
+                    return LocationModule.zipCodeLocation(zipCodeText)
+                        .then(coords => {
+                            lastLocation = coords;
+                            return coords;
+                        });
+                }
+            }
+            return LocationModule.getLocation();
         };
         getLocation.zipCodeField = null;
         
-        const restaurants = ZomatoModule.newRestaurants(getLocation);
+        let restaurants = null;
+        
+        const initRestaurants = function() {
+            restaurants = ZomatoModule.newRestaurants(getLocation);
+        };
+        
+        initRestaurants();
         
         /**
          * Add Zomato restaurant data to a div.
@@ -937,20 +996,45 @@
         };
         
         const numInitialRestaurants = 20;
+    
+        let first = true;
+        
+        const resetRestaurants = function() {
+            first = false;
+            restaurantList.reset();
+            initRestaurants();
+        };
+        
+        const loadInitialRestaurants = function(reset = false) {
+            if (reset) {
+                resetRestaurants();
+            }
+            new Range(0, numInitialRestaurants).forEach(i => {
+                addRestaurant()
+                    .then(() => {
+                        if (first) {
+                            first = false;
+                            setTimeout(() => loadInitialRestaurants.zipCodeField.scrollIntoView(), 100);
+                        }
+                    });
+            });
+        };
+        loadInitialRestaurants.zipCodeField = null;
         
         const main = function() {
             $(() => {
-                const zipCodeField = document.getElementById("zipCode");
-                const zipCodeEnterButton = document.getElementById("enterZipCode");
-                const locateButton = $("#locate")[0];
+                const zipCodeField = $("#zipCode")[0];
                 const moreRestaurantsButton = $("#moreRestaurants")[0];
                 const restaurantListDiv = $("#restaurants")[0];
                 
                 getLocation.zipCodeField = zipCodeField;
                 
-                zipCodeEnterButton.addEventListener("click", onZipCodeEnter);
-                
-                locateButton.addEventListener("click", onLocate);
+                $("#enterZipCode").click(onZipCodeEnter);
+                $("#zipCodeForm").submit(event => {
+                    onZipCodeEnter();
+                    return false;
+                });
+                $("#locate").click(onLocate);
                 
                 restaurantList
                     .appendTo(restaurantListDiv)
@@ -960,17 +1044,8 @@
                         },
                     });
                 
-                let first = true;
-                
-                new Range(0, numInitialRestaurants).forEach(i => {
-                    addRestaurant()
-                        .then(() => {
-                            if (first) {
-                                first = false;
-                                setTimeout(() => zipCodeField.scrollIntoView(), 100);
-                            }
-                        });
-                });
+                loadInitialRestaurants.zipCodeField = zipCodeField;
+                loadInitialRestaurants();
                 
                 moreRestaurantsButton.addEventListener("click", () => {
                     addRestaurant();
@@ -1173,10 +1248,19 @@
         
     };
     
+    // for testing
+    // const apiKeys = {
+    //     zomato: "",
+    //     google: {
+    //         geocoding: ""
+    //     },
+    //     getty: undefined,
+    // };
+    
     const mains = {
         
         "/index": function main(apiKeys) {
-            const locationModule = LocationModule();
+            const locationModule = LocationModule(apiKeys.google.geocoding);
             const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
             const restaurantImageModule = RestaurantImageModule();
             const restaurantListModule = RestaurantListModule();
@@ -1205,6 +1289,11 @@
                 restaurantListModule,
                 restaurantInfoPageModule);
             restaurantsPageModule.main();
+        },
+        
+        // for testing purposes
+        "/static/test.html": function main(apiKeys) {
+            this["/index"](apiKeys);
         },
         
         "/restaurant_info": function main(apiKeys) {

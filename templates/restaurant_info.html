@@ -6,7 +6,6 @@
 
 {% block preJS %}
   <script>
-      apiKeys.zomato = "{{ zomato_api_key }}";
       const restaurantId = +{{ restaurant_id }};
       // noinspection JSAnnotator
       const welpReviews = {{ json.dumps(welp_reviews) }};

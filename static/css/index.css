@@ -85,7 +85,7 @@ h1 {
     padding: 8px;
 }
 
-form {
+#location {
     z-index: 25;
     position: absolute;
     top: 380px;

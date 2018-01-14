@@ -583,3 +583,39 @@ Right now, I supplied the username.
 The route also checks that the user is logged in first.
 
 =======================================================
+khyberS -- 2018-01-14 07:00:51
+
+Got Use Zipcode and Use Current Location to work.
+
+For the Google Geocoding API, we need an API key,
+so I added one used by the JS and defined in secrets.json.
+
+Now, the apiKeys global object available to the JS
+is just a copy of secrets.json,
+so adding new keys should be very easy.
+
+For the Use Zipcode button, I changed the normal submit action
+to a custom onsubmit JS function that uses the zipcode instead of GPS/IP address.
+
+But the zipcode input box and the zipcode and current location buttons
+in one div, which CSS is applied to (instead of just the form like before).
+
+Added a resetRestaurants() function that removes all the current restaurants
+and reloads the initial (20) ones.
+This is used when the zipcode is changed or the current location is used again,
+because a different location means different restaurants must be shown.
+To do this, restaurants is re-initialized,
+and restaurantList.reset() is called.
+
+Added a reset() method to newRestaurantList(),
+which removes the div (to be garbage collected),
+makes a new one, and resets the indices/count.
+This is called by resetRestaurants().
+
+Found out that the cors-anywhere server
+sometimes responds with a 429 Too Many Requests.
+In this case, we fall back to our own CORS server
+for the Google image search.
+It's painfully slow, but it's better than nothing.
+
+=======================================================
