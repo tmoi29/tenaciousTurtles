@@ -428,6 +428,11 @@ khyberS -- 2018-01-11 22:18:06
 Added gettyApiKey definition in restaurant_info.html.
 
 =======================================================
+moiT -- 2018-01-04 22:33
+
+Added restaurant info to the page
+
+=======================================================
 ionkinaK -- 2018-01-12 00:39
 
 Improved the image positioning and behavior in the index.html 
@@ -638,3 +643,12 @@ If you type in 10282 and go to Dirty Bird's or Amore Pizza Restaurant,
 you can see the reviews I added.
 
 =======================================================
+moiT -- 2018-01-15 18:47
+
+Added profile functions to app.py
+Created profile.html
+Will display the restaurant panels like index.html given
+the restaurant IDs
+Modified the database structure to use username, not id
+
+
