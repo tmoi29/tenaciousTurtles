@@ -101,34 +101,34 @@ def get_reviews(restaurant):
         return [review for review in reviews]
 
 
-def add_favorite(user_id, restaurant_id):
+def add_favorite(username, restaurant_id):
     # type: (int, int) -> None
     """
     Adds favorited restaurants for a user
     Arg:
-        user_id (int): ID number of the user
+        username (str): username
         restaurant_id  (int): ID number of restaurant based on Zomato
     """
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
         c.execute(
                 'INSERT INTO favorite VALUES(?, ?)',
-                [user_id, restaurant_id])
+                [username, restaurant_id])
         db.commit()
 
 
-def get_favorite(user_id):
+def get_favorite(username):
     # type: (int) -> List[int]
     """
     Gets favorited restaurants for a user
     Arg:
-        user_id (int): ID number of the user
+        username (str): username
     Ret:
         List of restaurant IDs that user saved
     """
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
-        query = c.execute('SELECT restaurant FROM favorite WHERE userID = ?', [user_id])
+        query = c.execute('SELECT restaurant FROM favorite WHERE username = ?', [username])
         return [restaurant[0] for restaurant in query]
 
 

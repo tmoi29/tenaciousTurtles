@@ -1101,7 +1101,13 @@
             const name = restaurant.name;
             const src = restaurant.img;
             const address = restaurant.location.address;
-            const rating = restaurant.user_rating.aggregate_rating;
+            const num_reviews = restaurant.user_rating.rating_text;
+            if (num_reviews == "Not rated"){
+                var rating = "N/A";
+            }
+            else {
+                var rating = restaurant.user_rating.aggregate_rating;
+            }
             const price = restaurant.price_range;
             const cuisine = restaurant.cuisines;
             const menu = restaurant.menu_url;
@@ -1114,7 +1120,7 @@
             const img = document.getElementById("img");
             img.src = src;
             img.width = 500;
-            img.heigh = 250;
+            img.height = 250;
             
             if (!src) {
                 RestaurantImageModule.getRestaurantImgUrls(restaurant)
@@ -1137,6 +1143,7 @@
             loc.innerText = address;
             
             const r = document.getElementById("rating");
+            console.log(rating);
             r.innerText = rating;
             
             const cui = document.getElementById("cuisine");

@@ -20,7 +20,7 @@ def initialize():
     
     c.execute('CREATE TABLE IF NOT EXISTS '
               'favorite('
-              'userID INTEGER, '
+              'username TEXT, '
               'restaurant INTEGER)')
     
     db.commit()
