@@ -117,7 +117,8 @@ def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
     return render_template("profile.html", restaurant_ids = restaurants)
-    
+
+
 @app.route('/google_image_search', methods=['get', 'post'])
 def google_image_search_urls():
     # type: () -> Response

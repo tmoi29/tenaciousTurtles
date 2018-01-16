@@ -74,12 +74,13 @@ def authenticate(username, password):
         return False
 
 
-def add_review(restaurant, user, rating, review_title, review_content):
+def add_review(restaurant, username, rating, review_title, review_content):
+    # type: (int, unicode, float, unicode, unicode) -> None
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
         c.execute(
                 'INSERT INTO reviews VALUES (?, ?, ?, ?, ?)',
-                [restaurant, user, rating, review_title, review_content])
+                [restaurant, username, rating, review_title, review_content])
         db.commit()
 
 
@@ -102,7 +103,7 @@ def get_reviews(restaurant):
 
 
 def add_favorite(username, restaurant_id):
-    # type: (int, int) -> None
+    # type: (unicode, int) -> None
     """
     Adds favorited restaurants for a user
     Arg:
@@ -118,7 +119,7 @@ def add_favorite(username, restaurant_id):
 
 
 def get_favorite(username):
-    # type: (int) -> List[int]
+    # type: (unicode) -> List[int]
     """
     Gets favorited restaurants for a user
     Arg:

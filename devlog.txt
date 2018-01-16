@@ -651,4 +651,11 @@ Will display the restaurant panels like index.html given
 the restaurant IDs
 Modified the database structure to use username, not id
 
+=======================================================
+khyberS -- 2018-01-16 15:02:20
 
+Fixed zipcode bug so now you can search any zipcode
+any number of times.  For example, the "zipcode" asdfgh
+is near the Khyber Pass in Pakistan.
+
+=======================================================
