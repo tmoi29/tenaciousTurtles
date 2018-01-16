@@ -1,5 +1,5 @@
 ![Welp](static/img/logo.png)
-# tenaciousTurtles
+# Tenacious Turtles
 
 ## Features
 
@@ -25,7 +25,7 @@ Request an API key
 
 Get said key in e-mail
 
-#### Google
+#### Google:
 
 Go to the [Google Geocoding get API key page](https://developers.google.com/maps/documentation/geocoding/get-api-key)
 
@@ -33,7 +33,7 @@ Request an API key
 
 Copy the API key from the confirmation screen
 
-Save both keys in `.secret_key.txt` in the same directory as app.py
+Save both keys in `.secrets.json` in /api, according to the format of `secrets_template.json`
 
 ### 3. Prepare for launch
 
@@ -43,7 +43,7 @@ We recommend you use an virtual environment to install dependencies for this sit
 
 [To install virtualenv](https://virtualenv.pypa.io/en/stable/installation/)
 
-[To create an virtualevn](https://virtualenv.pypa.io/en/stable/reference/#virtualenv-command)
+[To create an virtualenv](https://virtualenv.pypa.io/en/stable/reference/#virtualenv-command)
 
 To activate virtualenv in a Unix-based system:
 
@@ -54,6 +54,28 @@ To activate virtualenv in a Unix-based system:
 With an activated virtualenv:
 
 `pip install -r ../tenaciousTurtles/requirements.txt`
+
+#### Sample database
+
+If you want a sample database containing a few premade accounts and reviews:
+
+   From the root of the repo:
+
+   ```
+   touch utils/generate_sample
+   python utils/database.py
+   rm utils/generate_sample
+   ```
+   
+If you want a blank database ready for usage:
+
+   From the root of the repo:
+   ```
+   touch utils/generate_empty
+   python utils/database.py
+   rm utils/generate_empty
+   ```
+
 
 ### 4. Launch
 
