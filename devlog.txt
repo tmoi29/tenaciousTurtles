@@ -651,4 +651,9 @@ Will display the restaurant panels like index.html given
 the restaurant IDs
 Modified the database structure to use username, not id
 
+===============================================================
+liuY -- 2018-01-16 2:00
 
+Finished README.md
+Enabled the creation of empty/sample database
+    Updated requirements.txt to reflect changes to requirements
