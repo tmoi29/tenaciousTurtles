@@ -1,4 +1,5 @@
 from __future__ import print_function
+from pathlib import Path
 
 import hashlib
 import sqlite3
@@ -133,30 +134,36 @@ def get_favorite(username):
 
 
 if __name__ == '__main__':
-    init = False
-    debug = True
+    file = Path("generate_sample")
+    generate_sample = file.is_file()
+
+    file = Path("generate_empty")
+    init = file.is_file()
     
-    if init:
+    debug           = False
+    filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at mi consequat, sodales sem non, ultricies nisl. Donec consequat dui id eros pulvinar venenatis. Nam suscipit dolor at lacus sollicitudin venenatis. Nam et magna mauris. Sed blandit porta dolor, et viverra eros accumsan in. Sed augue leo, faucibus aliquet nulla quis, pretium porttitor velit. Ut sollicitudin nisi lacus, non ultrices magna tristique in. Cras non metus non velit rhoncus tincidunt. Aliquam condimentum rhoncus ante eget ultricies.'
+    
+    if init or generate_sample:
         add_favorite(1, 2)
         add_favorite(10, 11)
         add_favorite(1, 15)
-        '''
+
+    if generate_sample:
         print()
         add_account('john smith', 'abc123', 'abc123')
         print()
         add_account('joe doe', 'johnNeedsToChangeHisPassword', 'johnNeedsToChangeHisPassword')
         print()
         add_account('john smith', 'should not happen', 'should not happen')
-        add_review(1, 'john smith', 5, 'Nice', 'filler text goes here')
-        add_review(2, 'john smith', 3, 'pls no', 'filler')
-        add_review(1, 'joe doe', 4, 'ok', 'hope this works')
-        '''
-    
+        add_review(1, 'john smith', 5, 'Nice', filler)
+        add_review(2, 'john smith', 3, 'pls no', filler)
+        add_review(1, 'joe doe', 4, 'ok', filler)
+        
     if debug:
         print(get_favorite(1))
         print(get_favorite(10))
         print(get_favorite(0))
-        '''
+        
         print()
         authenticate('john smith', 'abc123')
         print()
@@ -167,4 +174,3 @@ if __name__ == '__main__':
         get_review(1)
         print()
         get_review(2)
-        '''
