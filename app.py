@@ -118,6 +118,7 @@ def profile():
     restaurants = database.get_favorite(username)
     return render_template("profile.html", restaurant_ids = restaurants, json = json)
     
+
 @app.route('/google_image_search', methods=['get', 'post'])
 def google_image_search_urls():
     # type: () -> Response

@@ -15,6 +15,18 @@
         this.length = 0;
     };
     
+    Object.prototype.noNulls = function() {
+        for (const field in this) {
+            if (this.hasOwnProperty(field)) {
+                const value = this[field];
+                if (value === null || value === undefined) {
+                    delete this[field];
+                }
+            }
+        }
+        return this;
+    };
+    
     const newDiv = function() {
         return document.createElement("div");
     };
@@ -173,7 +185,7 @@
         
         const getZomato = function(route, query) {
             const baseUrl = "https://developers.zomato.com/api/v2.1/";
-            const url = baseUrl + route + "?" + $.param(query);
+            const url = baseUrl + route + "?" + $.param(query.noNulls());
             // + Object.entries(query)
             //     .filter(e => e[1]) // filter out false values
             //     .map(e => e[0] + "=" + e[1])
@@ -911,6 +923,11 @@
         let lastLocation = null;
         
         const switchLocatorAndReload = function(useGps) {
+            // if caching isn't properly, won't be able to change to new zipcode
+            // easier to just not use caching
+            // let browser cache as many requests as possible instead
+            lastLocation = null;
+            
             console.log("Now using " + (useGps ? "GPS" : "Zipcode"));
             useZipCode = !useGps;
             LocationModule.getLocation.useGps(useGps);
@@ -931,7 +948,7 @@
                     return Promise.resolve(lastLocation);
                 }
                 const zipCodeText = getLocation.zipCodeField.value;
-                if (zipCodeText && zipCodeText.length === 5) {
+                if (zipCodeText /*&& zipCodeText.length === 5*/) {
                     return LocationModule.zipCodeLocation(zipCodeText)
                         .then(coords => {
                             lastLocation = coords;
@@ -1102,12 +1119,8 @@
             const src = restaurant.img;
             const address = restaurant.location.address;
             const num_reviews = restaurant.user_rating.rating_text;
-            if (num_reviews == "Not rated"){
-                var rating = "N/A";
-            }
-            else {
-                var rating = restaurant.user_rating.aggregate_rating;
-            }
+            const rating = num_reviews === "Not rated" ? "N/A" : restaurant.user_rating.aggregate_rating;
+
             const price = restaurant.price_range;
             const cuisine = restaurant.cuisines;
             const menu = restaurant.menu_url;
@@ -1314,6 +1327,10 @@
         "/create_account": function main() {
             const createAccountPageModule = CreateAccountPageModule();
             createAccountPageModule.main();
+        },
+        
+        "/profile": function main(apiKeys) {
+            // TODO
         },
         
     };
