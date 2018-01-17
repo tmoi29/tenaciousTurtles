@@ -2,7 +2,11 @@
 
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
+
+
+
 {% endblock %}
+
 
 {% block preJS %}
   <script>
@@ -12,6 +16,7 @@
   </script>
 {% endblock %}
 
+
 {% block body %}
   <br><br>
   <div class="container">
@@ -20,6 +25,9 @@
         <div class="panel panel-default coupon">
           <div class="panel-heading" id="head">
             <div class="panel-title" id="title">
+<body>
+<!-- <button id="show_loc"> show location </button> -->
+
               <h1 id="name">Restaurant Title</h1>
             </div>
           </div>
@@ -28,13 +36,13 @@
               <img src="" id="img">
               <br>
               <ul class="items">
-                <li><b>Location </b>
-                  <div id="loc"></div>
-                </li>
-                <li><b>Rating </b>
+                <li id="show_loc"><b>Location </b>
+                  <p> <div id="loc"></div> </p>
+                </li> 
+                <li id="show_r"><b>Rating </b>
                   <div id="rating"></div>
                 </li>
-                <li><b>Cuisine </b>
+                <li id="show_c"><b>Cuisine </b>
                   <div id="cuisine"></div>
                 </li>
                 <li><a id="menu">Menu</a></li>
@@ -67,5 +75,34 @@
         </div>
       </div>
     </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$("div #loc").hide();
+
+$(document).ready(function(){
+    $("#show_loc").click(function(){
+    $("div #loc").show().slideDown("slow");
+});
+});
+
+
+//show cuisine
+$("div #cuisine").hide();
+
+$("#show_c").click(function(){
+    $("div #cuisine").slideDown("slow");
+});
+
+
+//show rating
+$("div #rating").hide();
+
+$("#show_r").click(function(){
+    $("div #rating").slideDown("slow");
+});
+
+
+
+</script>
   </div>
 {% endblock %}

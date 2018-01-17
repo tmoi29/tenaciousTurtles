@@ -666,3 +666,29 @@ any number of times.  For example, the "zipcode" asdfgh
 is near the Khyber Pass in Pakistan.
 
 =======================================================
+ionkinaK -- 2018-01-16 21:34
+
+-Updated the buttons on index.html
+  *bug: the carousel does not always move on 
+	 google chrome, but it works on Safari
+
+-Worked on making restaurant_info.html more appealing
+
+-Added js functions to add responsiveness to the
+location, rating, and cuisine sections
+  *bug: .show().slideDown() has .show() functionality
+  Stackoverflow recommended setting the content 
+  display to "none" but that did not work either
+
+- Note:
+  "Uncaught TypeError: V[g].exec is not a function" error
+is caused combination of bootstrap.js and the angular
+ bootstrap ui library. Suggested fix is to remove
+"unnecessary bootstrap.js" -- this might be the 
+source of the slideDown() bug too 
+
+To do:
+- work on the js animations 
+- GLAMify the restaurant_info page
+- Add in reviews  
+=======================================================

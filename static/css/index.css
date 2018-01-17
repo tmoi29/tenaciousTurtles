@@ -88,12 +88,33 @@ h1 {
 #location {
     z-index: 25;
     position: absolute;
-    top: 380px;
+    top: 350px;
     left: 30%;
     font-size: 2em;
     display: inline-block;
+
 }
 
+form{
+height: 50px;
+}
 #moreRestaurants {
     font-size: 3em;
 }
+
+.btn-warning {
+height: 50px;
+ z-index: 25;
+background-color: #eea236;
+border-radius: 4px;
+}
+
+.btn-primary {
+height: 50px;
+ z-index: 25;
+font-size: .8em;
+border-radius: 4px;
+border-color: #418CC6;
+background-color: #418CC6;
+}
+

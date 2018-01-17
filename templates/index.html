@@ -1,6 +1,14 @@
 {% extends "layout.html" %}
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/index.css">
+
+<script language="JavaScript" type="text/javascript">
+  $(document).ready(function(){
+    $('.carousel').carousel({
+      interval: 2000
+    })
+  });    
+</script>
 {% endblock %}
 
 {% block body %}
@@ -42,19 +50,22 @@
     </center>
   </div> <!-- end slider -->
 
-  <div id="location">
+
+ <div id="location">
     <center>
       <form id="zipCodeForm">
         <input type="text" placeholder="Zipcode" id="zipCode">
-        <input type="submit" value="Use Zipcode" id="enterZipCode">
+        <input class="btn-warning" type="submit" value="Use Zipcode" id="enterZipCode">
       </form>
-      <button id="locate">Use Current Location</button>
+<br>
+      <button class="btn-primary" id="locate">Use Current Location</button>
     </center>
   </div>
 
+
   <br> <br>
   <center>
-    <h1> The Best Restaurants In Your City </h1>
+    <h1>  Restaurants Near You </h1>
   </center>
 
 
