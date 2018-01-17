@@ -15,16 +15,16 @@
         this.length = 0;
     };
     
-    Object.prototype.noNulls = function() {
-        for (const field in this) {
-            if (this.hasOwnProperty(field)) {
-                const value = this[field];
+    Object.noNulls = function(obj) {
+        for (const field in obj) {
+            if (obj.hasOwnProperty(field)) {
+                const value = obj[field];
                 if (value === null || value === undefined) {
-                    delete this[field];
+                    delete obj[field];
                 }
             }
         }
-        return this;
+        return obj;
     };
     
     const newDiv = function() {
@@ -185,7 +185,7 @@
         
         const getZomato = function(route, query) {
             const baseUrl = "https://developers.zomato.com/api/v2.1/";
-            const url = baseUrl + route + "?" + $.param(query.noNulls());
+            const url = baseUrl + route + "?" + $.param(Object.noNulls(query));
             // + Object.entries(query)
             //     .filter(e => e[1]) // filter out false values
             //     .map(e => e[0] + "=" + e[1])
