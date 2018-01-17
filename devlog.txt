@@ -692,3 +692,11 @@ To do:
 - GLAMify the restaurant_info page
 - Add in reviews  
 =======================================================
+ionkinaK -- 2018-01-17 13:06
+
+UPDATE: Carousel was throwing an error becuause of
+object extension in welp.js
+- replaced .show() and .slideDown() with Bootstrap
+collapse (the js is already handled)
+
+=======================================================
