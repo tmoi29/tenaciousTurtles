@@ -70,7 +70,9 @@ If you want a sample database containing a few premade accounts and reviews:
    python utils/database.py
    rm utils/generate_sample
    ```
-   
+
+#### Reset database
+
 If you want a blank database ready for usage:
 
    From the root of the repo:
