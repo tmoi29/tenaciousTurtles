@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  {% endblock %}
+
+  {% block preJS %}
+  <script>
+    const restaurantIDs = {{json.dumps(restaurant_ids)}};
+    </script>
+    
+  {% endblock %}
+
+{% block body %}
+  <center>
+    <h1> Here are your saved restaurants! </h1>
+  </center>
+
+
+  <div id="restaurants"></div>
+
+  <center>
+    <button id="moreRestaurants">More Restaurants</button>
+  </center>
+
+
+{% endblock %}

@@ -1,8 +1,10 @@
 import sqlite3
+import os
 
 
 def initialize():
-    db = sqlite3.connect("/data/database.db")
+    os.remove("data/database.db")
+    db = sqlite3.connect("data/database.db")
     c = db.cursor()
     
     c.execute('CREATE TABLE IF NOT EXISTS '
@@ -26,5 +28,3 @@ def initialize():
     db.commit()
     db.close()
 
-
-initialize()

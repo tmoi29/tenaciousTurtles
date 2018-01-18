@@ -1,6 +1,7 @@
 from __future__ import print_function
 from pathlib import Path
 
+import setup_db
 import hashlib
 import sqlite3
 
@@ -9,7 +10,7 @@ from flask import flash, session
 from typing import Iterable, List, Tuple
 
 
-def add_account(username, password1, password2):
+def add_account(username, password1, password2, setup):
     # type: (unicode, unicode, unicode) -> bool
     """
     Add an account
@@ -31,17 +32,20 @@ def add_account(username, password1, password2):
         users = saved_users.fetchall()
         print(users)
         if len(users) > 0:
-            flash('Whoops! That username is already taken')
+            if not setup:
+                flash('Whoops! That username is already taken')
             return False
         
         # check if passw is confirmed
         elif password1 != password2:
-            flash('Whoops! Your passwords don\'t match')
+            if not setup:
+                flash('Whoops! Your passwords don\'t match')
             return False
         
         # all good! now add entry
         else:
-            flash('Yay! Please log in with your new credentials!')
+            if not setup:
+                flash('Yay! Please log in with your new credentials!')
             hash_object = hashlib.sha224(password1)
             hashed_pass = hash_object.hexdigest()
             c.execute('INSERT INTO accounts VALUES (?, ?)', [username, hashed_pass])
@@ -133,29 +137,48 @@ def get_favorite(username):
         query = c.execute('SELECT restaurant FROM favorite WHERE username = ?', [username])
         return [restaurant[0] for restaurant in query]
 
+def in_favorites(username, restaurant_ID):
+    # type: (unicode) -> List[int]
+    """
+    Gets favorited restaurants for a user
+    Arg:
+        username (str): username
+        restaurant_ID (int): restaurant ID
+    Ret:
+        True or false to see whether or not the restaurant is favorited
+    """
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        query = c.execute('SELECT restaurant FROM favorite WHERE username = ?  AND restaurant = ?', [username, restaurant_ID])
+        if len(query.fetchall()) == 0:
+            return False
+        return True
+    
 
 if __name__ == '__main__':
-    file = Path("generate_sample")
+    file = Path("utils/generate_sample")
     generate_sample = file.is_file()
 
-    file = Path("generate_empty")
+    file = Path("utils/generate_empty")
     init = file.is_file()
     
     debug           = False
-    filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at mi consequat, sodales sem non, ultricies nisl. Donec consequat dui id eros pulvinar venenatis. Nam suscipit dolor at lacus sollicitudin venenatis. Nam et magna mauris. Sed blandit porta dolor, et viverra eros accumsan in. Sed augue leo, faucibus aliquet nulla quis, pretium porttitor velit. Ut sollicitudin nisi lacus, non ultrices magna tristique in. Cras non metus non velit rhoncus tincidunt. Aliquam condimentum rhoncus ante eget ultricies.'
+    filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at mi consequat, sodales sem non, ultricies nisl. Donec consequat dui id eros pulvinar venenatis. Nam suscipit dolor at lacus sollicitudin venenatis. Nam et magna mauris. Sed blandit porta dolor, et viverra eros accumsan in. Sed augue leo, faucibus aliquet nulla quis, pretium porttitor velit. Ut sollicitudin nisi lacus, non ultrices magna tristique in. Cras non metus non velit rhoncus tincidunt. Aliquam condimentum rhoncus ante eget ultricies.'    
     
     if init or generate_sample:
-        add_favorite(1, 2)
-        add_favorite(10, 11)
-        add_favorite(1, 15)
-
+        setup_db.initialize()
+        
     if generate_sample:
-        print()
-        add_account('john smith', 'abc123', 'abc123')
-        print()
-        add_account('joe doe', 'johnNeedsToChangeHisPassword', 'johnNeedsToChangeHisPassword')
-        print()
-        add_account('john smith', 'should not happen', 'should not happen')
+        add_account('john smith', 'abc123', 'abc123', True)
+        add_account('joe doe', 'johnNeedsToChangeHisPassword', 'johnNeedsToChangeHisPassword', True)
+        add_account('john smith', 'should not happen', 'should not happen', True)
+        
+        add_favorite("john smith", 1)
+        add_favorite("john doe", 11)
+        
+        print(in_favorites("john smith", 1))
+        print(in_favorites("john smith", 11))
+        
         add_review(1, 'john smith', 5, 'Nice', filler)
         add_review(2, 'john smith', 3, 'pls no', filler)
         add_review(1, 'joe doe', 4, 'ok', filler)

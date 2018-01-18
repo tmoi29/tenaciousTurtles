@@ -76,7 +76,7 @@ def create_account():
     # type: () -> Response
     form = request.form
     username = form['username']
-    if not database.add_account(username, form['password1'], form['password2']):
+    if not database.add_account(username, form['password1'], form['password2'], False):
         return reroute_to(create_account_page)
     session[UID_KEY] = username
     return reroute_to(index)
