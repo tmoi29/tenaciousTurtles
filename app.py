@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, Response, render_template, request, session
+from flask import Flask, Response, render_template, request, session, flash
 from typing import Tuple
 
 from api import google_image_search
@@ -58,7 +58,7 @@ def login():
     if not database.authenticate(username, form['password']):
         return reroute_to(login_page)
     session[UID_KEY] = username
-    return reroute_to(index)
+    return reroute_to(profile)
 
 
 @app.route('/create_account')
@@ -79,7 +79,7 @@ def create_account():
     if not database.add_account(username, form['password1'], form['password2'], False):
         return reroute_to(create_account_page)
     session[UID_KEY] = username
-    return reroute_to(index)
+    return reroute_to(profile)
 
 
 @app.route('/logout')
@@ -87,6 +87,7 @@ def create_account():
 def logout():
     # type: () -> Response
     del session[UID_KEY]
+    flash("Yay! Successfully logged out!")
     return reroute_to(index)
 
 

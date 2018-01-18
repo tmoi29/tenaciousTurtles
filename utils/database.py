@@ -45,7 +45,7 @@ def add_account(username, password1, password2, setup):
         # all good! now add entry
         else:
             if not setup:
-                flash('Yay! Please log in with your new credentials!')
+                flash('Yay! You\'ve been logged in!')
             hash_object = hashlib.sha224(password1)
             hashed_pass = hash_object.hexdigest()
             c.execute('INSERT INTO accounts VALUES (?, ?)', [username, hashed_pass])
@@ -74,6 +74,7 @@ def authenticate(username, password):
         for password in saved_pass:
             if password[0] == hashed_pass:
                 session['username'] = username  # add session
+                flash("Yay! You\'ve logged in!")
                 return True  # back to main page
         flash('Whoops! Wrong password :(')
         return False
