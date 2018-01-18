@@ -20,10 +20,6 @@
 {% block body %}
   <br><br>
   <div class="container">
-
-
-
-
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-default coupon">
@@ -39,50 +35,16 @@
             <div class="col-md-9" id="info">
               <img src="" id="img">
               <br>
-
-
-<br> <br> <br>
-  <div class="panel-group" id="accordion">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Collapsible Group 1</a>
-        </h4>
-      </div>
-      <div id="collapse1" class="panel-collapse collapse in">
-        <div class="panel-body">
-
-           <p> <div id="loc"></div> </p>
-
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Collapsible Group 2</a>
-        </h4>
-      </div>
-      <div id="collapse2" class="panel-collapse collapse">
-        <div class="panel-body">
-     <p> <div id="rating"></div> </p>
-      </div>
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Collapsible Group 3</a>
-        </h4>
-      </div>
-      <div id="collapse3" class="panel-collapse collapse">
-        <div class="panel-body">
-
+              <ul class="items">
+                <li id="show_loc"><b>Location </b>
+                  <p> <div id="loc"></div> </p>
+                </li> 
+                <li id="show_r"><b>Rating </b>
+                  <div id="rating"></div>
+                </li>
+                <li id="show_c"><b>Cuisine </b>
                   <div id="cuisine"></div>
-
-      </div>
-    </div>
-  </div> 
-
-
+                </li>
                 <li><a id="menu">Menu</a></li>
               </ul>
             </div>
@@ -109,21 +71,11 @@
 
             </div>
 
-
-
-
           </div>
         </div>
       </div>
     </div>
-
-
-
-
-<!--
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-
 <script>
 $("div #loc").hide();
 
@@ -152,6 +104,5 @@ $("#show_r").click(function(){
 
 
 </script>
--->
   </div>
 {% endblock %}
