@@ -1132,8 +1132,8 @@
             
             const img = document.getElementById("img");
             img.src = src;
-            img.width = 500;
-            img.height = 250;
+            //img.width = 500;
+            //img.height = 250;
             
             if (!src) {
                 RestaurantImageModule.getRestaurantImgUrls(restaurant)
