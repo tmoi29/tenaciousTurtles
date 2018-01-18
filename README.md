@@ -1,11 +1,15 @@
 ![Welp](static/img/logo.png)
 # Tenacious Turtles
 #### Made by Karina Ionkina, Leo Liu, Tiffany Moi and Khyber Sen
+
+## What is Welp
+
+Welp is a web app designed to provide users with information about nearby restaurants. Unlike Yelp, we are dedicated solely to recommendations on food.
+
 ## Features
 
-Welp is a web app designed to provide users with information about nearby restaurants. The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information.
-
-A user may log in to leave reviews for restaurants in addition to the existing reviews provided by Zomato.
+The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information.
+A user may also log in to leave reviews for restaurants in addition to the existing reviews provided by Zomato.
 
 ## Launch Instructions
 
