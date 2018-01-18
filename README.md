@@ -1,6 +1,6 @@
 ![Welp](static/img/logo.png)
 # Tenacious Turtles
-
+#### Made by Karina Ionkina, Leo Liu, Tiffany Moi and Khyber Sen
 ## Features
 
 Welp is a web app designed to provide users with information about nearby restaurants. The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information.
