@@ -738,3 +738,13 @@ Created routes in app.py to handle this
 LATER:
 Add a remove button for favorited restaurants
 Connect the profile to JS to display the favorite restaurants
+
+=======================================================
+karinaI -- 2018-01-19 13:17
+
+Added review form, worked on styling restaurant_info.css
+
+=======================================================
+leoL -- 2018-01-19 13:18
+
+Made images on index.html responsive to window resizing
