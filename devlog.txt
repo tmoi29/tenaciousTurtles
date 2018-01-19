@@ -1,4 +1,4 @@
-tenaciousTurtles - moiT, ionkinaK, LiuL, SenK
+tenaciousTurtles - moiT, ionkinaK, liuL, senK
 
       ___
  ,,  // \\
@@ -14,12 +14,12 @@ tenaciousTurtles - moiT, ionkinaK, LiuL, SenK
     \____/_/ \_____\/ \___/_(   \_____\/ \_____\/ \_____\/
 
 =======================================================
-moiT -- 2017-12-14 13:14
+tiffanyM -- 2017-12-14 13:14
 -----------------------
 Filled out team registration form
 
 =======================================================
-moiT, ionkinaK, liuL, senK -- 2017-12-15 13:00
+tiffanyM, karinaI, leoL, khyberS -- 2017-12-15 13:00
 -----------------------
 Discussed project idea:
 
@@ -29,12 +29,12 @@ WELP
 - If we have time, integrate autrocomplete search from Nutritionix
 
 =======================================================
-moiT, ionkinaK, liuL, senK -- 2017-12-18 12:57
+tiffanyM, karinaI, leoL, khyberS -- 2017-12-18 12:57
 
 Worked on presentation and split up talking points
 
 =======================================================
-ionkinaK, liuL -- 2017-12-19 13:03
+karinaI, leoL -- 2017-12-19 13:03
 
 Presented design pitch
 Feedback:
@@ -42,7 +42,7 @@ Feedback:
 - Try Google Maps?
 
 =======================================================
-moiT, ionkinaK, liuL, senK -- 2017-12-20 13:06
+tiffanyM, karinaI, leoL, khyberS -- 2017-12-20 13:06
 
 Refined location finding
 - Use JS to find zipcode if the user has GPS
@@ -50,42 +50,42 @@ Refined location finding
 - If the IP address is inaccurate, use user input
 
 =======================================================
-moiT, liuL -- 2017-12-21 13:12
+tiffanyM, leoL -- 2017-12-21 13:12
 
 Worked on the component map and integrated AJAX
 
 =======================================================
-ionkinaK, senK -- 2017-12-21 13:12
+karinaI, khyberS -- 2017-12-21 13:12
 
 Worked on the site map and design doc
 
 =======================================================
-ionkinaK -- 2017-12-25 23:17
+karinaI -- 2017-12-25 23:17
 
 -Created app.py and layout.html
 -Worked on navbar
 
 =======================================================
-ionkinaK -- 2017-12-26 2:32
+karinaI -- 2017-12-26 2:32
 
 -Finished layout.html
 -Added logo to navbar
 -Worked on login and create account pages
 
 =======================================================
-ionkinaK -- 2017-12-26 22:29
+karinaI -- 2017-12-26 22:29
 
 -Improved index.html by adding an image slider and 
 changing the logo
 
 =======================================================
-moiT -- 2018-01-02 13:15
+tiffanyM -- 2018-01-02 13:15
 
 -Added freegeoip.py
 -Can look up user's zip code
 
 =======================================================
-ionkinaK -- 2018-01-02 21:01
+karinaI -- 2018-01-02 21:01
 
 -Adjust text form on index.html (user can now type
 over the image)
@@ -100,18 +100,18 @@ liuY -- 2018-01-03 13:17
   -reviews table now accepts new reviews
 
 =======================================================
-moiT -- 2018-01-03 13:20
+tiffanyM -- 2018-01-03 13:20
 
 -Found tags to scrape from for zomato suggested restaurants
 
 =======================================================
-ionkinaK -- 2018-01-03 13:21
+karinaI -- 2018-01-03 13:21
 
 -Added js function to prevent carousel from moving
 when the user is typing.
 
 =======================================================
-moiT -- 2018-01-03 15:58
+tiffanyM -- 2018-01-03 15:58
 
 -Added hashed passwords
 -Fixed authenticate() and create_account() to flash errors and redirect pages
@@ -127,7 +127,7 @@ liuY -- 2018-01-04 15:50
 -Added docstrings to functions whose usage is not apparent by signature
 
 =======================================================
-ionkinaK -- 2018-01-04 20:09
+karinaI -- 2018-01-04 20:09
 
 -Added responsive panels that will contain recommended
 restaurants in the user's city.
@@ -251,7 +251,7 @@ Refactored welp.js:
 
 =======================================================
 
-ionkinaK -- 2018-01-08 22:51
+karinaI -- 2018-01-08 22:51
 
 - Read through Khyber's JS to adapt to new changes
 - Attempted to resize the images with JS
@@ -305,7 +305,7 @@ that users added on our website.
 Set the class of the div element in restaurantToDiv() to make sure it works.
 
 =======================================================
-ionkinaK -- 2018-01-10 09:50
+karinaI -- 2018-01-10 09:50
 
 -Resized panel images by adding restaurant.thumb as a
 background image to the img_div div.
@@ -315,7 +315,7 @@ improve the user experience
 -to do: do something about the "" img.thumbs.
 
 =======================================================
-ionkinaK -- 2018-01-10 11:03
+karinaI -- 2018-01-10 11:03
 
 -Worked on using ajax to retreive images from Getty
 -These images will be replacements for restaurants
@@ -352,7 +352,7 @@ but will ensure that if someone doesn't move,
 the request should be cached.
 
 =======================================================
-moiT -- 2018-01-10 16:52
+tiffanyM -- 2018-01-10 16:52
 
 Added functions in database.py to allow user to add and get their 
 favorited restaurants
@@ -428,12 +428,12 @@ khyberS -- 2018-01-11 22:18:06
 Added gettyApiKey definition in restaurant_info.html.
 
 =======================================================
-moiT -- 2018-01-04 22:33
+tiffanyM -- 2018-01-04 22:33
 
 Added restaurant info to the page
 
 =======================================================
-ionkinaK -- 2018-01-12 00:39
+karinaI -- 2018-01-12 00:39
 
 Improved the image positioning and behavior in the index.html 
 panels, worked on the frontend of the restaurant_information pages.
@@ -473,7 +473,7 @@ Fixed restaurant.cuisine to restaurant.cuisines in addInfo(),
 which I also renamed to addRestaurantInfo().
 
 =======================================================
-ionkinaK -- 2018-01-12 08:39
+karinaI -- 2018-01-12 08:39
 
 Fixed the image size and position in restaurant_info.cs
 
@@ -643,7 +643,7 @@ If you type in 10282 and go to Dirty Bird's or Amore Pizza Restaurant,
 you can see the reviews I added.
 
 =======================================================
-moiT -- 2018-01-15 18:47
+tiffanyM -- 2018-01-15 18:47
 
 Added profile functions to app.py
 Created profile.html
@@ -666,7 +666,7 @@ any number of times.  For example, the "zipcode" asdfgh
 is near the Khyber Pass in Pakistan.
 
 =======================================================
-ionkinaK -- 2018-01-16 21:34
+karinaI -- 2018-01-16 21:34
 
 -Updated the buttons on index.html
   *bug: the carousel does not always move on 
@@ -691,8 +691,15 @@ To do:
 - work on the js animations 
 - GLAMify the restaurant_info page
 - Add in reviews  
+
 =======================================================
-ionkinaK -- 2018-01-17 13:16
+tiffanyM -- 2018-01-16 22:08
+
+added list of restaurants for the profile to js so it
+can create the panels on the profile page
+
+=======================================================
+karinaI -- 2018-01-17 13:16
 
 UPDATE: Carousel was throwing an error becuause of
 object extension in welp.js
@@ -703,10 +710,21 @@ collapse (the js is already handled)
 that the rating and cuisine divs work (it's not
 returning the location as of now)
 =======================================================
-ionkinaK -- 2018-01-17 13:16
+karinaI -- 2018-01-17 13:16
 
 UPDATE: location wasn't showing becuase of the css
 line: display: none;
 
 - Worked on collapse panels in restaurant_info.html
 =======================================================
+tiffanyM -- 2018-01-17 20:13
+
+Added ability to check whether or not a restaurant is 
+favorited for a user
+
+Fixed the database setup and testing
+
+=======================================================
+tiffanyM -- 2018-01-17 13:09
+
+Added flash messages to layout.html
