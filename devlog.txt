@@ -728,3 +728,13 @@ Fixed the database setup and testing
 tiffanyM -- 2018-01-17 13:09
 
 Added flash messages to layout.html
+
+=======================================================
+tiffanyM -- 2018-01-17 20:51
+
+Added button on restaurant_info to favorite the restaurant
+Created routes in app.py to handle this
+
+LATER:
+Add a remove button for favorited restaurants
+Connect the profile to JS to display the favorite restaurants

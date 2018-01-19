@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, Response, render_template, request, session, flash
+from flask import Flask, Response, render_template, request, session, flash, redirect
 from typing import Tuple
 
 from api import google_image_search
@@ -105,11 +105,21 @@ def restaurant_info():
             "name": username
         },
     } for restaurant_id, username, rating, review_title, review_content in db_reviews]
+    
+    if 'username' in session:
+        username = session[UID_KEY]
+        favorited = database.in_favorites(username, restaurant_id)
+        return render_template('restaurant_info.html',
+                           restaurant_id=restaurant_id,
+                           user_reviews=db_reviews,
+                           welp_reviews=welp_reviews,
+                           json=json, loggedIn = True, favorited = favorited)
+    
     return render_template('restaurant_info.html',
                            restaurant_id=restaurant_id,
                            user_reviews=db_reviews,
                            welp_reviews=welp_reviews,
-                           json=json)
+                           json=json, loggedIn = False)
 
 
 @app.route('/profile')
@@ -118,6 +128,16 @@ def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
     return render_template("profile.html", restaurant_ids = restaurants, json = json)
+
+@app.route("/add_favorite")
+@logged_in
+@preconditions(index, query_contains('restaurant_id'))
+def add_favorite():
+    restaurant_id = int(request.args['restaurant_id'])
+    username = session[UID_KEY]
+    database.add_favorite(username,restaurant_id)
+    flash("Yay! You added this restaurant to your favorites list!")
+    return redirect("/restaurant_info?restaurant_id=" + str(restaurant_id))
     
 
 @app.route('/google_image_search', methods=['get', 'post'])
