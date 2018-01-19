@@ -60,12 +60,14 @@ h1 {
     transition: 0.5s;
 }
 
-.panel-body .klass .image-holder {
+.panel-default .klass .image-holder {
     position: absolute;
     top: 30%;
     left: 0;
     bottom: 10%;
     right: 0;
+    max-height: 90vh;
+    max-width: 90vw;
     margin: 7%;
     background-position: center;
     background-size: contain;
