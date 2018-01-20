@@ -1101,10 +1101,11 @@
         };
         
         const reviewToDiv = function(div, review) {
+	    div.className += "rev_div";
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
-            div.innerHTML = "<br>" + "Rating: " + rating + "; " + title + "<br>" + text;
+            div.innerHTML = " <i>" + "Rating: " + rating + ";" + title + "</i> <br>" + text;
         };
         
         const addReview = function(reviewsDiv, review) {
