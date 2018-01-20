@@ -748,3 +748,15 @@ Added review form, worked on styling restaurant_info.css
 leoL -- 2018-01-19 13:18
 
 Made images on index.html responsive to window resizing
+=======================================================
+karinaI -- 2018-01-20 16:35
+
+Worked on formatting restaurant_info 
+       -fixed the positionin (col-md-9 was causing the
+       75% width issue
+Added ratings option 
+      - used the cssscript.com template
+
+Made finishing touches in index.html
+To do: reverse rating star order
+=======================================================
