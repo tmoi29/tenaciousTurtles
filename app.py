@@ -47,7 +47,7 @@ logged_in = preconditions(login_page, is_logged_in)  # type: Router
 not_logged_in = preconditions(index, is_not_logged_in)  # type: Router
 
 
-@app.route('/login_auth', methods=['get', 'post'])
+@app.route('/login_auth', methods=['GET', 'POST'])
 @not_logged_in
 @preconditions(login_page, post_only, form_contains('username', 'password'))
 def login():
@@ -67,7 +67,7 @@ def create_account_page():
     return render_template('create_account.html')
 
 
-@app.route('/create_account_auth', methods=['get', 'post'])
+@app.route('/create_account_auth', methods=['GET', 'POST'])
 @not_logged_in
 @preconditions(create_account_page, post_only,
                form_contains('username', 'password1', 'password2'))
@@ -86,8 +86,25 @@ def create_account():
 def logout():
     # type: () -> Response
     del session[UID_KEY]
-    flash("Yay! Successfully logged out!")
+    flash('Yay! Successfully logged out!')
     return reroute_to(index)
+
+
+@app.route('/google_image_search', methods=['GET', 'POST'])
+def google_image_search_urls():
+    # type: () -> Response
+    arg_name = 'query'
+    if arg_name not in request.args and arg_name not in request.form:
+        return Response(status=400, mimetype='application/json')
+    query = request.args.get(arg_name) or request.form.get(arg_name)
+    img_urls = google_image_search.get_img_urls(query)
+    return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
+
+
+@app.route('/empty', methods=['GET', 'POST'])
+def empty():
+    # type: () -> Response
+    return Response(status=204, response='')  # HTTP 204 is No Content
 
 
 @app.route('/restaurant_info')
@@ -97,11 +114,11 @@ def restaurant_info():
     restaurant_id = int(request.args['restaurant_id'])
     db_reviews = database.get_reviews(restaurant_id)
     welp_reviews = [{
-        "rating": rating,
-        "rating_text": review_title,
-        "review_text": review_content,
-        "user": {
-            "name": username
+        'rating': rating,
+        'rating_text': review_title,
+        'review_text': review_content,
+        'user': {
+            'name': username
         },
     } for restaurant_id, username, rating, review_title, review_content in db_reviews]
     
@@ -112,7 +129,7 @@ def restaurant_info():
         favorited = None
     
     return render_template(
-            "restaurant_info.html",
+            'restaurant_info.html',
             restaurant_id=restaurant_id,
             user_reviews=db_reviews,
             welp_reviews=welp_reviews,
@@ -127,41 +144,35 @@ def restaurant_info():
 def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
-    return render_template("profile.html", restaurant_ids=restaurants, json=json)
+    return render_template('profile.html', restaurant_ids=restaurants, json=json)
 
 
-@app.route("/add_favorite")
-@logged_in
-@preconditions(index, query_contains('restaurant_id'))
+# @app.route('/add_favorite')
+# @logged_in
+# @preconditions(index, query_contains('restaurant_id'))
+# def add_favorite():
+#     # FIXME this should be done with AJAX like add_review()
+#     # FIXME it's much smoother when the browser sends an AJAX call
+#     # FIXME and loads the new page itself
+#     restaurant_id = int(request.args['restaurant_id'])
+#     username = session[UID_KEY]
+#     database.add_favorite(username, restaurant_id)
+#     flash('Yay! You added this restaurant to your favorites list!')
+#     return redirect('/restaurant_info?restaurant_id=' + str(restaurant_id))
+
+
+@app.route('/add_favorite', methods=['GET', 'POST'])
+@preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
 def add_favorite():
-    # FIXME this should be done with AJAX like add_review()
-    # FIXME it's much smoother when the browser sends an AJAX call
-    # FIXME and loads the new page itself
-    restaurant_id = int(request.args['restaurant_id'])
+    # type: () -> str
     username = session[UID_KEY]
+    restaurant_id = int(request.form['restaurant_id'])
     database.add_favorite(username, restaurant_id)
-    flash("Yay! You added this restaurant to your favorites list!")
-    return redirect("/restaurant_info?restaurant_id=" + str(restaurant_id))
+    flash('Yay! You added this restaurant to your favorites list!')
+    return 'OK'
 
 
-@app.route('/google_image_search', methods=['get', 'post'])
-def google_image_search_urls():
-    # type: () -> Response
-    arg_name = 'query'
-    if arg_name not in request.args and arg_name not in request.form:
-        return Response(status=400, mimetype='application/json')
-    query = request.args.get(arg_name) or request.form.get(arg_name)
-    img_urls = google_image_search.get_img_urls(query)
-    return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
-
-
-@app.route('/empty', methods=['get', 'post'])
-def empty():
-    # type: () -> Response
-    return Response(status=204, response='')  # HTTP 204 is No Content
-
-
-@app.route('/add_review', methods=['get', 'post'])
+@app.route('/add_review', methods=['GET', 'POST'])
 @preconditions(empty, post_only, is_logged_in,
                form_contains('restaurant_id', 'rating', 'review_title', 'review_content'))
 def add_review():

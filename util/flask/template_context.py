@@ -61,6 +61,11 @@ def br(n):
     return Markup(repeat('<br>', n))
 
 
+def display(should_display):
+    # type: (bool) -> Markup | str
+    return '' if not should_display else Markup('style="display: none;"')
+
+
 # remove hiddens
 context = _filter_hidden(context)
 

@@ -1082,6 +1082,10 @@
         
         const main = function() {
             $(() => {
+                $(".carousel").carousel({
+                    interval: 2000,
+                });
+                
                 const zipCodeField = $("#zipCode")[0];
                 const moreRestaurantsButton = $("#moreRestaurants")[0];
                 const restaurantListDiv = $("#restaurants")[0];
@@ -1137,7 +1141,7 @@
         };
         
         const reviewToDiv = function(div, review) {
-	    div.className += "rev_div";
+            div.className += "rev_div";
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
@@ -1206,13 +1210,40 @@
             m.target = "_blank"; // open in new tab
         };
         
+        const postToServer = function(url, form) {
+            const promise = getRestaurant()
+                .then(restaurant => {
+                    form.restaurant_id = restaurant.id;
+                    console.log("posting to server:", form);
+                    const promise = fetch(url, {
+                        method: "POST",
+                        credentials: "include",
+                        mode: "same-origin",
+                        body: FormData.of(form),
+                    });
+                    delete form.restaurant_id;
+                    return promise;
+                });
+            
+            return new Promise((resolve, reject) => {
+                promise.then(response => {
+                    if (response.status !== 200) {
+                        // possibly b/c not logged in, although user should be
+                        reject(response);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            });
+        };
+        
         const addNewReview = function(reviewsDiv) {
             if (!loggedIn) {
                 alert("You must be logged in to add a review");
                 return; // TODO display better error message
             }
             
-            const reviewText = $("#newReviewTextew")[0];
+            const reviewText = $("#newReviewText")[0];
             
             const review = {
                 rating: -1, // FIXME rating system not set up yet in HTML
@@ -1226,33 +1257,64 @@
             
             const reviewDiv = addReview(reviewsDiv, review);
             
-            getRestaurant()
-                .then(restaurant => {
-                    return fetch("/add_review", {
-                        method: "POST",
-                        credentials: "include",
-                        mode: "same-origin",
-                        body: FormData.of({
-                            restaurant_id: restaurant.id,
-                            rating: review.rating,
-                            review_title: review.rating_text,
-                            review_content: review.review_text,
-                        })
-                    });
-                })
+            postToServer("/add_review", {
+                rating: review.rating_text,
+                review_title: review.rating_text,
+                review_content: review.review_text,
+            })
                 .then(response => {
-                    if (response.status !== 200) {
-                        // remove if server rejected request,
-                        // possibly b/c not logged in, although user should be
-                        reviewDiv.remove();
-                    }
+                    console.log("added review: ", review);
+                })
+                .catch(response => {
+                    reviewDiv.remove();
                 });
+        };
+        
+        const toggleDisplay = function(element, display) {
+            element.style.display = display ? "" : "none";
+        };
+        
+        const addFavoriteRestaurant = function(button, altText) {
+            if (!loggedIn) {
+                alert("You must be logged in to add a favorite restaurant");
+                return; // TODO display better error message
+            }
+            
+            getRestaurant();
+            
+            if ("favorited" in _restaurant && _restaurant.favorited) {
+                // already favorited
+                alert("You already favorited this restaurant");
+                return; // TODO display better error message, or none at all
+            }
+            
+            const toggleDisplays = function(display) {
+                toggleDisplay(button, display);
+                toggleDisplay(altText, !display);
+                _restaurant.favorited = !display;
+            };
+            
+            // make sure right to start with
+            toggleDisplays(true);
+            
+            postToServer("/add_favorite", {})
+                .then(response => {
+                    console.log("added as favorite: ", _restaurant);
+                })
+                .catch(response => {
+                    // switch displays back
+                    toggleDisplays(true);
+                });
+            
+            // eagerly switch displays, b/c probably will succeed
+            // if not, rollback the switch
+            toggleDisplays(false);
         };
         
         const main = function() {
             $(() => {
-                const zomatoReviewsDiv = document.getElementById("zomatoReviews");
-                const welpReviewsDiv = document.getElementById("welpReviews");
+                const zomatoReviewsDiv = $("#zomatoReviews")[0];
+                const welpReviewsDiv = $("#welpReviews")[0];
                 
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
@@ -1269,8 +1331,13 @@
                         reviews.forEach(review => addReview(zomatoReviewsDiv, review));
                     });
                 
-                $("#addReview").click(() => {
+                $("#addNewReviewButton").click(() => {
                     addNewReview(welpReviewsDiv);
+                });
+                
+                $("#addFavoriteRestaurantButton").click(function() {
+                    // `this` is bound to clicked button
+                    addFavoriteRestaurant(this, $("#addFavoriteRestaurantAltText")[0]);
                 });
             });
         };

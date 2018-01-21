@@ -842,3 +842,29 @@ TODO and FIXME: (I added FIXMEs and TODOs in the code for these things)
     FIXME so sometimes the image doesn't load.
 
 =======================================================
+khyberS -- 2018-01-21 02:38:52
+
+Changed add_favorite() to a REST API that adds the restaurant as a favorite
+and returns a status of 200 if successful or 204 if there's an error.
+This allows us to use AJAX for when a user favorites a restaurant,
+meaning it appears instantaneous to the user and there is no slow page reload.
+
+Finished the "Add to Favorites" button,
+which is now a single button that triggers JS
+that POSTs a request to /add_favorite.
+
+In the <div id="addFavoriteRestaurantDiv">,
+there are two elements, an "Add to Favorites" button
+and a <p> alt text that tells the user
+they already favorited this restaurant.
+
+Depending on the `favorited` value passed to Jinja,
+one is set to style="display: none;".
+When "Add to Favorites" is clicked,
+the JS switches the `display: none`s,
+and if the server returns a 204 failure,
+it switches them back again.
+
+Moved carousel <script> in index.html to welp.js.
+
+=======================================================

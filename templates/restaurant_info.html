@@ -127,7 +127,7 @@
                 <br>
 
                 <div id="newReview">
-                  <form action="add_review">
+                  <form>
                     <textarea id="newReviewText"
                               name="user_review"
                               placeholder="Add your own review...">
@@ -139,16 +139,17 @@
                       <label class="star star-{{ i }}" for="star-{{ i }}"></label>
                     {% endfor %}
 
-{#                    <input class="star star-5" id="star-5" type="radio" name="star"/>#}
-{#                    <label class="star star-5" for="star-5"></label>#}
-{#                    <input class="star star-4" id="star-4" type="radio" name="star"/>#}
-{#                    <label class="star star-4" for="star-4"></label>#}
-{#                    <input class="star star-3" id="star-3" type="radio" name="star"/>#}
-{#                    <label class="star star-3" for="star-3"></label>#}
-{#                    <input class="star star-2" id="star-2" type="radio" name="star"/>#}
-{#                    <label class="star star-2" for="star-2"></label>#}
-{#                    <input class="star star-1" id="star-1" type="radio" name="star"/>#}
-{#                    <label class="star star-1" for="star-1"></label>#}
+                    {# <input class="star star-5" id="star-5" type="radio" name="star"/>#}
+                    {# <label class="star star-5" for="star-5"></label>#}
+                    {# <input class="star star-4" id="star-4" type="radio" name="star"/>#}
+                    {# <label class="star star-4" for="star-4"></label>#}
+                    {# <input class="star star-3" id="star-3" type="radio" name="star"/>#}
+                    {# <label class="star star-3" for="star-3"></label>#}
+                    {# <input class="star star-2" id="star-2" type="radio" name="star"/>#}
+                    {# <label class="star star-2" for="star-2"></label>#}
+                    {# <input class="star star-1" id="star-1" type="radio" name="star"/>#}
+                    {# <label class="star star-1" for="star-1"></label>#}
+                    <button id="addNewReviewButton">Add Review</button>
 
                   </form>
                 </div>
@@ -157,19 +158,17 @@
           </div>
         </div>
 
-        {% if loggedIn %}
-          {% if not favorited %}
-            <form action="/add_favorite">
-              <input type="hidden" name="restaurant_id" value={{ restaurant_id }}>
-              <input type="submit" value="Add To Favorites">
-            </form>
-          {% else %}
-            <p>Already added to Favorites</p>
-          {% endif %}
+        {% if is_logged_in() %}
+          {# TODO add CSS for this #}
+          <div id="addFavoriteRestaurantDiv">
+            <button id="addFavoriteRestaurantButton"
+                {{ display(favorited) }}>Add to Favorites</button>
+            <p id="addFavoriteRestaurantAltText"
+                {{ display(not favorited) }}>Already Added to Favorites</p>
+          </div>
         {% else %}
           <p>Sign in to add to favorites</p>
         {% endif %}
-      
 
       </div>
     </div>
