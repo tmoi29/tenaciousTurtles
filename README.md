@@ -41,7 +41,7 @@ Request an API key
 
 Copy the API key from the confirmation screen
 
-Save both keys in `.secrets.json` in /api, according to the format of `secrets_template.json`
+Save both keys in `secrets.json` in `/api`, according to the format of `secrets_template.json`
 
 ### 3. Prepare for launch
 
@@ -61,7 +61,7 @@ To activate virtualenv in a Unix-based system:
 
 With an activated virtualenv:
 
-`pip install -r ../tenaciousTurtles/requirements.txt`
+`pip install -r requirements.txt`
 
 #### Sample database
 

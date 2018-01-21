@@ -699,9 +699,27 @@ added list of restaurants for the profile to js so it
 can create the panels on the profile page
 
 =======================================================
+khyberS -- 2018-01-17 13:08
+
+Extending Object.prototype with an enumerable property
+breaks jQuery, since it uses (for ... in) loops on Object.prototype
+and assumes no properties have been added
+because it doesn't check with Object#hasOwnProperty().
+
+This is what broke the Bootstrap Carousel, since it uses jQuery,
+as well as a bunch of other stuff.
+
+I removed this and just make a normal function
+bound to Object, just not Object.prototype.
+
+I can however, use Object.defineProperty()
+to add a non-enumerable property to Object.prototype,
+and this won't break things.
+
+=======================================================
 karinaI -- 2018-01-17 13:16
 
-UPDATE: Carousel was throwing an error becuause of
+UPDATE: Carousel was throwing an error because of
 object extension in welp.js
 
 - Replaced .show() and .slideDown() with Bootstrap
@@ -748,15 +766,79 @@ Added review form, worked on styling restaurant_info.css
 leoL -- 2018-01-19 13:18
 
 Made images on index.html responsive to window resizing
+
 =======================================================
 karinaI -- 2018-01-20 16:35
 
-Worked on formatting restaurant_info 
+Worked on formatting restaurant_info
        -fixed the positionin (col-md-9 was causing the
        75% width issue
-Added ratings option 
+Added ratings option
       - used the cssscript.com template
 
 Made finishing touches in index.html
 To do: reverse rating star order
+
+=======================================================
+khyberS -- 2018-01-19 20:39:09
+
+Refactored function in RestaurantsPageModule() into the new RestaurantsSubPageModule():
+    restaurantToDiv(),
+    openRestaurantInfoInNewPage(),
+    createRestauantList(), a factory constructor for newRestaurantList()
+
+Modified restaurantToDiv() so that if {empty: true} is passed as the restaurant,
+it creates an "empty" restaurant that can later be filled.
+
+Created ProfilePageModule(),
+which runs on profile.html and loads that user's favorited restaurants,
+using the same RestaurantsSubPageModule() as in index.html
+to load the restaurants.
+
+profile.html should now load favorited restaurants correctly.
+I tested in on the JS side;
+as long as the Python works correctly w/ the DB and everything, it should work.
+
+For testing purposes, a few favorited restaurants are automatically loaded in the JS,
+but we can remove this later once users have favorited restaurants in the DB.
+
+When you click the menu link for a restaurant,
+it opens in a new tab (target="_blank").
+
+addNewReview(), the JS function that sends the new review form to the server w/ AJAX,
+is mostly done, but still unfinished.
+It does the review_text right, but not the rating and review_title yet.
+
+When a user not logged somehow tried to add a review,
+alert() is called with an error message.
+We can try to make this look nicer, but it shouldn't happen anyways
+unless the JS and server get out of sync.
+
+TODO and FIXME: (I added FIXMEs and TODOs in the code for these things)
+
+    Rating Stars:
+        I put the stars HTML into a Jinja loop to be more concise.
+        It still works the same as before.
+
+        However, when you click on a star, they turn on from right to left,
+        which I think is the wrong direction.
+
+        I tried reversing the loop so that the stars are labeled in the HTML
+        from 1 to 5 instead of 5 to 1, but nothing changed.
+        I'm not sure how the CSS works for the stars,
+        so can you check it out Karina?
+
+    Flashed messages are covered by the Welp logo.
+
+    We should remove the "More Restaurants" button on profile.html.
+
+    align in restaurant_info.css is not a CSS property.
+    I'm not sure what it was supposed to be, align-content, align-items?
+
+    <div> cannot be inside <p> in restaurant_info.html.
+
+    I'll fix this:
+    FIXME The background image url is not always false when there's an error,
+    FIXME so sometimes the image doesn't load.
+
 =======================================================

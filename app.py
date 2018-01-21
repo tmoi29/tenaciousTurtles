@@ -1,8 +1,7 @@
 import json
 import os
 
-from flask import Flask, Response, render_template, request, session, flash, redirect
-from typing import Tuple
+from flask import Flask, Response, flash, redirect, render_template, request, session
 
 from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
@@ -106,20 +105,21 @@ def restaurant_info():
         },
     } for restaurant_id, username, rating, review_title, review_content in db_reviews]
     
-    if 'username' in session:
+    if is_logged_in():
         username = session[UID_KEY]
         favorited = database.in_favorites(username, restaurant_id)
-        return render_template('restaurant_info.html',
-                           restaurant_id=restaurant_id,
-                           user_reviews=db_reviews,
-                           welp_reviews=welp_reviews,
-                           json=json, loggedIn = True, favorited = favorited)
+    else:
+        favorited = None
     
-    return render_template('restaurant_info.html',
-                           restaurant_id=restaurant_id,
-                           user_reviews=db_reviews,
-                           welp_reviews=welp_reviews,
-                           json=json, loggedIn = False)
+    return render_template(
+            "restaurant_info.html",
+            restaurant_id=restaurant_id,
+            user_reviews=db_reviews,
+            welp_reviews=welp_reviews,
+            json=json,
+            loggedIn=is_logged_in(),
+            favorited=favorited,
+    )
 
 
 @app.route('/profile')
@@ -127,18 +127,22 @@ def restaurant_info():
 def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
-    return render_template("profile.html", restaurant_ids = restaurants, json = json)
+    return render_template("profile.html", restaurant_ids=restaurants, json=json)
+
 
 @app.route("/add_favorite")
 @logged_in
 @preconditions(index, query_contains('restaurant_id'))
 def add_favorite():
+    # FIXME this should be done with AJAX like add_review()
+    # FIXME it's much smoother when the browser sends an AJAX call
+    # FIXME and loads the new page itself
     restaurant_id = int(request.args['restaurant_id'])
     username = session[UID_KEY]
-    database.add_favorite(username,restaurant_id)
+    database.add_favorite(username, restaurant_id)
     flash("Yay! You added this restaurant to your favorites list!")
     return redirect("/restaurant_info?restaurant_id=" + str(restaurant_id))
-    
+
 
 @app.route('/google_image_search', methods=['get', 'post'])
 def google_image_search_urls():
@@ -160,7 +164,7 @@ def empty():
 @app.route('/add_review', methods=['get', 'post'])
 @preconditions(empty, post_only, is_logged_in,
                form_contains('restaurant_id', 'rating', 'review_title', 'review_content'))
-def add_reviews():
+def add_review():
     # type: () -> str
     form = request.form
     username = session[UID_KEY]
@@ -170,7 +174,7 @@ def add_reviews():
     review_content = form['review_content']
     database.add_review(restaurant_id, username, rating, review_title, review_content)
     return 'OK'
-    
+
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)

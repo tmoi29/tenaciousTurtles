@@ -1,14 +1,13 @@
 {% extends "layout.html" %}
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/index.css">
-  {% endblock %}
+{% endblock %}
 
-  {% block preJS %}
+{% block preJS %}
   <script>
-    const restaurantIDs = {{json.dumps(restaurant_ids)}};
-    </script>
-    
-  {% endblock %}
+      const favoriteRestaurantIds = false || {{json.dumps(restaurant_ids)|safe}};
+  </script>
+{% endblock %}
 
 {% block body %}
   <center>

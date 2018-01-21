@@ -1,167 +1,178 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
-
-
-
+  <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
+  <link rel="stylesheet" type="text/css"
+        href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 {% endblock %}
 
 
 {% block preJS %}
-<script>
-  const restaurantId = +{{ restaurant_id }};
-  // noinspection JSAnnotator
-  const welpReviews = {{ json.dumps(welp_reviews) }};
-</script>
+  <script>
+      const restaurantId = +{{ restaurant_id }};
+      // noinspection JSAnnotator
+      const welpReviews = {{ json.dumps(welp_reviews) }};
+  </script>
 {% endblock %}
 
 
 {% block body %}
-<br><br>
-<div class="container">
+  <br><br>
+  <div class="container">
 
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="panel panel-default coupon">
-        <div class="panel-heading" id="head">
-          <div class="panel-title" id="title">
-	    <!-- <button id="show_loc"> show location </button> -->
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default coupon">
+          <div class="panel-heading" id="head">
+            <div class="panel-title" id="title">
+              <!-- <button id="show_loc"> show location </button> -->
 
-            <h1 id="name">Restaurant Title</h1>
+              <h1 id="name">Restaurant Title</h1>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="col-md-9" id="info">
+              <br>
+              <img src="" id="img">
+              <br>
+
+              <br> <br>
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                        Address</a>
+                    </h4>
+                  </div>
+                  <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">
+
+                      {# FIXME <div> can't be inside <p> #}
+                      <p>
+                      <div id="loc"></div>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                        Rating</a>
+                    </h4>
+                  </div>
+                  <div id="collapse2" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      {# FIXME <div> can't be inside <p> #}
+                      <p>
+                      <div id="rating"></div>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion"
+                         href="#collapse3">Cuisine</a>
+                    </h4>
+                  </div>
+                  <div id="collapse3" class="panel-collapse collapse">
+                    <div class="panel-body">
+
+                      <div id="cuisine"></div>
+
+                    </div>
+                  </div>
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+
+                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Menu</a>
+                    </h4>
+                  </div>
+                  <div id="collapse4" class="panel-collapse collapse">
+                    <div class="panel-body">
+
+                      <div><a id="menu">Click me</a></div>
+
+
+                    </div>
+                  </div>
+
+
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+
+                      <a data-toggle="collapse" data-parent="#accordion"
+                         href="#collapse5">Reviews</a>
+                    </h4>
+                  </div>
+                  <div id="collapse5" class="panel-collapse collapse">
+                    <div class="panel-body">
+
+                      <div id="reviews">
+                        <div id="welpReviews">
+                          {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}
+                            Rating: {{ rating }}
+                            <h4>{{ review_title }} by {{ username }}</h4>
+                            {{ review_content }}
+                          {% endfor %}
+                        </div>
+                        <div id="zomatoReviews">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+
+                <div id="newReview">
+                  <form action="add_review">
+                    <textarea id="newReviewText"
+                              name="user_review"
+                              placeholder="Add your own review...">
+                    </textarea>
+
+                    {# FIXME When you click on a star, they're selected backwards. #}
+                    {% for i in xrange(5, 0, -1) %}
+                      <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
+                      <label class="star star-{{ i }}" for="star-{{ i }}"></label>
+                    {% endfor %}
+
+{#                    <input class="star star-5" id="star-5" type="radio" name="star"/>#}
+{#                    <label class="star star-5" for="star-5"></label>#}
+{#                    <input class="star star-4" id="star-4" type="radio" name="star"/>#}
+{#                    <label class="star star-4" for="star-4"></label>#}
+{#                    <input class="star star-3" id="star-3" type="radio" name="star"/>#}
+{#                    <label class="star star-3" for="star-3"></label>#}
+{#                    <input class="star star-2" id="star-2" type="radio" name="star"/>#}
+{#                    <label class="star star-2" for="star-2"></label>#}
+{#                    <input class="star star-1" id="star-1" type="radio" name="star"/>#}
+{#                    <label class="star star-1" for="star-1"></label>#}
+
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="panel-body">
-          <div class="col-md-9" id="info">
-<br>
-            <img src="" id="img"> 
-            <br>
 
-
-	    <br> <br> 
-	    <div class="panel-group" id="accordion">
-	      <div class="panel panel-default">
-		<div class="panel-heading">
-		  <h4 class="panel-title">
-		    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"> Address</a>
-		  </h4>
-		</div>
-		<div id="collapse1" class="panel-collapse collapse in">
-		  <div class="panel-body">
-
-		    <p> <div id="loc"></div> </p>
-
-		  </div>
-		</div>
-
-		  <div class="panel-heading">
-		    <h4 class="panel-title">
-		      <a data-toggle="collapse" data-parent="#accordion" href="#collapse2"> Rating</a>
-		    </h4>
-		  </div>
-		  <div id="collapse2" class="panel-collapse collapse">
-		    <div class="panel-body">
-		      <p> <div id="rating"></div> </p>
-		    </div>
-		  </div>
-
-		    <div class="panel-heading">
-		      <h4 class="panel-title">
-			<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Cuisine</a>
-		      </h4>
-		    </div>
-		    <div id="collapse3" class="panel-collapse collapse">
-		      <div class="panel-body">
-
-			<div id="cuisine"></div>
-
-		      </div>
-		    </div>
-		    <div class="panel-heading">
-		      <h4 class="panel-title">
-
-			<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Menu</a>
-		      </h4>
-		    </div>
-		    <div id="collapse4" class="panel-collapse collapse">
-		      <div class="panel-body">
-
-			<div><a id="menu">Click me</a></div>
-
-			
-		      </div>
-		    </div>
-
-
-
-		    <div class="panel-heading">
-		      <h4 class="panel-title">
-
-			<a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Reviews</a>
-		      </h4>
-		    </div>
-		    <div id="collapse5" class="panel-collapse collapse">
-		      <div class="panel-body">
-
-		<div id="reviews">
-		  <div id="welpReviews">
-		    {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}
-		    Rating: {{ rating }}
-		    <h4>{{ review_title }} by {{ username }}</h4>
-		    {{ review_content }}
-		    {% endfor %}
-		  </div>
-		  <div id="zomatoReviews">
-		  </div>
-		</div>
-</div>
-</div>
-</div>
-<br>
-
-		<div id="newReview">
-		<form action="add_review">
-		  <textarea name="user_review" placeholder="Add your own review..."></textarea>
-
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-
- <input class="star star-5" id="star-5" type="radio" name="star"/>
-
-    <label class="star star-5" for="star-5"></label>
-    <input class="star star-4" id="star-4" type="radio" name="star"/>
-    <label class="star star-4" for="star-4"></label>
-    <input class="star star-3" id="star-3" type="radio" name="star"/>
-    <label class="star star-3" for="star-3"></label>
-    <input class="star star-2" id="star-2" type="radio" name="star"/>
-    <label class="star star-2" for="star-2"></label>
-    <input class="star star-1" id="star-1" type="radio" name="star"/>
-    <label class="star star-1" for="star-1"></label>
-  </form>
-</div>
-	      </div>
-	    </div>  
-	  </div>
-	</div>
-
-      {% if loggedIn %}
-        {% if not favorited %}
-            <form action = "/add_favorite" >
-                <input type="hidden" name="restaurant_id" value={{restaurant_id}}>
-                <input type = "submit" value = "Add To Favorites">
+        {% if loggedIn %}
+          {% if not favorited %}
+            <form action="/add_favorite">
+              <input type="hidden" name="restaurant_id" value={{ restaurant_id }}>
+              <input type="submit" value="Add To Favorites">
             </form>
-        {% else %}
+          {% else %}
             <p>Already added to Favorites</p>
-      {% endif %}
-      {% else %}
-        <p>Sign in to add to favorites</p>
-      {% endif %}
+          {% endif %}
+        {% else %}
+          <p>Sign in to add to favorites</p>
+        {% endif %}
       
-
-
 
       </div>
     </div>
   </div>
-</div>
 
 {% endblock %}

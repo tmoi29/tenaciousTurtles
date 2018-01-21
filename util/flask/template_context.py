@@ -64,12 +64,16 @@ def br(n):
 # remove hiddens
 context = _filter_hidden(context)
 
-context['print'] = print
-context['vars'] = vars
-context['globals'] = globals
-context['list'] = list
-context['set'] = set
-context['dict'] = dict
+context.update({
+    'print': print,
+    'vars': vars,
+    'globals': globals,
+    'list': list,
+    'set': set,
+    'dict': dict,
+    'range': range,
+    'xrange': xrange or range,
+})
 
 
 def add_template_context(app):
@@ -81,5 +85,5 @@ def add_template_context(app):
 
 if __name__ == '__main__':
     from pprint import pprint
-
+    
     pprint(context)

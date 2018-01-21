@@ -1,23 +1,25 @@
 from __future__ import print_function
-from pathlib import Path
 
-import setup_db
 import hashlib
 import sqlite3
 
 from flask import flash, session
-# from utils.setup_db import initialize
+# noinspection PyCompatibility
+from pathlib import Path
 from typing import Iterable, List, Tuple
+
+import setup_db
 
 
 def add_account(username, password1, password2, setup):
-    # type: (unicode, unicode, unicode) -> bool
+    # type: (unicode, unicode, unicode, bool) -> bool
     """
     Add an account
     Args:
         username (str): username, will not accept duplicates
         password1 (str): first password entered
         password2 (str): second password entered
+        setup (bool): ??? FIXME
     Ret:
         If username exists or passwords don't match
             -Redirects you back to page
@@ -138,8 +140,9 @@ def get_favorite(username):
         query = c.execute('SELECT restaurant FROM favorite WHERE username = ?', [username])
         return [restaurant[0] for restaurant in query]
 
-def in_favorites(username, restaurant_ID):
-    # type: (unicode) -> List[int]
+
+def in_favorites(username, restaurant_id):
+    # type: (unicode, int) -> bool
     """
     Gets favorited restaurants for a user
     Arg:
@@ -150,25 +153,37 @@ def in_favorites(username, restaurant_ID):
     """
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
-        query = c.execute('SELECT restaurant FROM favorite WHERE username = ?  AND restaurant = ?', [username, restaurant_ID])
+        query = c.execute('SELECT restaurant FROM favorite WHERE username = ?  AND restaurant = ?',
+                          [username, restaurant_id])
         if len(query.fetchall()) == 0:
             return False
         return True
-    
+
 
 if __name__ == '__main__':
-    file = Path("utils/generate_sample")
-    generate_sample = file.is_file()
-
-    file = Path("utils/generate_empty")
-    init = file.is_file()
+    path = Path("utils/generate_sample")
+    generate_sample = path.is_file()
     
-    debug           = False
-    filler = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at mi consequat, sodales sem non, ultricies nisl. Donec consequat dui id eros pulvinar venenatis. Nam suscipit dolor at lacus sollicitudin venenatis. Nam et magna mauris. Sed blandit porta dolor, et viverra eros accumsan in. Sed augue leo, faucibus aliquet nulla quis, pretium porttitor velit. Ut sollicitudin nisi lacus, non ultrices magna tristique in. Cras non metus non velit rhoncus tincidunt. Aliquam condimentum rhoncus ante eget ultricies.'    
+    path = Path("utils/generate_empty")
+    init = path.is_file()
+    
+    debug = False
+    filler = \
+        'Lorem ipsum dolor sit amet, ' \
+        'consectetur adipiscing elit. ' \
+        'Cras at mi consequat, sodales sem non, ultricies nisl. ' \
+        'Donec consequat dui id eros pulvinar venenatis. ' \
+        'Nam suscipit dolor at lacus sollicitudin venenatis. ' \
+        'Nam et magna mauris. ' \
+        'Sed blandit porta dolor, et viverra eros accumsan in. ' \
+        'Sed augue leo, faucibus aliquet nulla quis, pretium porttitor velit. ' \
+        'Ut sollicitudin nisi lacus, non ultrices magna tristique in. ' \
+        'Cras non metus non velit rhoncus tincidunt. ' \
+        'Aliquam condimentum rhoncus ante eget ultricies.'
     
     if init or generate_sample:
         setup_db.initialize()
-        
+    
     if generate_sample:
         add_account('john smith', 'abc123', 'abc123', True)
         add_account('joe doe', 'johnNeedsToChangeHisPassword', 'johnNeedsToChangeHisPassword', True)
@@ -183,8 +198,10 @@ if __name__ == '__main__':
         add_review(1, 'john smith', 5, 'Nice', filler)
         add_review(2, 'john smith', 3, 'pls no', filler)
         add_review(1, 'joe doe', 4, 'ok', filler)
-        
+    
     if debug:
+        # FIXME these calls dont' work
+        # FIXME since get_favorite() takes the username, not uid
         print(get_favorite(1))
         print(get_favorite(10))
         print(get_favorite(0))
@@ -196,6 +213,6 @@ if __name__ == '__main__':
         print()
         authenticate('joe smith', 'abc123')
         print()
-        get_review(1)
+        get_reviews(1)
         print()
-        get_review(2)
+        get_reviews(2)

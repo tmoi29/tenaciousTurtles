@@ -2,13 +2,14 @@
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/index.css">
 
-<script language="JavaScript" type="text/javascript">
-  $(document).ready(function(){
-    $('.carousel').carousel({
-      interval: 2000
-    })
-  });    
-</script>
+  <script>
+      {# FIXME Why do we need this? Can I put it in welp.js? #}
+      $(() => {
+          $(".carousel").carousel({
+              interval: 2000,
+          });
+      });
+  </script>
 {% endblock %}
 
 {% block body %}
@@ -51,13 +52,13 @@
   </div> <!-- end slider -->
 
 
- <div id="location">
+  <div id="location">
     <center>
       <form id="zipCodeForm">
         <input type="text" placeholder="Zipcode" id="zipCode">
         <input class="btn-primary" type="submit" value="Use Zipcode" id="enterZipCode">
       </form>
-<br>
+      <br>
       <button class="btn-primary" id="locate">Use Current Location</button>
     </center>
   </div>
@@ -65,7 +66,7 @@
 
   <br> <br>
   <center>
-    <h1>  Restaurants Near You </h1>
+    <h1> Restaurants Near You </h1>
   </center>
 
 

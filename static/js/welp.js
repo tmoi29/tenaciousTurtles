@@ -15,6 +15,8 @@
         this.length = 0;
     };
     
+    // can't extend Object.prototype
+    // because it breaks jQuery
     Object.noNulls = function(obj) {
         for (const field in obj) {
             if (obj.hasOwnProperty(field)) {
@@ -26,6 +28,20 @@
         }
         return obj;
     };
+    
+    Object.defineProperty(Object.prototype, "extendSafely", {
+        value: function(property, value) {
+            Object.defineProperty(this, property, {
+                value: value,
+                writable: false,
+                enumerable: false,
+            });
+        },
+        writable: false,
+        enumerable: false,
+    });
+    
+    Object.prototype.extendSafely("noNulls", Object.noNulls);
     
     const newDiv = function() {
         return document.createElement("div");
@@ -176,9 +192,9 @@
         
     };
     
-    const ZomatoModule = function(LocationModule, _apiKey) {
+    const ZomatoModule = function(LocationModule, zomatoApiKey) {
         
-        const apiKey = _apiKey || prompt("Enter Zomato API key:");
+        const apiKey = zomatoApiKey || prompt("Enter Zomato API key:");
         
         const maxNumZomatoFails = 20;
         let numZomatoFails = 0;
@@ -542,9 +558,9 @@
         
     };
     
-    const GettyModule = function(_apiKey) {
+    const GettyModule = function(gettyApiKey) {
         
-        const apiKey = _apiKey || prompt("Enter Getty API key:");
+        const apiKey = gettyApiKey || prompt("Enter Getty API key:");
         
         const queriesPerSecond = 5;
         
@@ -701,7 +717,7 @@
             let _parent = null;
             
             const initDiv = function() {
-               div = newDiv().withId(id).withClass(klass);
+                div = newDiv().withId(id).withClass(klass);
             };
             
             initDiv();
@@ -765,6 +781,9 @@
                 },
                 
                 setRestaurant: function(restaurantNum, restaurant) {
+                    console.log(restaurantNum);
+                    console.log(rows);
+                    console.log(getRow(restaurantNum));
                     getRow(restaurantNum).setRestaurant(restaurantNum % width, restaurant);
                 },
                 
@@ -885,7 +904,7 @@
             // return GettyModule.getImageUrl(phrase, "best_match");
         };
         
-        const setRestaurantImgUrl = function(imgDiv, restaurant) {
+        const setRestaurantBackgroundImgUrl = function(imgDiv, restaurant) {
             return getRestaurantImgUrls(restaurant)
                 .then(imgUrls => {
                     for (const imgUrl of imgUrls) {
@@ -894,6 +913,8 @@
                         // imgDiv.style.cssText will be an empty string ""
                         if (imgDiv.style.cssText) {
                             restaurant.img = imgUrl;
+                            console.log(imgUrl);
+                            // FIXME background img url not always false when error
                             return imgUrl;
                         }
                     }
@@ -907,17 +928,73 @@
         return {
             getGoogleImgUrls: getRestaurantImgUrls,
             getRestaurantImgUrls: getRestaurantImgUrls,
-            setRestaurantImgUrl: setRestaurantImgUrl,
+            setRestaurantBackgroundImgUrl: setRestaurantBackgroundImgUrl,
         };
         
     };
     
-    const RestaurantsPageModule = function( //
-        LocationModule,
-        ZomatoModule,
-        RestaurantImageModule,
-        RestaurantListModule, //
-    ) {
+    const RestaurantsSubPageModule = function(ZomatoModule, RestaurantListModule, RestaurantImageModule) {
+        
+        /**
+         * Add Zomato restaurant data to a div.
+         *
+         * @param {HTMLDivElement} div div restaurant data will be added to
+         * @param {RestaurantL3} restaurant RestaurantL3 (from Zomato) restaurant data
+         */
+        const restaurantToDiv = function(div, restaurant) {
+            if (!restaurant) {
+                return;
+            }
+            
+            // {empty: true} is passed in ProfilePageModule as restaurant placeholder
+            if ("empty" in restaurant && restaurant.empty === true) {
+                return;
+            }
+            
+            div.withClass("klass");
+            console.log(restaurant);
+            
+            // TODO make this better and fancier
+            
+            const name = document.createElement("h1");
+            div.appendChild(name);
+            name.innerText = restaurant.name;
+            
+            const rating = document.createElement("p");
+            div.appendChild(rating);
+            rating.innerText = "Rating: " +
+                (restaurant.user_rating.rating_text === "Not rated"
+                        ? "N/A"
+                        : restaurant.user_rating.aggregate_rating
+                );
+            
+            const imgDiv = newDiv().withClass("image-holder");
+            div.appendChild(imgDiv);
+            
+            RestaurantImageModule.setRestaurantBackgroundImgUrl(imgDiv, restaurant);
+        };
+        
+        const openRestaurantInfoInNewPage = function(restaurant) {
+            const newPage = window.open("/restaurant_info?restaurant_id=" + restaurant.id);
+            newPage.restaurant = restaurant;
+        };
+        
+        const createRestaurantList = function() {
+            return RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
+                .withEventListeners({
+                    click: function(event) {
+                        openRestaurantInfoInNewPage(this.getRestaurant());
+                    },
+                });
+        };
+        
+        return {
+            createRestaurantList: createRestaurantList,
+        };
+        
+    };
+    
+    const RestaurantsPageModule = function(LocationModule, ZomatoModule, RestaurantsSubPageModule) {
         
         let useZipCode = false;
         let lastLocation = null;
@@ -968,42 +1045,7 @@
         
         initRestaurants();
         
-        /**
-         * Add Zomato restaurant data to a div.
-         *
-         * @param {HTMLDivElement} div div restaurant data will be added to
-         * @param {RestaurantL3} restaurant RestaurantL3 (from Zomato) restaurant data
-         */
-        const restaurantToDiv = function(div, restaurant) {
-            div.withClass("klass");
-            console.log(restaurant);
-            
-            // TODO make this better and fancier
-            
-            const name = document.createElement("h1");
-            div.appendChild(name);
-            name.innerText = restaurant.name;
-            
-            const rating = document.createElement("p");
-            div.appendChild(rating);
-            rating.innerText = "Rating: " +
-                (restaurant.user_rating.rating_text === "Not rated"
-                        ? "N/A"
-                        : restaurant.user_rating.aggregate_rating
-                );
-            
-            const imgDiv = newDiv().withClass("image-holder");
-            div.appendChild(imgDiv);
-            
-            RestaurantImageModule.setRestaurantImgUrl(imgDiv, restaurant);
-        };
-        
-        const openRestaurantInfoInNewPage = function(restaurant) {
-            const newPage = window.open("/restaurant_info?restaurant_id=" + restaurant.id);
-            newPage.restaurant = restaurant;
-        };
-        
-        const restaurantList = RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4);
+        const restaurantList = RestaurantsSubPageModule.createRestaurantList();
         
         const addRestaurant = function() {
             return restaurants.next()
@@ -1013,7 +1055,7 @@
         };
         
         const numInitialRestaurants = 20;
-    
+        
         let first = true;
         
         const resetRestaurants = function() {
@@ -1053,13 +1095,7 @@
                 });
                 $("#locate").click(onLocate);
                 
-                restaurantList
-                    .appendTo(restaurantListDiv)
-                    .withEventListeners({
-                        click: function(event) {
-                            openRestaurantInfoInNewPage(this.getRestaurant());
-                        },
-                    });
+                restaurantList.appendTo(restaurantListDiv);
                 
                 loadInitialRestaurants.zipCodeField = zipCodeField;
                 loadInitialRestaurants();
@@ -1121,7 +1157,7 @@
             const address = restaurant.location.address;
             const num_reviews = restaurant.user_rating.rating_text;
             const rating = num_reviews === "Not rated" ? "N/A" : restaurant.user_rating.aggregate_rating;
-
+            
             const price = restaurant.price_range;
             const cuisine = restaurant.cuisines;
             const menu = restaurant.menu_url;
@@ -1132,9 +1168,11 @@
             element.innerText = name;
             
             const img = document.getElementById("img");
-            img.src = src;
             //img.width = 500;
             //img.height = 250;
+            if (src) {
+                img.src = src;
+            }
             
             if (!src) {
                 RestaurantImageModule.getRestaurantImgUrls(restaurant)
@@ -1165,14 +1203,26 @@
             
             const m = document.getElementById("menu");
             m.href = menu;
+            m.target = "_blank"; // open in new tab
         };
         
         const addNewReview = function(reviewsDiv) {
             if (!loggedIn) {
-                return; // TODO display error message
+                alert("You must be logged in to add a review");
+                return; // TODO display better error message
             }
             
-            const review = null; // TODO
+            const reviewText = $("#newReviewTextew")[0];
+            
+            const review = {
+                rating: -1, // FIXME rating system not set up yet in HTML
+                rating_text: "", // FIXME neither is rating_text (title)
+                review_text: reviewText.value,
+            };
+            
+            review.rating = -1; // FIXME rating system not set up yet in HTML
+            review.rating_text = ""; // FIXME neither is rating_text (title)
+            review.review_text = review.value;
             
             const reviewDiv = addReview(reviewsDiv, review);
             
@@ -1269,6 +1319,43 @@
         
     };
     
+    const ProfilePageModule = function(ZomatoModule, RestaurantSubPageModule) {
+        
+        const restaurantList = RestaurantSubPageModule.createRestaurantList();
+        
+        const addFavoriteRestaurants = function(favoriteRestaurantIds) {
+            if (favoriteRestaurantIds.length === 0) {
+                restaurantList.addRestaurant(null); // signifies no more restaurants
+                return;
+            }
+            
+            favoriteRestaurantIds.forEach((restaurantId, i) => {
+                // create element ahead of time and set lazily later
+                // this ensures correct order
+                restaurantList.addRestaurant({empty: true});
+                ZomatoModule.getRestaurant(restaurantId)
+                    .then(restaurant => {
+                        restaurantList.setRestaurant(i, restaurant);
+                    });
+            });
+        };
+        
+        // test, TODO remove later
+        favoriteRestaurantIds.push(16783966, 16775819, 16770116, 18072159);
+        
+        const main = function() {
+            $(() => {
+                restaurantList.appendTo($("#restaurants")[0]); // FIXME id
+                addFavoriteRestaurants(favoriteRestaurantIds);
+            });
+        };
+        
+        return {
+            main: main,
+        };
+        
+    };
+    
     // for testing
     // const apiKeys = {
     //     zomato: "",
@@ -1285,7 +1372,13 @@
             const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
             const restaurantImageModule = RestaurantImageModule();
             const restaurantListModule = RestaurantListModule();
-            const restaurantInfoPageModule = RestaurantInfoPageModule(zomatoModule);
+            const restaurantSubPageModule = RestaurantsSubPageModule(zomatoModule, restaurantListModule, restaurantImageModule);
+            
+            const restaurantsPageModule = RestaurantsPageModule(
+                locationModule,
+                zomatoModule,
+                restaurantSubPageModule);
+            restaurantsPageModule.main();
             
             const test = function() {
                 const restaurants = zomatoModule.newRestaurants();
@@ -1302,14 +1395,6 @@
                 }
             };
             // test();
-            
-            const restaurantsPageModule = RestaurantsPageModule(
-                locationModule,
-                zomatoModule,
-                restaurantImageModule,
-                restaurantListModule,
-                restaurantInfoPageModule);
-            restaurantsPageModule.main();
         },
         
         // for testing purposes
@@ -1331,7 +1416,12 @@
         },
         
         "/profile": function main(apiKeys) {
-            // TODO
+            const zomatoModule = ZomatoModule(null, apiKeys.zomato);
+            const restaurantListModule = RestaurantListModule();
+            const restaurantImageModule = RestaurantImageModule();
+            const restaurantSubPageModule = RestaurantsSubPageModule(zomatoModule, restaurantListModule, restaurantImageModule);
+            const profilePageModule = ProfilePageModule(zomatoModule, restaurantSubPageModule);
+            profilePageModule.main();
         },
         
     };
