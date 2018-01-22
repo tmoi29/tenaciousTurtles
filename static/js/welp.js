@@ -1155,12 +1155,40 @@
             return reviewDiv;
         };
         
-        const addRestaurantInfo = function(restaurant) {
+        const addRestaurantInfo = function(restaurant, welpRatings) {
             const name = restaurant.name;
             const src = restaurant.img;
             const address = restaurant.location.address;
             const num_reviews = restaurant.user_rating.rating_text;
-            const rating = num_reviews === "Not rated" ? "N/A" : restaurant.user_rating.aggregate_rating;
+            const wRating = 0;
+            const id = restaurant.id;
+            
+            if (id in welpRatings){
+                for (var rating in welpRatings[id]){
+                    wRating += parseInt(rating);
+                }
+            }
+            
+            const zRating = num_reviews === "Not rated" ? "N/A" : restaurant.user_rating.aggregate_rating;
+            console.log(zRating)
+            var new_rating = 0;
+            
+            
+            if ((zRating == "N/A") && wRating == 0){
+                new_rating = "N/A";
+            }
+            else if (zRating == "N/A"){
+                new_rating = Math.round(wRating * 10/ welpRatings[id].length)/10.0;
+            }
+            else if (wRating == 0){
+                new_rating = zRating;
+            }   
+            else {
+                var total = wRating + parseInt(zRating) * parseInt(restaurant.all_reviews_count);
+                var num = welpRatings[id].length + parseInt(restaurant.all_reviews_count);
+                new_rating = (Math.round(total * 10 / num ))/10.0;
+            }   
+            
             
             const price = restaurant.price_range;
             const cuisine = restaurant.cuisines;
@@ -1199,8 +1227,8 @@
             loc.innerText = address;
             
             const r = document.getElementById("rating");
-            console.log(rating);
-            r.innerText = rating;
+            console.log(new_rating);
+            r.innerText = new_rating;
             
             const cui = document.getElementById("cuisine");
             cui.innerText = cuisine;
@@ -1316,11 +1344,13 @@
                 const zomatoReviewsDiv = $("#zomatoReviews")[0];
                 const welpReviewsDiv = $("#welpReviews")[0];
                 
+                console.log(welpReview)
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
+                
                 
                 getRestaurant()
                     .then(restaurant => {
-                        addRestaurantInfo(restaurant);
+                        addRestaurantInfo(restaurant, welpRatings);
                         return restaurant;
                     })
                     .then(restaurant => ZomatoModule.getReviews(restaurant.id))

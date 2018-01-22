@@ -6,6 +6,7 @@
 {% block preJS %}
   <script>
       const favoriteRestaurantIds = false || {{json.dumps(restaurant_ids)|safe}};
+      const welpRatings = {{ json.dumps(ratings)|safe}};
   </script>
 {% endblock %}
 

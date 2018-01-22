@@ -11,7 +11,8 @@
   <script>
       const restaurantId = +{{ restaurant_id }};
       // noinspection JSAnnotator
-      const welpReviews = {{ json.dumps(welp_reviews) }};
+      const welpReviews = {{ json.dumps(welp_reviews)|safe }};
+      const welpRatings = {{ json.dumps(ratings)|safe}};
   </script>
 {% endblock %}
 

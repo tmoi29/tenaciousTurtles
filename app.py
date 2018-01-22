@@ -25,14 +25,16 @@ is_not_logged_in = ~is_logged_in
 is_not_logged_in.func_name = 'is_not_logged_in'
 context[is_not_logged_in.func_name] = is_not_logged_in
 
-
 @app.reroute_from('/')
 @app.route('/index')
 def index():
     # type: () -> Response
+    ratings = database.get_all_review_ratings()
     return render_template(
             'index.html',
-            logged_in=is_logged_in())
+            ratings = ratings,
+            logged_in=is_logged_in(),
+            json = json)
 
 
 @app.route('/login')
@@ -113,6 +115,7 @@ def restaurant_info():
     # type: () -> Response
     restaurant_id = int(request.args['restaurant_id'])
     db_reviews = database.get_reviews(restaurant_id)
+    ratings = database.get_all_review_ratings()
     welp_reviews = [{
         'rating': rating,
         'rating_text': review_title,
@@ -136,6 +139,7 @@ def restaurant_info():
             json=json,
             loggedIn=is_logged_in(),
             favorited=favorited,
+            ratings = ratings,
     )
 
 
@@ -144,7 +148,8 @@ def restaurant_info():
 def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
-    return render_template('profile.html', restaurant_ids=restaurants, json=json)
+    ratings = database.get_all_review_ratings()
+    return render_template('profile.html', restaurant_ids=restaurants, ratings = ratings, json=json)
 
 
 # @app.route('/add_favorite')

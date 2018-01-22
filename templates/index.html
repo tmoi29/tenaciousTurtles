@@ -3,6 +3,12 @@
   <link rel="stylesheet" type="text/css" href="css/index.css">
 {% endblock %}
 
+{% block preJS %}
+  <script>
+      const welpRatings = {{ json.dumps(ratings)|safe}};
+  </script>
+{% endblock %}
+
 {% block body %}
 
   <div id="welpcarousel" class="carousel slide" data-ride="carousel" data-pause="hover">

@@ -108,7 +108,28 @@ def get_reviews(restaurant):
                 'SELECT * FROM reviews WHERE restaurant = ?',
                 [restaurant])  # type: Iterable[Tuple[int, unicode, int, unicode, unicode]]
         return [review for review in reviews]
-
+    
+def get_all_review_ratings():
+    """
+    Gets all ratings of restaurants
+    Ret:
+        A dictionary with restaurant ids as keys and a list of their ratings
+    """
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        r = c.execute(
+                'SELECT restaurant, rating FROM reviews')
+        ratings = r.fetchall()
+        ret = {}
+        for entry in ratings:
+            if entry[0] in ret:
+                ret[int(entry[0])].append(entry[1])
+            else:
+                ret[int(entry[0])] = []
+                ret[int(entry[0])].append(entry[1])
+                
+        return ret
+        
 
 def add_favorite(username, restaurant_id):
     # type: (unicode, int) -> None
@@ -198,6 +219,9 @@ if __name__ == '__main__':
         add_review(1, 'john smith', 5, 'Nice', filler)
         add_review(2, 'john smith', 3, 'pls no', filler)
         add_review(1, 'joe doe', 4, 'ok', filler)
+        add_review(17464110, 'joe doe', 2, "meh", filler)
+        
+        print(get_all_review_ratings())
     
     if debug:
         # FIXME these calls dont' work
