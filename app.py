@@ -36,10 +36,7 @@ context['UID_KEY'] = UID_KEY
 @app.route('/index')
 def index():
     # type: () -> Response
-    return render_template(
-            'index.html',
-            logged_in=is_logged_in()
-    )
+    return render_template('index.html')
 
 
 @app.route('/login')

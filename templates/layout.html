@@ -39,7 +39,7 @@
     
     <nav class="navbar navbar-inverse">
       <div class="navbar-header">
-        <a class="navbar-brand" rel="home" href="/" title="Buy Sell Rent Everyting">
+        <a class="navbar-brand" rel="home" href="/" title="Welp, what do we have here?">
           <img id="logo" src="img/logo.png">
         </a>
       </div>
@@ -60,17 +60,20 @@
     </nav>
 
     {# Display flashed messages #}
-    {% set messages = get_flashed_messages() %}
-    {% for msg in messages %}
-      <div class="container" style="padding:20px">
-        {% if msg.find("Yay!") >= 0 %}
-          <div class="alert alert-success" role="alert">{{ msg }}</div>
-        {% endif %}
-        {% if msg.find("Whoops!") >= 0 %}
-          <div class="alert alert-danger" role="alert">{{ msg }}</div>
-        {% endif %}
-      </div>
-    {% endfor %}
+    {% with messages = get_flashed_messages() %}
+      <center>
+        {% for msg in messages %}
+          <div class="container" style="padding:20px">
+            {% if msg.find("Yay!") >= 0 %}
+              <div class="alert alert-success" role="alert">{{ msg }}</div>
+            {% endif %}
+            {% if msg.find("Whoops!") >= 0 %}
+              <div class="alert alert-danger" role="alert">{{ msg }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </center>
+    {% endwith %}
 
     {% block body %}
 

@@ -882,3 +882,10 @@ However, the rating and review title aren't quite done,
 so I hardcoded those to 5 and "Test" for now.
 
 =======================================================
+khyberS -- 2018-01-23 02:56:07
+
+Centered the flashed messages so they don't get cut off by the Welp logo.
+
+Got rid of useless "More Restaurants" button in /profile.
+
+=======================================================
