@@ -8,8 +8,9 @@ Welp is a web app designed to provide users with information about nearby restau
 
 ## Features
 
-The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information.
-A user may also log in to leave reviews for restaurants in addition to the existing reviews provided by Zomato.
+The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information in order for us to provide information on restaurants near you. We provide information such as the restaurant's address, menu, type of cuisine, ratings, and reviews.
+A user may also log in to leave reviews for restaurants in addition to the existing reviews provided by Zomato, as well as save restaurants as Favorites. 
+
 
 ## Launch Instructions
 
@@ -47,11 +48,11 @@ Save both keys in `secrets.json` in `/api`, according to the format of `secrets_
 
 #### Virtualenv
 
-We recommend you use an virtual environment to install dependencies for this site.
+We recommend you use a virtual environment to install dependencies for this site.
 
 [To install virtualenv](https://virtualenv.pypa.io/en/stable/installation/)
 
-[To create an virtualenv](https://virtualenv.pypa.io/en/stable/reference/#virtualenv-command)
+[To create a virtualenv](https://virtualenv.pypa.io/en/stable/reference/#virtualenv-command)
 
 To activate virtualenv in a Unix-based system:
 
