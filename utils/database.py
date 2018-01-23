@@ -148,10 +148,28 @@ def add_favorite(username, restaurant_id):
         username (str): username
         restaurant_id  (int): ID number of restaurant based on Zomato
     """
+    print('adding favorite: ', username, restaurant_id)
     with sqlite3.connect('data/database.db') as db:
         c = db.cursor()
         c.execute(
                 'INSERT INTO favorite VALUES(?, ?)',
+                [username, restaurant_id])
+        db.commit()
+
+
+def remove_favorite(username, restaurant_id):
+    # type: (unicode, int) -> None
+    """
+    Removes favorited restaurants for a user
+    Arg:
+        username (str): username
+        restaurant_id  (int): ID number of restaurant based on Zomato
+    """
+    print('removing favorite: ', username, restaurant_id)
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        c.execute(
+                'DELETE FROM favorite WHERE username = ? AND restaurant = ?',
                 [username, restaurant_id])
         db.commit()
 

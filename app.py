@@ -7,7 +7,7 @@ from typing import Any
 from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
     reroute_to, session_contains
-from util.flask.flask_utils_types import Router
+from util.flask.flask_utils_types import Router, Route
 from util.flask.template_context import add_template_context, context
 from utils import database
 
@@ -174,15 +174,37 @@ def profile():
 #     return redirect('/restaurant_info?restaurant_id=' + str(restaurant_id))
 
 
-@app.route('/add_favorite', methods=['GET', 'POST'])
-@preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
-def add_favorite():
-    # type: () -> str
-    username = session[UID_KEY]
-    restaurant_id = int(request.form['restaurant_id'])
-    database.add_favorite(username, restaurant_id)
-    flash('Yay! You added this restaurant to your favorites list!')
-    return 'OK'
+def make_favorite_route(add, db_function):
+    # type: (bool) -> Route
+
+    @preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
+    def favorite():
+        # type: () -> str
+        username = session[UID_KEY]
+        restaurant_id = int(request.form['restaurant_id'])
+        db_function(username, restaurant_id)
+        flash('Yay! You {} this restaurant to your favorites list!'
+              .format('added' if add else 'removed'))
+        return 'OK'
+    
+    favorite.func_name = ('add' if add else 'remove') + '_favorite'
+    favorite = app.route('/' + favorite.func_name, methods=['GET', 'POST'])(favorite)
+    return favorite
+
+
+add_favorite = make_favorite_route(True, database.add_favorite)
+remove_favorite = make_favorite_route(False, database.remove_favorite)
+
+
+# @app.route('/add_favorite', methods=['GET', 'POST'])
+# @preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
+# def add_favorite():
+#     # type: () -> str
+#     username = session[UID_KEY]
+#     restaurant_id = int(request.form['restaurant_id'])
+#     database.add_favorite(username, restaurant_id)
+#     flash('Yay! You added this restaurant to your favorites list!')
+#     return 'OK'
 
 
 @app.route('/add_review', methods=['GET', 'POST'])
