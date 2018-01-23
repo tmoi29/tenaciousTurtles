@@ -283,13 +283,13 @@
             });
         };
         
-        const searchRestaurantsRaw = function(start, count, radius, getLocationFunc) {
+        const searchRestaurantsRaw = function(start, count, radius, getLocationFunc, query) {
             // Promises can resolve nested Promises
             return getLocationFunc()
                 .then(coords => {
                     console.log(coords);
                     return search(
-                        null, "zone", null, start, count,
+                        null, "zone", query, start, count,
                         coords, radius,
                         null, null,
                         null, null,
@@ -297,8 +297,8 @@
                 });
         };
         
-        const searchRestaurants = function(start, count, radius, getLocationFunc) {
-            return searchRestaurantsRaw(start, count, radius, getLocationFunc)
+        const searchRestaurants = function(start, count, radius, getLocationFunc, query) {
+            return searchRestaurantsRaw(start, count, radius, getLocationFunc, query)
                 .then(response => {
                     const restaurants = response.restaurants.map(restaurant => restaurant.restaurant);
                     for (let i = 0; i < restaurants.length; i++) {
@@ -316,9 +316,10 @@
          *      a function that returns a promise of coordinates
          *      if null, defaults to getLocation,
          *      which uses geolocation if able, or else IP address
+         * @param {string | undefined} query
          * @return a new Restaurants object
          */
-        const newRestaurants = function(getLocationPromiseFunc) {
+        const newRestaurants = function(getLocationPromiseFunc, query) {
             
             const getLocationFunc = getLocationPromiseFunc || LocationModule.getLocation;
             
@@ -356,7 +357,7 @@
                 if (numFails >= maxFails) {
                     return;
                 }
-                const promise = searchRestaurants(searchStart, count, searchRadius, getLocationFunc);
+                const promise = searchRestaurants(searchStart, count, searchRadius, getLocationFunc, query);
                 promise.firstRestaurantNum = firstRestaurantNum;
                 promise.index = promisesIndex;
                 promise.attached = [];
@@ -933,7 +934,158 @@
         
     };
     
-    const RestaurantsSubPageModule = function(ZomatoModule, RestaurantListModule, RestaurantImageModule) {
+    const WelpRatingsModule = function() {
+        
+        const url = "/all_review_ratings_raw";
+        
+        const newRatingsMap = function() {
+            const ratings = new Map();
+            
+            ratings.addRating = function(restaurantId, rating, count = 1) {
+                const newRatings = new Array(count).fill(rating);
+                if (ratings.has(restaurantId)) {
+                    const ratingObj = ratings.get(restaurantId);
+                    ratingObj.ratings.addAll(newRatings);
+                    const numRatings = ratingObj.numRatings;
+                    ratingObj.averageRating = (((ratingObj.averageRating * numRatings) + (rating * count))
+                        / (numRatings + count)).toFixed(1);
+                    ratingObj.numRatings += count;
+                } else {
+                    ratings.set(restaurantId, {
+                        ratings: newRatings,
+                        numRatings: count,
+                        averageRating: rating,
+                    });
+                }
+            };
+            
+            return ratings;
+        };
+        
+        const parseRawWelpRatings = function(rawWelpRatings) {
+            const ratings = newRatingsMap();
+            for (const pair of rawWelpRatings) {
+                const restaurantId = pair[0];
+                const rating = pair[1];
+                ratings.addRating(restaurantId, rating);
+            }
+            return ratings;
+        };
+        
+        const setRatingTextStatic = function(ratingElem, welpRating, zomatoRating) {
+            const numZomatoRatings = parseInt(zomatoRating.votes);
+            const isRated = numZomatoRatings !== 0;
+            const averateZomatoRating = !isRated ? NaN : parseFloat(zomatoRating.aggregate_rating);
+            
+            const setRatingText = function(rating, count) {
+                ratingElem.innerText = "Rating: " +
+                    (count === 0 ? "N/A" : (rating.toString() + " (out of " + count.toString() + ")"));
+            };
+            
+            // set initial ratings as Zomato only
+            setRatingText(averateZomatoRating, numZomatoRatings);
+            
+            if (isRated) {
+                welpRating.addRating(averateZomatoRating, numZomatoRatings);
+            }
+            // update ratings w/ Welp Rating ASAP
+            welpRating.getRatings()
+                .then(rating => {
+                    if (rating) {
+                        setRatingText(rating.averageRating, rating.numRatings);
+                    }
+                });
+        };
+        
+        const newWelpRatings = function() {
+            
+            let _ratings = null;
+            let ratingsPromise = null;
+            
+            const ratings = function() {
+                if (_ratings) {
+                    console.log("already fetched welpRatings");
+                    return Promise.resolve(_ratings);
+                }
+                if (ratingsPromise) {
+                    console.log("already fetching welpRatings");
+                    return ratingsPromise;
+                }
+                console.log("fetching welpRatings");
+                return ratingsPromise = new Promise(resolve => {
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(rawRatings => parseRawWelpRatings(rawRatings))
+                        .then(ratings => resolve(ratings))
+                        .catch(error => resolve(new Map()));
+                })
+                    .then(ratings => {
+                        _ratings = ratings;
+                        return ratings;
+                    });
+            };
+            
+            window.welp = this;
+            window.ratings = ratings;
+            
+            return {
+                
+                forRestaurant: function(restaurantId) {
+                    if ($.type(restaurantId) === "string") {
+                        restaurantId = parseInt(restaurantId);
+                    }
+                    
+                    return {
+                        
+                        getRatings: function() {
+                            return ratings()
+                                .then(ratings => ratings.get(restaurantId));
+                        },
+                        
+                        getRatingAverage: function() {
+                            return this.getRatings(restaurantId)
+                                .then(rating => rating.averageRating);
+                        },
+                        
+                        getNumRatings: function() {
+                            return this.getRatings()
+                                .then(rating => rating.numRatings);
+                        },
+                        
+                        addRating: function(rating, count = 1) {
+                            ratings()
+                                .then(ratings => {
+                                    ratings.addRating(restaurantId, rating, count);
+                                });
+                        },
+                        
+                        setRatingText: function(ratingElem, zomatoRating) {
+                            setRatingTextStatic(ratingElem, this, zomatoRating);
+                        },
+                        
+                    };
+                },
+                
+                load: function() {
+                    ratings();
+                    return this;
+                },
+                
+            };
+            
+        };
+        
+        return {
+            newWelpRatings: newWelpRatings,
+        };
+        
+    };
+    
+    const RestaurantsSubPageModule = function( //
+        ZomatoModule, RestaurantListModule, RestaurantImageModule, WelpRatingsModule) {
+        
+        const welpRatings = WelpRatingsModule.newWelpRatings();
+        welpRatings.load(); // force request to server immediately
         
         /**
          * Add Zomato restaurant data to a div.
@@ -954,19 +1106,15 @@
             div.withClass("klass");
             console.log(restaurant);
             
-            // TODO make this better and fancier
-            
             const name = document.createElement("h1");
             div.appendChild(name);
             name.innerText = restaurant.name;
             
             const rating = document.createElement("p");
             div.appendChild(rating);
-            rating.innerText = "Rating: " +
-                (restaurant.user_rating.rating_text === "Not rated"
-                        ? "N/A"
-                        : restaurant.user_rating.aggregate_rating
-                );
+            
+            welpRatings.forRestaurant(restaurant.id)
+                .setRatingText(rating, restaurant.user_rating);
             
             const imgDiv = newDiv().withClass("image-holder");
             div.appendChild(imgDiv);
@@ -998,6 +1146,7 @@
         
         let useZipCode = false;
         let lastLocation = null;
+        let query = undefined;
         
         const switchLocatorAndReload = function(useGps) {
             // if caching isn't properly, won't be able to change to new zipcode
@@ -1008,6 +1157,11 @@
             console.log("Now using " + (useGps ? "GPS" : "Zipcode"));
             useZipCode = !useGps;
             LocationModule.getLocation.useGps(useGps);
+            loadInitialRestaurants(true);
+        };
+        
+        const onSearch = function(searchField) {
+            query = searchField.value;
             loadInitialRestaurants(true);
         };
         
@@ -1040,7 +1194,8 @@
         let restaurants = null;
         
         const initRestaurants = function() {
-            restaurants = ZomatoModule.newRestaurants(getLocation);
+            console.log("using query: " + query);
+            restaurants = ZomatoModule.newRestaurants(getLocation, query);
         };
         
         initRestaurants();
@@ -1073,12 +1228,12 @@
                     .then(() => {
                         if (first) {
                             first = false;
-                            setTimeout(() => loadInitialRestaurants.zipCodeField.scrollIntoView(), 100);
+                            setTimeout(() => loadInitialRestaurants.topElement.scrollIntoView(), 100);
                         }
                     });
             });
         };
-        loadInitialRestaurants.zipCodeField = null;
+        loadInitialRestaurants.topElement = null;
         
         const main = function() {
             $(() => {
@@ -1086,22 +1241,24 @@
                     interval: 2000,
                 });
                 
+                const searchField = $("#searchField")[0];
                 const zipCodeField = $("#zipCode")[0];
                 const moreRestaurantsButton = $("#moreRestaurants")[0];
                 const restaurantListDiv = $("#restaurants")[0];
                 
                 getLocation.zipCodeField = zipCodeField;
                 
-                $("#enterZipCode").click(onZipCodeEnter);
-                $("#zipCodeForm").submit(event => {
-                    onZipCodeEnter();
-                    return false;
+                $("#searchButton").click(() => {
+                    onSearch(searchField);
                 });
+                
+                $("#enterZipCode").click(onZipCodeEnter);
+                
                 $("#locate").click(onLocate);
                 
                 restaurantList.appendTo(restaurantListDiv);
                 
-                loadInitialRestaurants.zipCodeField = zipCodeField;
+                loadInitialRestaurants.topElement = searchField;
                 loadInitialRestaurants();
                 
                 moreRestaurantsButton.addEventListener("click", () => {
@@ -1125,7 +1282,7 @@
         
     };
     
-    const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule) {
+    const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule, WelpRatingsModule) {
         
         let _restaurant = window.restaurant || undefined;
         
@@ -1142,16 +1299,17 @@
         
         const reviewToDiv = function(div, review) {
             div.className += "rev_div";
+            // FIXME make this look nicer
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
-            div.innerHTML = " <i>" + "Rating: " + rating + ";" + title + "</i> <br>" + text;
+            div.innerHTML = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
         };
         
         const addReview = function(reviewsDiv, review) {
             const reviewDiv = newDiv();
             reviewToDiv(reviewDiv, review);
-            reviewsDiv.appendChild(reviewDiv);
+            reviewsDiv.prepend(reviewDiv);
             return reviewDiv;
         };
         
@@ -1159,45 +1317,15 @@
             const name = restaurant.name;
             const src = restaurant.img;
             const address = restaurant.location.address;
-            const num_reviews = restaurant.user_rating.rating_text;
-            const wRating = 0;
-            const id = restaurant.id;
-            
-            if (id in welpRatings){
-                for (var rating in welpRatings[id]){
-                    wRating += parseInt(rating);
-                }
-            }
-            
-            const zRating = num_reviews === "Not rated" ? "N/A" : restaurant.user_rating.aggregate_rating;
-            console.log(zRating)
-            var new_rating = 0;
-            
-            
-            if ((zRating == "N/A") && wRating == 0){
-                new_rating = "N/A";
-            }
-            else if (zRating == "N/A"){
-                new_rating = Math.round(wRating * 10/ welpRatings[id].length)/10.0;
-            }
-            else if (wRating == 0){
-                new_rating = zRating;
-            }   
-            else {
-                var total = wRating + parseInt(zRating) * parseInt(restaurant.all_reviews_count);
-                var num = welpRatings[id].length + parseInt(restaurant.all_reviews_count);
-                new_rating = (Math.round(total * 10 / num ))/10.0;
-            }   
-            
             
             const price = restaurant.price_range;
             const cuisine = restaurant.cuisines;
-            const menu = restaurant.menu_url;
+            const menuUrl = restaurant.menu_url;
             
-            console.log(menu);
+            console.log(menuUrl);
             
-            const element = document.getElementById("name");
-            element.innerText = name;
+            const nameElem = document.getElementById("name");
+            nameElem.innerText = name;
             
             const img = document.getElementById("img");
             //img.width = 500;
@@ -1223,19 +1351,19 @@
                     });
             }
             
-            const loc = document.getElementById("loc");
-            loc.innerText = address;
+            const locationElem = document.getElementById("loc");
+            locationElem.innerText = address;
             
-            const r = document.getElementById("rating");
-            console.log(new_rating);
-            r.innerText = new_rating;
+            const ratingElem = document.getElementById("rating");
+            welpRatings.forRestaurant(restaurant.id)
+                .setRatingText(ratingElem, restaurant.user_rating);
             
-            const cui = document.getElementById("cuisine");
-            cui.innerText = cuisine;
+            const cuisineElem = document.getElementById("cuisine");
+            cuisineElem.innerText = cuisine;
             
-            const m = document.getElementById("menu");
-            m.href = menu;
-            m.target = "_blank"; // open in new tab
+            const menuElem = document.getElementById("menu");
+            menuElem.href = menuUrl;
+            menuElem.target = "_blank"; // open in new tab
         };
         
         const postToServer = function(url, form) {
@@ -1274,19 +1402,16 @@
             const reviewText = $("#newReviewText")[0];
             
             const review = {
-                rating: -1, // FIXME rating system not set up yet in HTML
-                rating_text: "", // FIXME neither is rating_text (title)
+                user: {name: username},
+                rating: 5, // FIXME rating system not set up yet in HTML
+                rating_text: "Test", // FIXME neither is rating_text (title)
                 review_text: reviewText.value,
             };
-            
-            review.rating = -1; // FIXME rating system not set up yet in HTML
-            review.rating_text = ""; // FIXME neither is rating_text (title)
-            review.review_text = review.value;
             
             const reviewDiv = addReview(reviewsDiv, review);
             
             postToServer("/add_review", {
-                rating: review.rating_text,
+                rating: review.rating,
                 review_title: review.rating_text,
                 review_content: review.review_text,
             })
@@ -1344,9 +1469,13 @@
                 const zomatoReviewsDiv = $("#zomatoReviews")[0];
                 const welpReviewsDiv = $("#welpReviews")[0];
                 
-                console.log(welpReview)
+                // a bunch of spaces are put there for some reason, this clears them
+                $("#newReviewText")[0].value = "";
+                
+                console.log(welpReviews);
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
+                const welpRatings = WelpRatingsModule.newWelpRatings().load();
                 
                 getRestaurant()
                     .then(restaurant => {
@@ -1361,8 +1490,9 @@
                         reviews.forEach(review => addReview(zomatoReviewsDiv, review));
                     });
                 
-                $("#addNewReviewButton").click(() => {
+                $("#addNewReviewButton").click(event => {
                     addNewReview(welpReviewsDiv);
+                    event.preventDefault();
                 });
                 
                 $("#addFavoriteRestaurantButton").click(function() {
@@ -1469,7 +1599,9 @@
             const zomatoModule = ZomatoModule(locationModule, apiKeys.zomato);
             const restaurantImageModule = RestaurantImageModule();
             const restaurantListModule = RestaurantListModule();
-            const restaurantSubPageModule = RestaurantsSubPageModule(zomatoModule, restaurantListModule, restaurantImageModule);
+            const welpRatingsModule = WelpRatingsModule();
+            const restaurantSubPageModule = RestaurantsSubPageModule(
+                zomatoModule, restaurantListModule, restaurantImageModule, welpRatingsModule);
             
             const restaurantsPageModule = RestaurantsPageModule(
                 locationModule,
@@ -1502,8 +1634,9 @@
         "/restaurant_info": function main(apiKeys) {
             const zomatoModule = ZomatoModule(null, apiKeys.zomato);
             const restaurantImageModule = RestaurantImageModule();
+            const welpRatingsModule = WelpRatingsModule();
             const restaurantInfoPageModule =
-                RestaurantInfoPageModule(zomatoModule, restaurantImageModule);
+                RestaurantInfoPageModule(zomatoModule, restaurantImageModule, welpRatingsModule);
             restaurantInfoPageModule.main();
         },
         
@@ -1516,7 +1649,9 @@
             const zomatoModule = ZomatoModule(null, apiKeys.zomato);
             const restaurantListModule = RestaurantListModule();
             const restaurantImageModule = RestaurantImageModule();
-            const restaurantSubPageModule = RestaurantsSubPageModule(zomatoModule, restaurantListModule, restaurantImageModule);
+            const welpRatingsModule = WelpRatingsModule();
+            const restaurantSubPageModule = RestaurantsSubPageModule(
+                zomatoModule, restaurantListModule, restaurantImageModule, welpRatingsModule);
             const profilePageModule = ProfilePageModule(zomatoModule, restaurantSubPageModule);
             profilePageModule.main();
         },

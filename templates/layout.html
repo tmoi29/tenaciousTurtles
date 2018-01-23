@@ -16,6 +16,7 @@
     <script>
         let welpPreMain = undefined;
         const loggedIn = false || {{ "true" if is_logged_in() else "false" }};
+        const username = "{{ session[UID_KEY] }}";
         let apiKeys = {
             zomato: undefined,
             google: {
@@ -47,8 +48,8 @@
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/">Home</a></li>
           {% if not is_logged_in() %}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/create_account">Create Account</a></li>
+            <li><a href="/login" target="_blank">Login</a></li>
+            <li><a href="/create_account" target="_blank">Create Account</a></li>
           {% else %}
             <li><a href="/profile"> Profile </a></li>
             <li><a href="/logout">Log out </a></li>

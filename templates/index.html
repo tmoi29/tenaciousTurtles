@@ -3,12 +3,6 @@
   <link rel="stylesheet" type="text/css" href="css/index.css">
 {% endblock %}
 
-{% block preJS %}
-  <script>
-      const welpRatings = {{ json.dumps(ratings)|safe}};
-  </script>
-{% endblock %}
-
 {% block body %}
 
   <div id="welpcarousel" class="carousel slide" data-ride="carousel" data-pause="hover">
@@ -51,10 +45,11 @@
 
   <div id="location">
     <center>
-      <form id="zipCodeForm">
-        <input type="text" placeholder="Zipcode" id="zipCode">
-        <input class="btn-primary" type="submit" value="Use Zipcode" id="enterZipCode">
-      </form>
+      <input type="text" placeholder="Search for Restaurants" id="searchField">
+      <button class="btn-primary" id="searchButton">Search</button>
+      <br>
+      <input type="text" placeholder="Zipcode" id="zipCode">
+      <button class="btn-primary" id="enterZipCode">Use Zipcode</button>
       <br>
       <button class="btn-primary" id="locate">Use Current Location</button>
     </center>

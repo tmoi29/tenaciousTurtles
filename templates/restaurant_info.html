@@ -10,9 +10,7 @@
 {% block preJS %}
   <script>
       const restaurantId = +{{ restaurant_id }};
-      // noinspection JSAnnotator
-      const welpReviews = {{ json.dumps(welp_reviews)|safe }};
-      const welpRatings = {{ json.dumps(ratings)|safe}};
+      const welpReviews = false || {{ json.dumps(welp_reviews)|safe }};
   </script>
 {% endblock %}
 
@@ -113,11 +111,11 @@
 
                       <div id="reviews">
                         <div id="welpReviews">
-                          {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}
-                            Rating: {{ rating }}
-                            <h4>{{ review_title }} by {{ username }}</h4>
-                            {{ review_content }}
-                          {% endfor %}
+                          {#                          {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}#}
+                          {#                            Rating: {{ rating }}#}
+                          {#                            <h4>{{ review_title }} by {{ username }}</h4>#}
+                          {#                            {{ review_content }}#}
+                          {#                          {% endfor %}#}
                         </div>
                         <div id="zomatoReviews">
                         </div>
@@ -128,31 +126,27 @@
                 <br>
 
                 <div id="newReview">
-                  <form>
-                    <textarea id="newReviewText"
-                              name="user_review"
-                              placeholder="Add your own review...">
-                    </textarea>
+                  <textarea id="newReviewText"
+                            placeholder="Add your own review...">
+                  </textarea>
 
-                    {# FIXME When you click on a star, they're selected backwards. #}
-                    {% for i in xrange(5, 0, -1) %}
-                      <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
-                      <label class="star star-{{ i }}" for="star-{{ i }}"></label>
-                    {% endfor %}
+                  {# FIXME When you click on a star, they're selected backwards. #}
+                  {% for i in xrange(5, 0, -1) %}
+                    <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
+                    <label class="star star-{{ i }}" for="star-{{ i }}"></label>
+                  {% endfor %}
 
-                    {# <input class="star star-5" id="star-5" type="radio" name="star"/>#}
-                    {# <label class="star star-5" for="star-5"></label>#}
-                    {# <input class="star star-4" id="star-4" type="radio" name="star"/>#}
-                    {# <label class="star star-4" for="star-4"></label>#}
-                    {# <input class="star star-3" id="star-3" type="radio" name="star"/>#}
-                    {# <label class="star star-3" for="star-3"></label>#}
-                    {# <input class="star star-2" id="star-2" type="radio" name="star"/>#}
-                    {# <label class="star star-2" for="star-2"></label>#}
-                    {# <input class="star star-1" id="star-1" type="radio" name="star"/>#}
-                    {# <label class="star star-1" for="star-1"></label>#}
-                    <button id="addNewReviewButton">Add Review</button>
-
-                  </form>
+                  {# <input class="star star-5" id="star-5" type="radio" name="star"/>#}
+                  {# <label class="star star-5" for="star-5"></label>#}
+                  {# <input class="star star-4" id="star-4" type="radio" name="star"/>#}
+                  {# <label class="star star-4" for="star-4"></label>#}
+                  {# <input class="star star-3" id="star-3" type="radio" name="star"/>#}
+                  {# <label class="star star-3" for="star-3"></label>#}
+                  {# <input class="star star-2" id="star-2" type="radio" name="star"/>#}
+                  {# <label class="star star-2" for="star-2"></label>#}
+                  {# <input class="star star-1" id="star-1" type="radio" name="star"/>#}
+                  {# <label class="star star-1" for="star-1"></label>#}
+                  <button id="addNewReviewButton">Add Review</button>
                 </div>
               </div>
             </div>
@@ -163,7 +157,8 @@
           {# TODO add CSS for this #}
           <div id="addFavoriteRestaurantDiv">
             <button id="addFavoriteRestaurantButton"
-                {{ display(favorited) }}>Add to Favorites</button>
+                {{ display(favorited) }}>Add to Favorites
+            </button>
             <p id="addFavoriteRestaurantAltText"
                 {{ display(not favorited) }}>Already Added to Favorites</p>
           </div>

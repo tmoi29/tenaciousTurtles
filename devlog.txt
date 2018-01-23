@@ -868,3 +868,17 @@ it switches them back again.
 Moved carousel <script> in index.html to welp.js.
 
 =======================================================
+khyberS -- 2018-01-23 02:45:13
+
+Fixed all the rating stuff as far as I can tell.
+The Welp and Zomato ratings are integrated on
+the /index and /restaurant_info pages.
+
+Added a Search field so you can search for specific or types of restaurants.
+
+Fixed the review form so that it adds the review to the DB
+and it shows up under the reviews tab immediately.
+However, the rating and review title aren't quite done,
+so I hardcoded those to 5 and "Test" for now.
+
+=======================================================

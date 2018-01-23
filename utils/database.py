@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Iterable, List, Tuple
 
 import setup_db
+from util.annotations import deprecated
 
 
 def add_account(username, password1, password2, setup):
@@ -108,7 +109,15 @@ def get_reviews(restaurant):
                 'SELECT * FROM reviews WHERE restaurant = ?',
                 [restaurant])  # type: Iterable[Tuple[int, unicode, int, unicode, unicode]]
         return [review for review in reviews]
-    
+
+
+def get_all_review_ratings_raw():
+    # type: () -> List[Tuple[int, float]]
+    with sqlite3.connect('data/database.db') as db:
+        return list(db.cursor().execute('SELECT restaurant, rating FROM reviews'))
+
+
+@deprecated
 def get_all_review_ratings():
     """
     Gets all ratings of restaurants
@@ -127,9 +136,9 @@ def get_all_review_ratings():
             else:
                 ret[int(entry[0])] = []
                 ret[int(entry[0])].append(entry[1])
-                
-        return ret
         
+        return ret
+
 
 def add_favorite(username, restaurant_id):
     # type: (unicode, int) -> None

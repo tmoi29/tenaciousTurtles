@@ -1,7 +1,8 @@
 import json
 import os
 
-from flask import Flask, Response, flash, redirect, render_template, request, session
+from flask import Flask, Response, flash, render_template, request, session
+from typing import Any
 
 from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
@@ -25,16 +26,20 @@ is_not_logged_in = ~is_logged_in
 is_not_logged_in.func_name = 'is_not_logged_in'
 context[is_not_logged_in.func_name] = is_not_logged_in
 
+context['database'] = database
+context['json'] = json
+context['session'] = session
+context['UID_KEY'] = UID_KEY
+
+
 @app.reroute_from('/')
 @app.route('/index')
 def index():
     # type: () -> Response
-    ratings = database.get_all_review_ratings()
     return render_template(
             'index.html',
-            ratings = ratings,
-            logged_in=is_logged_in(),
-            json = json)
+            logged_in=is_logged_in()
+    )
 
 
 @app.route('/login')
@@ -92,6 +97,11 @@ def logout():
     return reroute_to(index)
 
 
+def as_json_response(obj):
+    # type: (Any) -> Response
+    return Response(status=200, mimetype='application/json', response=json.dumps(obj))
+
+
 @app.route('/google_image_search', methods=['GET', 'POST'])
 def google_image_search_urls():
     # type: () -> Response
@@ -100,7 +110,13 @@ def google_image_search_urls():
         return Response(status=400, mimetype='application/json')
     query = request.args.get(arg_name) or request.form.get(arg_name)
     img_urls = google_image_search.get_img_urls(query)
-    return Response(status=200, mimetype='application/json', response=json.dumps(img_urls))
+    return as_json_response(img_urls)
+
+
+@app.route('/all_review_ratings_raw', methods=['GET', 'POST'])
+def all_review_ratings_raw():
+    # type: () -> Response
+    return as_json_response(database.get_all_review_ratings_raw())
 
 
 @app.route('/empty', methods=['GET', 'POST'])
@@ -115,7 +131,6 @@ def restaurant_info():
     # type: () -> Response
     restaurant_id = int(request.args['restaurant_id'])
     db_reviews = database.get_reviews(restaurant_id)
-    ratings = database.get_all_review_ratings()
     welp_reviews = [{
         'rating': rating,
         'rating_text': review_title,
@@ -136,10 +151,7 @@ def restaurant_info():
             restaurant_id=restaurant_id,
             user_reviews=db_reviews,
             welp_reviews=welp_reviews,
-            json=json,
-            loggedIn=is_logged_in(),
             favorited=favorited,
-            ratings = ratings,
     )
 
 
@@ -148,8 +160,7 @@ def restaurant_info():
 def profile():
     username = session[UID_KEY]
     restaurants = database.get_favorite(username)
-    ratings = database.get_all_review_ratings()
-    return render_template('profile.html', restaurant_ids=restaurants, ratings = ratings, json=json)
+    return render_template('profile.html', restaurant_ids=restaurants)
 
 
 # @app.route('/add_favorite')
