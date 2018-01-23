@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, Response, flash, render_template, request, session
+from flask import Flask, Response, flash, render_template, request, session, redirect
 from typing import Any
 
 from api import google_image_search
@@ -197,6 +197,17 @@ def add_review():
     review_content = form['review_content']
     database.add_review(restaurant_id, username, rating, review_title, review_content)
     return 'OK'
+               
+@app.route('/delete_review', methods=['GET', 'POST'])
+@preconditions(empty, is_logged_in,
+               query_contains('rest_id'))
+def delete_review():
+    # type: () -> str
+    form = request.args
+    username = session[UID_KEY]
+    restaurant_id = int(form['rest_id'])
+    database.remove_review(username, restaurant_id)
+    return redirect("/restaurant_info?restaurant_id=" + restaurant_id)
 
 
 if __name__ == '__main__':
