@@ -1334,8 +1334,8 @@
             var base = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
             if (username == review.user.name){
                 console.log("same user")
-                base += '<br><br><button id = "edit"><a href="/edit_review">Edit</a></button>';
-                base += '<button id = "delete"><a href="/delete_review">Delete</a></button>';
+                base += '<br><br><button class = "btn-primary"><a href="/edit_review">Edit</a></button>';
+                base += '&nbsp<button class = "btn-warning" id = "delete"><a href="/delete_review">Delete</a></button>';
             }
             div.innerHTML = base;
             

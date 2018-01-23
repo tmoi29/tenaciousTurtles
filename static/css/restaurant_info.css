@@ -115,9 +115,14 @@ label.star:before {
     font-size: 1.3em;
 }
 
+.btn-warning a{
+    color: white !important;
+    text-decoration: none;
+}
+
 .btn-primary {
     font-size: 1.3em;
-    height: 30px;
+    height: 40px;
 }
 
 .btn-primary a {
