@@ -712,7 +712,7 @@
             
         };
         
-        const newRestaurantList = function(restaurantToDiv, id, klass, width = 4) {
+        const newRestaurantList = function(restaurantToDiv, id, klass, width = 4, errorText="No More Restaurants Available") {
             
             let div = null;
             let _parent = null;
@@ -757,7 +757,7 @@
                         div.appendChild(center);
                         const p = document.createElement("p");
                         center.appendChild(p);
-                        p.innerText = "No More Restaurants Available";
+                        p.innerText = errorText;
                         return false;
                     }
                     
@@ -1179,8 +1179,8 @@
             newPage.restaurant = restaurant;
         };
         
-        const createRestaurantList = function() {
-            return RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4)
+        const createRestaurantList = function(errorText="No More Restaurants Available") {
+            return RestaurantListModule.newRestaurantList(restaurantToDiv, null, null, 4, errorText)
                 .withEventListeners({
                     click: function(event) {
                         openRestaurantInfoInNewPage(this.getRestaurant());
@@ -1252,7 +1252,7 @@
         
         initRestaurants();
         
-        const restaurantList = RestaurantsSubPageModule.createRestaurantList();
+        const restaurantList = RestaurantsSubPageModule.createRestaurantList("No More Restaurants Available");
         
         const addRestaurant = function() {
             return restaurants.next()
@@ -1670,7 +1670,7 @@
     
     const ProfilePageModule = function(ZomatoModule, RestaurantSubPageModule) {
         
-        const restaurantList = RestaurantSubPageModule.createRestaurantList();
+        const restaurantList = RestaurantSubPageModule.createRestaurantList("No Saved Restaurants");
         
         const addFavoriteRestaurants = function(favoriteRestaurantIds) {
             if (favoriteRestaurantIds.length === 0) {
@@ -1694,7 +1694,7 @@
         
         const main = function() {
             $(() => {
-                restaurantList.appendTo($("#restaurants")[0]); // FIXME id
+                restaurantList.appendTo($("#restaurants")[0]);
                 addFavoriteRestaurants(favoriteRestaurantIds);
             });
         };

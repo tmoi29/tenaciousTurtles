@@ -953,3 +953,9 @@ Add review form is hidden when you add a review and restored when you delete it.
 Default favorited restaurants used for testing are removed.
 
 =======================================================
+khyberS -- 2018-01-23 15:32:42
+
+No Saved Restaurants shown on profile page instead of
+No More Restaurants Available like on index page.
+
+=======================================================
