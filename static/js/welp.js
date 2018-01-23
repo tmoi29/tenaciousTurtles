@@ -1319,6 +1319,7 @@
             }
             return ZomatoModule.getRestaurant(restaurantId)
                 .then(restaurant => {
+                    restaurant.favorited = false;
                     _restaurant = restaurant;
                     return restaurant;
                 });
@@ -1397,7 +1398,7 @@
             const promise = getRestaurant()
                 .then(restaurant => {
                     form.restaurant_id = restaurant.id;
-                    console.log("posting to server:", form);
+                    console.log("posting to server (" + url + "):", form);
                     const promise = fetch(url, {
                         method: "POST",
                         credentials: "include",
@@ -1452,6 +1453,58 @@
         
         const toggleDisplay = function(element, display) {
             element.style.display = display ? "" : "none";
+        };
+        
+        const toggleFavoriteRestaurant = function( //
+            addFavoriteRestaurantButton, removeFavoriteRestaurantButton, adding) {
+            if (!loggedIn) {
+                alert("You must be logged in to add a favorite restaurant");
+                return; // TODO display better error message
+            }
+            
+            getRestaurant();
+            
+            if (_restaurant.favorited === adding) {
+                const msg = adding
+                    ? "You already favorited this restaurant"
+                    : "You haven't favorited this restaurant yet";
+                alert(msg);
+                return; // TODO display better error message, or none at all
+            }
+            
+            const toggleDisplays = function(display) {
+                toggleDisplay(addFavoriteRestaurantButton, display);
+                toggleDisplay(removeFavoriteRestaurantButton, !display);
+                _restaurant.favorited = !display;
+            };
+            
+            // make sure right to start with
+            toggleDisplays(adding);
+            
+            postToServer(adding ? "/add_favorite" : "/remove_favorite", {})
+                .then(response => {
+                    console.log((adding ? "added" : "removed") + " as favorite", _restaurant);
+                })
+                .catch(error => {
+                    // switch displays back
+                    toggleDisplays(adding);
+                });
+            
+            // eagerly switch displays, b/c probably will succeed
+            // if not, rollback the switch
+            toggleDisplays(!adding);
+        };
+        
+        const toggleFavoriteRestaurantOnClick = function( //
+            addFavoriteRestuarantButtonSelector, removeFavoriteRestuarantButtonSelector, adding) {
+            (adding ? addFavoriteRestuarantButtonSelector : removeFavoriteRestuarantButtonSelector)
+                .click(() => {
+                    toggleFavoriteRestaurant(
+                        addFavoriteRestuarantButtonSelector[0],
+                        removeFavoriteRestuarantButtonSelector[0],
+                        adding,
+                    );
+                });
         };
         
         const addFavoriteRestaurant = function(button, altText) {
@@ -1522,10 +1575,24 @@
                     event.preventDefault();
                 });
                 
-                $("#addFavoriteRestaurantButton").click(function() {
-                    // `this` is bound to clicked button
-                    addFavoriteRestaurant(this, $("#addFavoriteRestaurantAltText")[0]);
+                const addFavoriteRestaurantButton = $("#addFavoriteRestaurantButton");
+                const removeFavoriteRestaurantButton = $("#removeFavoriteRestaurantButton");
+                
+                [true, false].forEach(adding => {
+                    toggleFavoriteRestaurantOnClick(
+                        addFavoriteRestaurantButton, removeFavoriteRestaurantButton, adding);
                 });
+                
+                // addFavoriteRestaurantButton.click(() => {
+                //     addFavoriteRestaurant(
+                //         addFavoriteRestaurantButton[0], removeFavoriteRestaurantButton[0]);
+                // });
+                //
+                // removeFavoriteRestaurantButton.click(() => {
+                //     removeFavoriteRestaurant(
+                //         removeFavoriteRestaurantButton[0], addFavoriteRestaurantButton[0]);
+                // });
+                
             });
         };
         

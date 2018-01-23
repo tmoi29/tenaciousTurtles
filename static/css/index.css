@@ -101,8 +101,8 @@ form {
     height: 50px;
 }
 
-input{
-height: 40px;
+input {
+    height: 40px;
 }
 
 #moreRestaurants {
@@ -120,7 +120,7 @@ height: 40px;
     height: 40px !important;
     z-index: 25 !important;
     font-size: .8em !important;
-    border-radius: 0px;
+    border-radius: 0;
     border-color: #418CC6;
     background-color: #418CC6;
     margin: .3%
