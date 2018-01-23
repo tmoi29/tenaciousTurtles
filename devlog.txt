@@ -904,3 +904,12 @@ khyberS -- 2018-01-23 11:46:58
 Got the add and remove favorite buttons to work.
 
 =======================================================
+khyberS -- 2018-01-23 12:29:20
+
+Images always load, even for background images that act weird (Palm Restaurant).
+This is done by using an <img> element and setting img.onerror and img.onload,
+and then transferring this url to the background img.
+
+Made stars show up for 0 rating.
+
+=======================================================

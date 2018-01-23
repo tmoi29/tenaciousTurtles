@@ -905,14 +905,37 @@
             // return GettyModule.getImageUrl(phrase, "best_match");
         };
         
-        const setRestaurantBackgroundImgUrl = function(imgDiv, restaurant) {
+        const setRestaurantImgSrc = function(img, restaurant) {
+            return getRestaurantImgUrls(restaurant)
+                .then(imgUrls => {
+                    imgUrls.reverse();
+                    // keep reloading next url until successful or no more urls
+                    img.onerror = function() {
+                        const imgUrl = imgUrls.pop();
+                        if (imgUrl === undefined) {
+                            img.onerror = undefined;
+                            return;
+                        }
+                        img.src = imgUrl;
+                    };
+                    const promise = new Promise(resolve => {
+                        img.onload = function() {
+                            resolve(img.src);
+                        };
+                    });
+                    img.src = imgUrls.pop();
+                    return promise;
+                });
+        };
+        
+        const setRestaurantBackgroundImgUrlBroken = function(imgDiv, restaurant) {
             return getRestaurantImgUrls(restaurant)
                 .then(imgUrls => {
                     for (const imgUrl of imgUrls) {
-                        imgDiv.style.cssText = "background-image: url(" + imgUrl + ")";
+                        imgDiv.style.backgroundImage = "url(" + imgUrl + ")";
                         // if imgUrl is corrupt or something,
                         // imgDiv.style.cssText will be an empty string ""
-                        if (imgDiv.style.cssText) {
+                        if (imgDiv.style.backgroundImage) {
                             restaurant.img = imgUrl;
                             console.log(imgUrl);
                             // FIXME background img url not always false when error
@@ -926,9 +949,22 @@
                 });
         };
         
+        const setRestaurantBackgroundImgUrl = function(imgDiv, restaurant) {
+            const img = document.createElement("img");
+            img.style.display = "none";
+            imgDiv.appendChild(img);
+            return setRestaurantImgSrc(img, restaurant)
+                .then(url => {
+                    img.remove();
+                    imgDiv.style.backgroundImage = "url(" + url + ")";
+                    return url;
+                });
+        };
+        
         return {
             getGoogleImgUrls: getRestaurantImgUrls,
             getRestaurantImgUrls: getRestaurantImgUrls,
+            setRestaurantImgSrc: setRestaurantImgSrc,
             setRestaurantBackgroundImgUrl: setRestaurantBackgroundImgUrl,
         };
         
@@ -972,41 +1008,33 @@
             return ratings;
         };
         
-
-	const make_stars = function(rating) {
-	    let x = Math.round(rating);
-	    let ret_str = "";
-	    if (x === 0){
-		    return "";
-		}
-	    else if (x >= 5){
-		for (let i=0; i < 5; i++){
-		    ret_str += " <i class='glyphicon glyphicon-star'></i>";
-		}
-	    }
-		else{
-		    for (let i= 0; i< x; i++){
-			ret_str += "<i class='glyphicon glyphicon-star'></i>"; }
-		    for (let i=0; i < (5-x); i++){
-			ret_str += "<i class='glyphicon glyphicon-star-empty'></i>";
-		    }
-		}
-	    return ret_str;
-	}
-	    
-
-
+        const ratingToStarsHtml = function(rating) {
+            rating = Math.round(rating);
+            return new Range(0, 5)
+                .map(i => {
+                    return "<i class=\"glyphicon glyphicon-star" + (i + 1 > rating ? "-empty" : "") + "\"></i>";
+                })
+                .join("");
+        };
+        
         const setRatingTextStatic = function(ratingElem, welpRating, zomatoRating) {
             const numZomatoRatings = parseInt(zomatoRating.votes);
             const isRated = numZomatoRatings !== 0;
             const averateZomatoRating = !isRated ? NaN : parseFloat(zomatoRating.aggregate_rating);
             
             const setRatingText = function(rating, count) {
-		
-		
-		
                 ratingElem.innerHTML = "Rating: " +
-		(count === 0 ? "N/A" : ( make_stars(rating) + rating.toString() + " (out of " + count.toString() + "reviews)"));
+                    (count === 0
+                            ? "N/A"
+                            : (
+                                ratingToStarsHtml(rating) +
+                                " " +
+                                rating.toString() +
+                                " (out of " +
+                                count.toString() +
+                                " reviews)"
+                            )
+                    );
             };
             
             // set initial ratings as Zomato only
@@ -1051,9 +1079,6 @@
                         return ratings;
                     });
             };
-            
-            window.welp = this;
-            window.ratings = ratings;
             
             return {
                 
@@ -1363,20 +1388,7 @@
             }
             
             if (!src) {
-                RestaurantImageModule.getRestaurantImgUrls(restaurant)
-                    .then(imgUrls => {
-                        imgUrls.reverse();
-                        // keep reloading next url until successful or no more urls
-                        img.onerror = function() {
-                            const imgUrl = imgUrls.pop();
-                            if (imgUrl === undefined) {
-                                img.onerror = undefined;
-                                return;
-                            }
-                            img.src = imgUrl;
-                        };
-                        img.src = imgUrls.pop();
-                    });
+                RestaurantImageModule.setRestaurantImgSrc(img, restaurant);
             }
             
             const locationElem = document.getElementById("loc");
@@ -1582,16 +1594,6 @@
                     toggleFavoriteRestaurantOnClick(
                         addFavoriteRestaurantButton, removeFavoriteRestaurantButton, adding);
                 });
-                
-                // addFavoriteRestaurantButton.click(() => {
-                //     addFavoriteRestaurant(
-                //         addFavoriteRestaurantButton[0], removeFavoriteRestaurantButton[0]);
-                // });
-                //
-                // removeFavoriteRestaurantButton.click(() => {
-                //     removeFavoriteRestaurant(
-                //         removeFavoriteRestaurantButton[0], addFavoriteRestaurantButton[0]);
-                // });
                 
             });
         };

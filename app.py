@@ -162,20 +162,6 @@ def profile():
     return render_template('profile.html', restaurant_ids=restaurants)
 
 
-# @app.route('/add_favorite')
-# @logged_in
-# @preconditions(index, query_contains('restaurant_id'))
-# def add_favorite():
-#     # FIXME this should be done with AJAX like add_review()
-#     # FIXME it's much smoother when the browser sends an AJAX call
-#     # FIXME and loads the new page itself
-#     restaurant_id = int(request.args['restaurant_id'])
-#     username = session[UID_KEY]
-#     database.add_favorite(username, restaurant_id)
-#     flash('Yay! You added this restaurant to your favorites list!')
-#     return redirect('/restaurant_info?restaurant_id=' + str(restaurant_id))
-
-
 def make_favorite_route(add, db_function):
     # type: (bool) -> Route
 
@@ -197,28 +183,6 @@ def make_favorite_route(add, db_function):
 add_favorite = make_favorite_route(True, database.add_favorite)
 remove_favorite = make_favorite_route(False, database.remove_favorite)
 
-
-# @app.route('/add_favorite', methods=['GET', 'POST'])
-# @preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
-# def add_favorite():
-#     # type: () -> str
-#     username = session[UID_KEY]
-#     restaurant_id = int(request.form['restaurant_id'])
-#     database.add_favorite(username, restaurant_id)
-#     flash('Yay! You added this restaurant to your favorites list!')
-#     return 'OK'
-
-'''
-@app.route('/remove_favorite', methods=['GET', 'POST'])
-@preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
-def remove_favorite():
-    # type: () -> str
-    username = session[UID_KEY]
-    restaurant_id = int(request.form['restaurant_id'])
-    database.remove_favorite(username, restaurant_id)
-    flash('Yay! You removed this restaurant from your favorites list!')
-    return 'OK'
-'''
 
 @app.route('/add_review', methods=['GET', 'POST'])
 @preconditions(empty, post_only, is_logged_in,
