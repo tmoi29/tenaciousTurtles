@@ -306,7 +306,7 @@ if __name__ == '__main__':
         print(get_all_review_ratings())
     
     if debug:
-        # FIXME these calls dont' work
+        # FIXME these calls don't work
         # FIXME since get_favorite() takes the username, not uid
         print(get_favorite(1))
         print(get_favorite(10))
