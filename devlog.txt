@@ -913,3 +913,8 @@ and then transferring this url to the background img.
 Made stars show up for 0 rating.
 
 =======================================================
+ionkinaK -- 2018-01-23 13:47
+
+-Made py (and the js) fxns to display star ratings based 
+on zomato rating in index.html and restaurant_info.html
+-Worked on image/ input frontend
