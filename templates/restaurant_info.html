@@ -51,10 +51,10 @@
                   <div id="collapse1" class="panel-collapse collapse in">
                     <div class="panel-body">
 
-                      {# FIXME <div> can't be inside <p> #}
-                      <p>
+                      
+                      
                       <div id="loc"></div>
-                      </p>
+                      
 
                     </div>
                   </div>
@@ -133,24 +133,15 @@
                   <textarea id="newReviewText"
                             placeholder="Add your own review...">
                   </textarea>
-
+		  <p style="font-size: 1.3em;" align="right"> Your rating: </p>
                   {# FIXME When you click on a star, they're selected backwards. #}
                   {% for i in xrange(5, 0, -1) %}
+
                     <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
                     <label class="star star-{{ i }}" for="star-{{ i }}"></label>
                   {% endfor %}
-
-                  {# <input class="star star-5" id="star-5" type="radio" name="star"/>#}
-                  {# <label class="star star-5" for="star-5"></label>#}
-                  {# <input class="star star-4" id="star-4" type="radio" name="star"/>#}
-                  {# <label class="star star-4" for="star-4"></label>#}
-                  {# <input class="star star-3" id="star-3" type="radio" name="star"/>#}
-                  {# <label class="star star-3" for="star-3"></label>#}
-                  {# <input class="star star-2" id="star-2" type="radio" name="star"/>#}
-                  {# <label class="star star-2" for="star-2"></label>#}
-                  {# <input class="star star-1" id="star-1" type="radio" name="star"/>#}
-                  {# <label class="star star-1" for="star-1"></label>#}
-                  <button id="addNewReviewButton">Add Review</button>
+		    <br>
+		    <button id="addNewReviewButton" class="btn-warning">Add Review</button>
                 </div>
               </div>
             </div>
@@ -161,13 +152,13 @@
           {# TODO add CSS for this #}
           <div id="addFavoriteRestaurantDiv">
             <button id="addFavoriteRestaurantButton"
-                {{ display(favorited) }}>Add to Favorites
+                {{ display(favorited) }}>  <button class="btn-primary"> Add to Favorites </button>
             </button>
             <button id="removeFavoriteRestaurantButton"
                 {{ display(not favorited) }}>Remove from Favorites</button>
           </div>
         {% else %}
-          <p>Sign in to add to favorites</p>
+          <button class="btn-primary"> <a href="/login">Sign in to add to favorites </a></p> </button>
         {% endif %}
 
       </div>

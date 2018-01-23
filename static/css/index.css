@@ -68,9 +68,10 @@ h1 {
     right: 0;
     max-height: 90vh;
     max-width: 90vw;
-    margin: 7%;
+    margin: 6%;
     background-size: contain;
-    background: no-repeat center;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .klass > p {
@@ -100,6 +101,10 @@ form {
     height: 50px;
 }
 
+input{
+height: 40px;
+}
+
 #moreRestaurants {
     font-size: 3em;
 }
@@ -112,12 +117,13 @@ form {
 }
 
 .btn-primary {
-    height: 50px !important;
+    height: 40px !important;
     z-index: 25 !important;
-    font-size: 1.1em !important;
-    border-radius: 4px;
+    font-size: .8em !important;
+    border-radius: 0px;
     border-color: #418CC6;
     background-color: #418CC6;
+    margin: .3%
 }
 
 button {

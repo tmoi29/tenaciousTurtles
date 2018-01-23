@@ -72,8 +72,6 @@ textarea {
 div.stars {
     width: 270px;
     display: inline-block;
-    /* FIXME align is not a CSS property */
-    align: left;
 }
 
 input.star {
@@ -81,7 +79,8 @@ input.star {
 }
 
 label.star {
-    padding: 0;
+    float: right;
+    padding: 0px;
     font-size: 36px;
     color: #444;
     transition: all .2s;
@@ -111,3 +110,19 @@ label.star:before {
     font-family: FontAwesome, serif;
 }
 
+.btn-warning {
+height: 40px;
+font-size: 1.3em;
+}
+
+
+.btn-primary{
+font-size: 1.3em;
+height: 30px;
+}
+
+.btn-primary a{
+color: white !important;
+text-decoration: none;
+
+}

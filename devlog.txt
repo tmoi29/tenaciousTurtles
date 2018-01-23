@@ -889,3 +889,12 @@ Centered the flashed messages so they don't get cut off by the Welp logo.
 Got rid of useless "More Restaurants" button in /profile.
 
 =======================================================
+ionkinaK -- 2018-01-23 09:55
+
+Fixed the images on index.html (they were zoomed in)
+Fixed the buttons on index.html
+Fixed the rating stars in restaurant_info.html
+(they were backwards)
+
+Fixed the buttons on restautant_info.html 
+=======================================================
