@@ -62,7 +62,7 @@ Worked on the site map and design doc
 =======================================================
 karinaI -- 2017-12-25 23:17
 
--Created app.py and layout.html
+-worked on app.py and layout.html
 -Worked on navbar
 
 =======================================================

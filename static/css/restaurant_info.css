@@ -56,6 +56,7 @@ textarea #add_rev {
 div.rev_div {
     border-bottom: 1px solid #A9A9A9;
     padding: 8px;
+    font-size: 1.3em;
 }
 
 .panel-default > .panel-heading {
@@ -128,4 +129,21 @@ label.star:before {
 .btn-primary a {
     color: white !important;
     text-decoration: none;
+}
+
+div#loc {
+font-size: 1.7em;
+}
+
+div#rating{
+font-size: 1.7em;
+}
+
+div#cuisine{
+font-size: 1.7em;
+}
+
+a#menu{
+font-size: 1.7em;
+text-decoration: none;
 }
