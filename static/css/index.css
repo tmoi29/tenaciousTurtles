@@ -101,6 +101,10 @@ form {
     height: 50px;
 }
 
+input{
+height: 40px;
+}
+
 #moreRestaurants {
     font-size: 3em;
 }
@@ -113,12 +117,13 @@ form {
 }
 
 .btn-primary {
-    height: 50px !important;
+    height: 40px !important;
     z-index: 25 !important;
-    font-size: 1.1em !important;
-    border-radius: 4px;
+    font-size: .8em !important;
+    border-radius: 0px;
     border-color: #418CC6;
     background-color: #418CC6;
+    margin: .3%
 }
 
 button {
