@@ -91,8 +91,8 @@ h1 {
 div#welpcarousel.carousel.slide div#searching {
     z-index: 25;
     position: absolute;
-    top: 50%;
-    left: 30%;
+    top: 55%;
+    left: 33%;
     font-size: 2em;
     display: inline-block;
 
@@ -127,8 +127,8 @@ border: none;
     z-index: 25 !important;
     font-size: .8em !important;
     border-radius: 0;
-    border-color: #418CC6;
-    background-color: #418CC6;
+    border-color: #70A7D8;
+    background-color: #70A7D8;
     margin: .3%
 }
 
