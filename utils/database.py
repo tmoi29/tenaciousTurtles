@@ -2,13 +2,14 @@ from __future__ import print_function
 
 import hashlib
 import sqlite3
+import setup_db as setup_db
 
 from flask import flash, session
 # noinspection PyCompatibility
 from pathlib import Path
 from typing import Iterable, List, Tuple
 
-from util.annotations import deprecated
+#from util.annotations import deprecated
 
 
 def add_account(username, password1, password2, setup):
@@ -154,7 +155,7 @@ def get_all_review_ratings_raw():
         return list(db.cursor().execute('SELECT restaurant, rating FROM reviews'))
 
 
-@deprecated
+#@deprecated
 def get_all_review_ratings():
     """
     Gets all ratings of restaurants
@@ -281,8 +282,8 @@ if __name__ == '__main__':
         'Cras non metus non velit rhoncus tincidunt. ' \
         'Aliquam condimentum rhoncus ante eget ultricies.'
     
-    # if init or generate_sample:
-    # setup_db.initialize()
+    if init:
+        setup_db.initialize()
     
     if generate_sample:
         add_account('john smith', 'abc123', 'abc123', True)
@@ -304,6 +305,7 @@ if __name__ == '__main__':
         add_review(17464110, 'joe doe', 2, "meh", filler)
         
         print(get_all_review_ratings())
+        print("Samples generated")
     
     if debug:
         # FIXME these calls dont' work
