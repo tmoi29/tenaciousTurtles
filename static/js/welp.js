@@ -972,14 +972,41 @@
             return ratings;
         };
         
+
+	const make_stars = function(rating) {
+	    let x = Math.round(rating);
+	    let ret_str = "";
+	    if (x === 0){
+		    return "";
+		}
+	    else if (x >= 5){
+		for (let i=0; i < 5; i++){
+		    ret_str += " <i class='glyphicon glyphicon-star'></i>";
+		}
+	    }
+		else{
+		    for (let i= 0; i< x; i++){
+			ret_str += "<i class='glyphicon glyphicon-star'></i>"; }
+		    for (let i=0; i < (5-x); i++){
+			ret_str += "<i class='glyphicon glyphicon-star-empty'></i>";
+		    }
+		}
+	    return ret_str;
+	}
+	    
+
+
         const setRatingTextStatic = function(ratingElem, welpRating, zomatoRating) {
             const numZomatoRatings = parseInt(zomatoRating.votes);
             const isRated = numZomatoRatings !== 0;
             const averateZomatoRating = !isRated ? NaN : parseFloat(zomatoRating.aggregate_rating);
             
             const setRatingText = function(rating, count) {
-                ratingElem.innerText = "Rating: " +
-                    (count === 0 ? "N/A" : (rating.toString() + " (out of " + count.toString() + ")"));
+		
+		
+		
+                ratingElem.innerHTML = "Rating: " +
+		(count === 0 ? "N/A" : ( make_stars(rating) + rating.toString() + " (out of " + count.toString() + "reviews)"));
             };
             
             // set initial ratings as Zomato only
