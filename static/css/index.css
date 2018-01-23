@@ -68,9 +68,10 @@ h1 {
     right: 0;
     max-height: 90vh;
     max-width: 90vw;
-    margin: 7%;
+    margin: 6%;
     background-size: contain;
-    background: no-repeat center;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .klass > p {
