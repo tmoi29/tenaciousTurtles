@@ -8,8 +8,8 @@ from flask import flash, session
 from pathlib import Path
 from typing import Iterable, List, Tuple
 
-import setup_db
 from util.annotations import deprecated
+
 
 def add_account(username, password1, password2, setup):
     # type: (unicode, unicode, unicode, bool) -> bool
@@ -80,7 +80,8 @@ def authenticate(username, password):
                 return True  # back to main page
         flash('Whoops! Wrong password :(')
         return False
-    
+
+
 def has_review(username, restaurant_id):
     """
     return true if a user has made a review for a restaurant
@@ -88,40 +89,45 @@ def has_review(username, restaurant_id):
     """
     with sqlite3.connect("data/database.db") as db:
         c = db.cursor()
-        review = c.execute('SELECT username FROM reviews WHERE username = ? AND restaurant = ?',
+        review = c.execute('SELECT user FROM reviews WHERE user = ? AND restaurant = ?',
                            [username, restaurant_id])
         if len(review.fetchall()) == 0:
             return False
         return True
 
+
 def add_review(restaurant, username, rating, review_title, review_content):
     # type: (int, unicode, float, unicode, unicode) -> None
-    if (has_review(username, restaurant)):
+    if has_review(username, restaurant):
         with sqlite3.connect('data/database.db') as db:
             c = db.cursor()
             c.execute(
-                'INSERT INTO reviews VALUES (?, ?, ?, ?, ?)',
-                [restaurant, username, rating, review_title, review_content])
+                    'INSERT INTO reviews VALUES (?, ?, ?, ?, ?)',
+                    [restaurant, username, rating, review_title, review_content])
             db.commit()
-    
+
+
 def remove_review(username, restaurant_id):
     with sqlite3.connect("data/database.db") as db:
         c = db.cursor()
         c.execute('DELETE FROM reviews WHERE username = ? AND restaurant = ?',
-                [username, restaurant_id])
+                  [username, restaurant_id])
         db.commit()
-    
+
+
 def update_review(restaurant, username, rating, review_title, review_content):
     remove_review(username, restaurant)
     add_review(restaurant, username, rating, review_title, review_content)
+
 
 def get_review(username, restaurant_id):
     with sqlite3.connect("data/database.db") as db:
         c = db.cursor()
         reviews = c.execute('SELECT username FROM reviews WHERE username = ? AND restaurant = ?',
-                           [username, restaurant_id])
+                            [username, restaurant_id])
         return [review[0] for review in reviews]
-        
+
+
 def get_reviews(restaurant):
     # type: (int) -> List[Tuple[int, unicode, int, unicode, unicode]]
     """
@@ -185,6 +191,7 @@ def add_favorite(username, restaurant_id):
                 [username, restaurant_id])
         db.commit()
 
+
 def remove_favorite(username, restaurant_id):
     """
     Removes a favorited restaurant for a user
@@ -198,6 +205,7 @@ def remove_favorite(username, restaurant_id):
                 'DELETE FROM favorite WHERE username = ? AND restaurant = ?',
                 [username, restaurant_id])
         db.commit()
+
 
 def remove_favorite(username, restaurant_id):
     # type: (unicode, int) -> None
@@ -248,7 +256,7 @@ def in_favorites(username, restaurant_id):
         if len(query.fetchall()) == 0:
             return False
         return True
-    
+
 
 if __name__ == '__main__':
     path = Path("utils/generate_sample")
@@ -271,8 +279,8 @@ if __name__ == '__main__':
         'Cras non metus non velit rhoncus tincidunt. ' \
         'Aliquam condimentum rhoncus ante eget ultricies.'
     
-    #if init or generate_sample:
-        #setup_db.initialize()
+    # if init or generate_sample:
+    # setup_db.initialize()
     
     if generate_sample:
         add_account('john smith', 'abc123', 'abc123', True)
