@@ -87,10 +87,10 @@ h1 {
     padding: 8px;
 }
 
-#location {
+div#welpcarousel.carousel.slide div#searching {
     z-index: 25;
     position: absolute;
-    top: 350px;
+    top: 50%;
     left: 30%;
     font-size: 2em;
     display: inline-block;
