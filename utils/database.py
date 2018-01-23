@@ -11,7 +11,6 @@ from typing import Iterable, List, Tuple
 import setup_db
 from util.annotations import deprecated
 
-
 def add_account(username, password1, password2, setup):
     # type: (unicode, unicode, unicode, bool) -> bool
     """
@@ -220,6 +219,37 @@ def in_favorites(username, restaurant_id):
             return False
         return True
 
+
+def get_review(username, restaurant_id):
+    with sqlite3.connect("data/database.db") as db:
+        c = db.cursor()
+        reviews = c.execute('SELECT username FROM reviews WHERE username = ? AND restaurant = ?',
+                           [username, restaurant_id])
+        return [review[0] for review in reviews]
+        
+def update_review(restaurant, username, rating, review_title, review_content):
+    remove_review(username, restaurant)
+    add_review(restaurant, username, rating, review_title, review_content)
+    
+def remove_review(username, restaurant_id):
+    with sqlite3.connect("data/database.db") as db:
+        c = db.cursor()
+        c.execute('DELETE FROM reviews WHERE username = ? AND restaurant = ?',
+                [username, restaurant_id])
+        db.commit()
+    
+def has_review(username, restaurant_id):
+    """
+    return true if a user has made a review for a restaurant
+    else return false
+    """
+    with sqlite3.connect("data/database.db") as db:
+        c = db.cursor()
+        review = c.execute('SELECT username FROM reviews WHERE username = ? AND restaurant = ?',
+                           [username, restaurant_id])
+        if len(review.fetchall()) == 0:
+            return False
+        return True
 
 if __name__ == '__main__':
     path = Path("utils/generate_sample")
