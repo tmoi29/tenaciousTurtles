@@ -110,7 +110,7 @@ def add_review(restaurant, username, rating, review_title, review_content):
 def remove_review(username, restaurant_id):
     with sqlite3.connect("data/database.db") as db:
         c = db.cursor()
-        c.execute('DELETE FROM reviews WHERE username = ? AND restaurant = ?',
+        c.execute('DELETE FROM reviews WHERE user = ? AND restaurant = ?',
                   [username, restaurant_id])
         db.commit()
 

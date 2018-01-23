@@ -200,14 +200,14 @@ def add_review():
                
 @app.route('/delete_review', methods=['GET', 'POST'])
 @preconditions(empty, is_logged_in,
-               query_contains('rest_id'))
+               form_contains('rest_id'))
 def delete_review():
     # type: () -> str
-    form = request.args
+    form = request.form
     username = session[UID_KEY]
     restaurant_id = int(form['rest_id'])
     database.remove_review(username, restaurant_id)
-    return redirect("/restaurant_info?restaurant_id=" + restaurant_id)
+    return "OK"
 
 
 if __name__ == '__main__':
