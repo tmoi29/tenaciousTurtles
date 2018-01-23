@@ -1356,7 +1356,14 @@
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
-            div.innerHTML = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
+            var base = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
+            if (username == review.user.name){
+                console.log("same user")
+                base += '<br><br><button class = "btn-primary"><a href="/edit_review">Edit</a></button>';
+                base += '&nbsp<button class = "btn-warning" id = "delete"><a href="/delete_review">Delete</a></button>';
+            }
+            div.innerHTML = base;
+            
         };
         
         const addReview = function(reviewsDiv, review) {
@@ -1565,6 +1572,7 @@
                 $("#newReviewText")[0].value = "";
                 
                 console.log(welpReviews);
+                
                 welpReviews.forEach(review => addReview(welpReviewsDiv, review));
                 
                 const welpRatings = WelpRatingsModule.newWelpRatings().load();
