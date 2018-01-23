@@ -128,6 +128,7 @@ def restaurant_info():
     # type: () -> Response
     restaurant_id = int(request.args['restaurant_id'])
     db_reviews = database.get_reviews(restaurant_id)
+    name = request.args['name']
     welp_reviews = [{
         'rating': rating,
         'rating_text': review_title,
@@ -149,6 +150,7 @@ def restaurant_info():
             user_reviews=db_reviews,
             welp_reviews=welp_reviews,
             favorited=favorited,
+            name = name,
     )
 
 
@@ -205,6 +207,16 @@ remove_favorite = make_favorite_route(False, database.remove_favorite)
 #     database.add_favorite(username, restaurant_id)
 #     flash('Yay! You added this restaurant to your favorites list!')
 #     return 'OK'
+
+@app.route('/remove_favorite', methods=['GET', 'POST'])
+@preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
+def remove_favorite():
+    # type: () -> str
+    username = session[UID_KEY]
+    restaurant_id = int(request.form['restaurant_id'])
+    database.remove_favorite(username, restaurant_id)
+    flash('Yay! You removed this restaurant from your favorites list!')
+    return 'OK'
 
 
 @app.route('/add_review', methods=['GET', 'POST'])

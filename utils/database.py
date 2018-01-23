@@ -156,6 +156,19 @@ def add_favorite(username, restaurant_id):
                 [username, restaurant_id])
         db.commit()
 
+def remove_favorite(username, restaurant_id):
+    """
+    Removes a favorited restaurant for a user
+    Arg:
+        username (str): username
+        restaurant_id  (int): ID number of restaurant based on Zomato
+    """
+    with sqlite3.connect('data/database.db') as db:
+        c = db.cursor()
+        c.execute(
+                'DELETE FROM favorite WHERE username = ? AND restaurant = ?',
+                [username, restaurant_id])
+        db.commit()
 
 def remove_favorite(username, restaurant_id):
     # type: (unicode, int) -> None
@@ -229,8 +242,8 @@ if __name__ == '__main__':
         'Cras non metus non velit rhoncus tincidunt. ' \
         'Aliquam condimentum rhoncus ante eget ultricies.'
     
-    if init or generate_sample:
-        setup_db.initialize()
+    #if init or generate_sample:
+        #setup_db.initialize()
     
     if generate_sample:
         add_account('john smith', 'abc123', 'abc123', True)
@@ -242,6 +255,9 @@ if __name__ == '__main__':
         
         print(in_favorites("john smith", 1))
         print(in_favorites("john smith", 11))
+        
+        remove_favorite("john smith", 1)
+        print(in_favorites("john smith", 1))
         
         add_review(1, 'john smith', 5, 'Nice', filler)
         add_review(2, 'john smith', 3, 'pls no', filler)
