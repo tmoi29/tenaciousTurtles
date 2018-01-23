@@ -1337,6 +1337,9 @@
     const RestaurantInfoPageModule = function(ZomatoModule, RestaurantImageModule, WelpRatingsModule) {
         
         let _restaurant = window.restaurant || undefined;
+        if (_restaurant) {
+            _restaurant.favorited = favorited;
+        }
         
         const getRestaurant = function() {
             if (_restaurant) {
@@ -1344,11 +1347,13 @@
             }
             return ZomatoModule.getRestaurant(restaurantId)
                 .then(restaurant => {
-                    restaurant.favorited = false;
+                    restaurant.favorited = favorited;
                     _restaurant = restaurant;
                     return restaurant;
                 });
         };
+        
+        let userAlreadyReviewed = false;
         
         const reviewToDiv = function(div, review) {
             div.withClass("rev_div");
@@ -1356,19 +1361,44 @@
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
-            let base = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
-            if (username === review.user.name){
+            
+            div.innerHTML = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text
+                + "<br>By " + review.user.name;
+            
+            if (username === review.user.name) {
                 console.log("same user");
-                base += '<br><br><button class = "btn-primary"><a href="/edit_review?rest_id=' + restaurantId +'">Edit</a></button>';
-                base += '&nbsp<button class = "btn-warning" id = "delete"><a href="/delete_review?rest_id=' + restaurantId +' ">Delete</a></button>';
+                userAlreadyReviewed = true;
+                
+                div.innerHTML += "<br><br>";
+                
+                const deleteButton = document.createElement("button")
+                    .withClass("btn-warning")
+                    .withId("delete");
+                div.appendChild(deleteButton);
+                deleteButton.innerText = "Delete";
+                
+                const parent = div.parentElement;
+                
+                deleteButton.addEventListener("click", () => {
+                    postToServer("/delete_review", {})
+                        .then(response => {
+                            console.log("deleted review:", div);
+                        })
+                        .catch(error => {
+                            console.log("restored review: ", div);
+                            parent.prepend(div);
+                            userAlreadyReviewed = true;
+                        });
+                    div.remove();
+                    userAlreadyReviewed = false;
+                });
             }
-            div.innerHTML = base;
         };
         
         const addReview = function(reviewsDiv, review) {
             const reviewDiv = newDiv();
-            reviewToDiv(reviewDiv, review);
             reviewsDiv.prepend(reviewDiv);
+            reviewToDiv(reviewDiv, review);
             return reviewDiv;
         };
         
@@ -1447,6 +1477,11 @@
                 return; // TODO display better error message
             }
             
+            if (userAlreadyReviewed) {
+                alert("You already reviewed this restaurant");
+                return;
+            }
+            
             const reviewText = $("#newReviewText")[0];
             
             const review = {
@@ -1475,7 +1510,11 @@
                 })
                 .catch(response => {
                     reviewDiv.remove();
+                    reviewText.value = review.review_text;
+                    userAlreadyReviewed = false;
                 });
+            
+            reviewText.value = "";
         };
         
         const toggleDisplay = function(element, display) {

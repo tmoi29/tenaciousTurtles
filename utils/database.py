@@ -98,7 +98,8 @@ def has_review(username, restaurant_id):
 
 def add_review(restaurant, username, rating, review_title, review_content):
     # type: (int, unicode, float, unicode, unicode) -> None
-    if has_review(username, restaurant):
+    if not has_review(username, restaurant):
+        print('added review:', restaurant, username, rating, review_title, review_content)
         with sqlite3.connect('data/database.db') as db:
             c = db.cursor()
             c.execute(
@@ -108,6 +109,7 @@ def add_review(restaurant, username, rating, review_title, review_content):
 
 
 def remove_review(username, restaurant_id):
+    print('deleted review:', username, restaurant_id)
     with sqlite3.connect("data/database.db") as db:
         c = db.cursor()
         c.execute('DELETE FROM reviews WHERE user = ? AND restaurant = ?',

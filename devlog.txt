@@ -941,3 +941,8 @@ khyberS -- 2018-01-23 14:02:24
 Add new review now uses the correct review title and rating from the stars.
 
 =======================================================
+khyberS -- 2018-01-23 15:09:43
+
+Got deleting a review to work and adding a review to be restricted to 1 per user.
+
+=======================================================

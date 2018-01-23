@@ -1,13 +1,13 @@
 import json
 import os
 
-from flask import Flask, Response, flash, render_template, request, session, redirect
+from flask import Flask, Response, flash, render_template, request, session
 from typing import Any
 
 from api import google_image_search
 from util.flask.flask_utils import form_contains, post_only, preconditions, query_contains, \
     reroute_to, session_contains
-from util.flask.flask_utils_types import Router, Route
+from util.flask.flask_utils_types import Route, Router
 from util.flask.template_context import add_template_context, context
 from utils import database
 
@@ -150,7 +150,7 @@ def restaurant_info():
             user_reviews=db_reviews,
             welp_reviews=welp_reviews,
             favorited=favorited,
-            name = name,
+            name=name,
     )
 
 
@@ -164,7 +164,7 @@ def profile():
 
 def make_favorite_route(add, db_function):
     # type: (bool) -> Route
-
+    
     @preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
     def favorite():
         # type: () -> str
@@ -197,15 +197,16 @@ def add_review():
     review_content = form['review_content']
     database.add_review(restaurant_id, username, rating, review_title, review_content)
     return 'OK'
-               
+
+
 @app.route('/delete_review', methods=['GET', 'POST'])
 @preconditions(empty, is_logged_in,
-               form_contains('rest_id'))
+               form_contains('restaurant_id'))
 def delete_review():
     # type: () -> str
     form = request.form
     username = session[UID_KEY]
-    restaurant_id = int(form['rest_id'])
+    restaurant_id = int(form['restaurant_id'])
     database.remove_review(username, restaurant_id)
     return "OK"
 

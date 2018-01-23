@@ -14,6 +14,7 @@
 {% block preJS %}
   <script>
       const restaurantId = +{{ restaurant_id }};
+      const favorited = false || {{ "true" if favorited else "false" }};
       const welpReviews = false || {{ json.dumps(welp_reviews)|safe }};
   </script>
 {% endblock %}
