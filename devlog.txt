@@ -913,3 +913,31 @@ and then transferring this url to the background img.
 Made stars show up for 0 rating.
 
 =======================================================
+ionkinaK -- 2018-01-23 13:47
+
+-Made py (and the js) fxns to display star ratings based
+on zomato rating in index.html and restaurant_info.html
+-Worked on image/ input frontend
+
+=======================================================
+leoL -- 2018-01-23 13:39
+
+More work on database.py:
+    Added functions:
+        remove_review:
+	    remove a user's review for a restaurant
+        update_review:
+	    update a user's review for a restaurant
+        get_review:
+	    retrieve a user's review for a restaurant
+	has_review:
+	    check if a user has made a review for a restaurant
+    Updated add_review:
+        Now enforces one review per user per restaurant
+
+=======================================================
+khyberS -- 2018-01-23 14:02:24
+
+Add new review now uses the correct review title and rating from the stars.
+
+=======================================================

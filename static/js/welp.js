@@ -1351,19 +1351,18 @@
         };
         
         const reviewToDiv = function(div, review) {
-            div.className += "rev_div";
+            div.withClass("rev_div");
             // FIXME make this look nicer
             const rating = review.rating;
             const title = review.rating_text;
             const text = review.review_text;
-            var base = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
-            if (username == review.user.name){
-                console.log("same user")
+            let base = " <i>" + "Rating: " + rating + " (" + title + ")</i> <br>" + text + "<br>By " + review.user.name;
+            if (username === review.user.name){
+                console.log("same user");
                 base += '<br><br><button class = "btn-primary"><a href="/edit_review?rest_id=' + restaurantId +'">Edit</a></button>';
                 base += '&nbsp<button class = "btn-warning" id = "delete"><a href="/delete_review?rest_id=' + restaurantId +' ">Delete</a></button>';
             }
             div.innerHTML = base;
-            
         };
         
         const addReview = function(reviewsDiv, review) {
@@ -1440,6 +1439,8 @@
             });
         };
         
+        let newRating = 0;
+        
         const addNewReview = function(reviewsDiv) {
             if (!loggedIn) {
                 alert("You must be logged in to add a review");
@@ -1450,8 +1451,15 @@
             
             const review = {
                 user: {name: username},
-                rating: 5, // FIXME rating system not set up yet in HTML
-                rating_text: "Test", // FIXME neither is rating_text (title)
+                rating: newRating,
+                rating_text: {
+                    0: "Not rated",
+                    1: "Bad",
+                    2: "Okay",
+                    3: "Good",
+                    4: "Great",
+                    5: "Insane!",
+                }[newRating],
                 review_text: reviewText.value,
             };
             
@@ -1526,43 +1534,6 @@
                 });
         };
         
-        const addFavoriteRestaurant = function(button, altText) {
-            if (!loggedIn) {
-                alert("You must be logged in to add a favorite restaurant");
-                return; // TODO display better error message
-            }
-            
-            getRestaurant();
-            
-            if ("favorited" in _restaurant && _restaurant.favorited) {
-                // already favorited
-                alert("You already favorited this restaurant");
-                return; // TODO display better error message, or none at all
-            }
-            
-            const toggleDisplays = function(display) {
-                toggleDisplay(button, display);
-                toggleDisplay(altText, !display);
-                _restaurant.favorited = !display;
-            };
-            
-            // make sure right to start with
-            toggleDisplays(true);
-            
-            postToServer("/add_favorite", {})
-                .then(response => {
-                    console.log("added as favorite: ", _restaurant);
-                })
-                .catch(response => {
-                    // switch displays back
-                    toggleDisplays(true);
-                });
-            
-            // eagerly switch displays, b/c probably will succeed
-            // if not, rollback the switch
-            toggleDisplays(false);
-        };
-        
         const main = function() {
             $(() => {
                 const zomatoReviewsDiv = $("#zomatoReviews")[0];
@@ -1590,9 +1561,12 @@
                         reviews.forEach(review => addReview(zomatoReviewsDiv, review));
                     });
                 
-                $("#addNewReviewButton").click(event => {
+                $("input.star").click(function() {
+                    newRating = parseFloat(this.id.substring(5));
+                });
+                
+                $("#addNewReviewButton").click(() => {
                     addNewReview(welpReviewsDiv);
-                    event.preventDefault();
                 });
                 
                 const addFavoriteRestaurantButton = $("#addFavoriteRestaurantButton");

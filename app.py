@@ -171,8 +171,8 @@ def make_favorite_route(add, db_function):
         username = session[UID_KEY]
         restaurant_id = int(request.form['restaurant_id'])
         db_function(username, restaurant_id)
-        flash('Yay! You {} this restaurant to your favorites list!'
-              .format('added' if add else 'removed'))
+        # flash('Yay! You {} this restaurant to your favorites list!'
+        #       .format('added' if add else 'removed'))
         return 'OK'
     
     favorite.func_name = ('add' if add else 'remove') + '_favorite'
