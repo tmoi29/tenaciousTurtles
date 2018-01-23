@@ -208,6 +208,7 @@ remove_favorite = make_favorite_route(False, database.remove_favorite)
 #     flash('Yay! You added this restaurant to your favorites list!')
 #     return 'OK'
 
+'''
 @app.route('/remove_favorite', methods=['GET', 'POST'])
 @preconditions(empty, post_only, is_logged_in, form_contains('restaurant_id'))
 def remove_favorite():
@@ -217,7 +218,7 @@ def remove_favorite():
     database.remove_favorite(username, restaurant_id)
     flash('Yay! You removed this restaurant from your favorites list!')
     return 'OK'
-
+'''
 
 @app.route('/add_review', methods=['GET', 'POST'])
 @preconditions(empty, post_only, is_logged_in,
