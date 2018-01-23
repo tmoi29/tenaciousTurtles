@@ -91,7 +91,7 @@ h1 {
 div#welpcarousel.carousel.slide div#searching {
     z-index: 25;
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: 33%;
     font-size: 2em;
     display: inline-block;
