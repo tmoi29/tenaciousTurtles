@@ -946,3 +946,10 @@ khyberS -- 2018-01-23 15:09:43
 Got deleting a review to work and adding a review to be restricted to 1 per user.
 
 =======================================================
+khyberS -- 2018-01-23 15:19:35
+
+Add review form is hidden when you add a review and restored when you delete it.
+
+Default favorited restaurants used for testing are removed.
+
+=======================================================

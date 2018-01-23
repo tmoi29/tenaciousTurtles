@@ -1355,6 +1355,11 @@
         
         let userAlreadyReviewed = false;
         
+        const setUserAlreadyReviewed = function(reviewed) {
+            userAlreadyReviewed = reviewed;
+            $("#newReview")[0].style.display = reviewed ? "none" : "";
+        };
+        
         const reviewToDiv = function(div, review) {
             div.withClass("rev_div");
             // FIXME make this look nicer
@@ -1367,7 +1372,7 @@
             
             if (username === review.user.name) {
                 console.log("same user");
-                userAlreadyReviewed = true;
+                setUserAlreadyReviewed(true);
                 
                 div.innerHTML += "<br><br>";
                 
@@ -1387,10 +1392,10 @@
                         .catch(error => {
                             console.log("restored review: ", div);
                             parent.prepend(div);
-                            userAlreadyReviewed = true;
+                            setUserAlreadyReviewed(true);
                         });
                     div.remove();
-                    userAlreadyReviewed = false;
+                    setUserAlreadyReviewed(false);
                 });
             }
         };
@@ -1511,7 +1516,7 @@
                 .catch(response => {
                     reviewDiv.remove();
                     reviewText.value = review.review_text;
-                    userAlreadyReviewed = false;
+                    setUserAlreadyReviewed(false);
                 });
             
             reviewText.value = "";
@@ -1684,8 +1689,8 @@
             });
         };
         
-        // test, TODO remove later
-        favoriteRestaurantIds.push(16783966, 16775819, 16770116, 18072159);
+        // // test, TODO remove later
+        // favoriteRestaurantIds.push(16783966, 16775819, 16770116, 18072159);
         
         const main = function() {
             $(() => {

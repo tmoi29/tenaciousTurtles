@@ -115,9 +115,7 @@
                             placeholder="Add your own review...">
                   </textarea>
                   <p style="font-size: 1.3em;" align="right"> Your rating: </p>
-                  {# FIXME When you click on a star, they're selected backwards. #}
                   {% for i in xrange(5, 0, -1) %}
-
                     <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
                     <label class="star star-{{ i }}" for="star-{{ i }}"></label>
                   {% endfor %}
@@ -131,7 +129,6 @@
 
         <center>
           {% if is_logged_in() %}
-            {# TODO add CSS for this #}
             <div id="addFavoriteRestaurantDiv">
               <button id="addFavoriteRestaurantButton" class="btn-primary"
                   {{ display(favorited) }}>Add to Favorites
