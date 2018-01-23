@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-{{name}}
+  {{ name }}
 {% endblock %}
 
 {% block head %}
@@ -50,12 +50,7 @@
                   </div>
                   <div id="collapse1" class="panel-collapse collapse in">
                     <div class="panel-body">
-
-                      
-                      
                       <div id="loc"></div>
-                      
-
                     </div>
                   </div>
 
@@ -67,10 +62,7 @@
                   </div>
                   <div id="collapse2" class="panel-collapse collapse">
                     <div class="panel-body">
-                      {# FIXME <div> can't be inside <p> #}
-                      <p>
                       <div id="rating"></div>
-                      </p>
                     </div>
                   </div>
 
@@ -82,26 +74,19 @@
                   </div>
                   <div id="collapse3" class="panel-collapse collapse">
                     <div class="panel-body">
-
                       <div id="cuisine"></div>
-
                     </div>
                   </div>
                   <div class="panel-heading">
                     <h4 class="panel-title">
-
                       <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Menu</a>
                     </h4>
                   </div>
                   <div id="collapse4" class="panel-collapse collapse">
                     <div class="panel-body">
-
                       <div><a id="menu">Click me</a></div>
-
-
                     </div>
                   </div>
-
 
                   <div class="panel-heading">
                     <h4 class="panel-title">
@@ -115,11 +100,6 @@
 
                       <div id="reviews">
                         <div id="welpReviews">
-                          {#                          {% for restaurant_id, username, rating, review_title, review_content in user_reviews %}#}
-                          {#                            Rating: {{ rating }}#}
-                          {#                            <h4>{{ review_title }} by {{ username }}</h4>#}
-                          {#                            {{ review_content }}#}
-                          {#                          {% endfor %}#}
                         </div>
                         <div id="zomatoReviews">
                         </div>
@@ -133,34 +113,39 @@
                   <textarea id="newReviewText"
                             placeholder="Add your own review...">
                   </textarea>
-		  <p style="font-size: 1.3em;" align="right"> Your rating: </p>
+                  <p style="font-size: 1.3em;" align="right"> Your rating: </p>
                   {# FIXME When you click on a star, they're selected backwards. #}
                   {% for i in xrange(5, 0, -1) %}
 
                     <input class="star star-{{ i }}" id="star-{{ i }}" type="radio" name="star">
                     <label class="star star-{{ i }}" for="star-{{ i }}"></label>
                   {% endfor %}
-		    <br>
-		    <button id="addNewReviewButton" class="btn-warning">Add Review</button>
+                  <br>
+                  <button id="addNewReviewButton" class="btn-warning">Add Review</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {% if is_logged_in() %}
-          {# TODO add CSS for this #}
-          <div id="addFavoriteRestaurantDiv">
-            <button id="addFavoriteRestaurantButton"
-                {{ display(favorited) }}>  <button class="btn-primary"> Add to Favorites </button>
+        <center>
+          {% if is_logged_in() %}
+            {# TODO add CSS for this #}
+            <div id="addFavoriteRestaurantDiv">
+              <button id="addFavoriteRestaurantButton" class="btn-primary"
+                  {{ display(favorited) }}>Add to Favorites
+              </button>
+              <button id="removeFavoriteRestaurantButton" class="btn-primary"
+                  {{ display(not favorited) }}>Remove from Favorites
+              </button>
+            </div>
+          {% else %}
+            <button class="btn-primary">
+              <a href="/login" target="_blank">Sign in to add to favorites</a>
             </button>
-            <button id="removeFavoriteRestaurantButton"
-                {{ display(not favorited) }}>Remove from Favorites</button>
-          </div>
-        {% else %}
-          <button class="btn-primary"> <a href="/login">Sign in to add to favorites </a></p> </button>
-        {% endif %}
-
+          {% endif %}
+        </center>
+        <br>
       </div>
     </div>
   </div>

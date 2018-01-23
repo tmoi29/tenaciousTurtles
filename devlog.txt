@@ -896,5 +896,11 @@ Fixed the buttons on index.html
 Fixed the rating stars in restaurant_info.html
 (they were backwards)
 
-Fixed the buttons on restautant_info.html 
+Fixed the buttons on restautant_info.html
+
+=======================================================
+khyberS -- 2018-01-23 11:46:58
+
+Got the add and remove favorite buttons to work.
+
 =======================================================
