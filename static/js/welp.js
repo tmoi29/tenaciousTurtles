@@ -1123,7 +1123,7 @@
         };
         
         const openRestaurantInfoInNewPage = function(restaurant) {
-            const newPage = window.open("/restaurant_info?restaurant_id=" + restaurant.id);
+            const newPage = window.open("/restaurant_info?restaurant_id=" + restaurant.id + "&name=" + restaurant.name);
             newPage.restaurant = restaurant;
         };
         

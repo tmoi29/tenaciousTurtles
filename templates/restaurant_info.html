@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block title %}
+{{name}}
+{% endblock %}
+
 {% block head %}
   <link rel="stylesheet" type="text/css" href="css/restaurant_info.css">
   <link rel="stylesheet" type="text/css"
@@ -159,8 +163,8 @@
             <button id="addFavoriteRestaurantButton"
                 {{ display(favorited) }}>Add to Favorites
             </button>
-            <p id="addFavoriteRestaurantAltText"
-                {{ display(not favorited) }}>Already Added to Favorites</p>
+            <button id="removeFavoriteRestaurantButton"
+                {{ display(not favorited) }}>Remove from Favorites</button>
           </div>
         {% else %}
           <p>Sign in to add to favorites</p>
