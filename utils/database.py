@@ -229,7 +229,7 @@ def get_review(username, restaurant_id):
         
 def update_review(restaurant, username, rating, review_title, review_content):
     remove_review(username, restaurant)
-    add_review(restaurant, username, rating, review_title, review_content):
+    add_review(restaurant, username, rating, review_title, review_content)
     
 def remove_review(username, restaurant_id):
     with sqlite3.connect("data/database.db") as db:
