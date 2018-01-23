@@ -87,6 +87,7 @@ h1 {
     padding: 8px;
 }
 
+
 div#welpcarousel.carousel.slide div#searching {
     z-index: 25;
     position: absolute;
@@ -96,6 +97,7 @@ div#welpcarousel.carousel.slide div#searching {
     display: inline-block;
 
 }
+
 
 form {
     height: 50px;
