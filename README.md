@@ -6,12 +6,15 @@
 
 Welp is a web app designed to provide users with information about nearby restaurants. Unlike Yelp, we are dedicated solely to recommendations on food.
 
+Watch our demo [here](https://youtu.be/8mA85GcYzu0)!
+
 ## Features
 
 The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information in order for us to provide information on restaurants near you. We provide information such as the restaurant's address, menu, type of cuisine, ratings, and reviews.
-A user may also log in to leave reviews for restaurants in addition to the existing reviews provided by Zomato, as well as save restaurants as Favorites. 
 
-Watch our demo [here](https://youtu.be/8mA85GcYzu0)!
+A user may also log in to leave reviews\* for restaurants in addition to the existing reviews provided by Zomato, as well as save restaurants as Favorites. 
+
+\*Note: each user may only add one review per restaurant to prevent spamming and a skew in the ratings
 
 ## Launch Instructions
 
