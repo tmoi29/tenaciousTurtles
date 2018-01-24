@@ -1,6 +1,6 @@
 ![Welp](static/img/logo.png)
 # Tenacious Turtles
-#### Made by Karina Ionkina, Leo Liu, Tiffany Moi and Khyber Sen
+#### Made by Karina Ionkina, Leo Liu, Tiffany Moi, and Khyber Sen
 
 ## What's Welp?
 
