@@ -991,3 +991,12 @@ ionkinaK -- 2018-01-24 1:03
 Edited site map in design doc to match current version
 of Welp 
 
+=======================================================
+khyberS -- 2018-01-24 03:15:19
+
+Explained more in How Does It Work? in the README
+and added a bunch of pictures of Welp in action.
+
+Deleted rating_index.py, which we didn't use.
+
+=======================================================

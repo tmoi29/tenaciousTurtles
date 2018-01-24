@@ -4,25 +4,61 @@
 
 ## What's Welp?
 
-Welp is a web app designed to provide users with information about nearby restaurants. Unlike Yelp, we are dedicated solely to recommendations on food.
+Welp is a web app designed to provide users with information about nearby restaurants. 
+Unlike Yelp, we are dedicated solely to recommendations on food.
 
-Watch our demo [here](https://youtu.be/8mA85GcYzu0)!
+Watch our demo! (*click on the picture*): 
+[![Demo Video](static/img/welp/DemoVideoThumbnail.png)](https://youtu.be/8mA85GcYzu0)
 
-## Features
+## How Does It Work?
 
-The user may provide his/her location by providing a zip code or allowing Welp to access GPS, IP, and other network information in order for us to provide information on restaurants near you. We provide information such as the restaurant's address, menu, type of cuisine, ratings, and reviews.
+![Front Page](static/img/welp/FrontPage.png)
 
-A user may also log in to leave reviews\* for restaurants in addition to the existing reviews provided by Zomato, as well as save restaurants as Favorites. 
+We use your GPS or IP address to find your location (with your permission of course) 
+and pass it to the ***Zomato API*** to search for a list of restaurants around you. 
+If you're uncomfortable with this or those results are inaccurate, 
+or if you simply want to find restaurants near a different location, 
+you can also manually enter in your zip code (this uses the ***Google Geocoding API***). 
+You can also filter your search with key words using the search box, 
+which is also passed along to Zomato to get a refined list of restaurants.
 
-\*Note: each user may only add one review per restaurant to prevent spamming and a skew in the ratings
+![Restaurants](static/img/welp/Restaurants.png)
 
-## How does it work?
+The closest 20 restaurants are automatically loaded on the page,
+but if you want to see more, you can simply click the More Restaurants button
+and they will load immediately, a result of aggressive caching and prefetching.
+(Up to a max of 100 restaurants are shown, a limit set by Zomato).
 
-We use your GPS or IP address to find your location (with your permission of course) and pass it to the ***Zomato API*** to search for a list of restaurants around you. If you're uncomfortable with this or those results are inaccurate, you can also manually enter in your zip code. You can also filter your search with key words, which is also passed along to Zomato to get a refined list of restaurants.
+Zomato also gives us information about the restaurants, including images of the restaurant. 
+However, it doesn't have an image for most restaurants,
+so for these restaurants, we scrape Google search for images related to the name of the restaurant. 
 
-Zomato will give us information about the restaurants, including images of the restaurant. However, it sometimes does not give images for some restaurants, so we use the ***Google API*** to search for images related to the name of the restaurant. 
+Zomato also gives us reviews and ratings, 
+which we merge with ones that we receive from our users, 
+which are stored in our own database.
 
-Zomato also gives us reviews and ratings, which we merge with ones that we receive from our users. The information that we get from our users is stored in our own database.
+![Shake Shack](static/img/welp/ShakeShackCropped.png)
+
+By clicking on a restaurant,
+a new page opens, giving more detailed information about the restuarant,
+including its address, type of cuisine, a link to its menu, and its ratings and reviews,
+which are combined with our own ratings.
+
+Once logged in, a user is also able to favorite restaurants.
+Once favorited, these restaurants will also appear in the user's profile page.
+A user can also unfavorite a restaurant they have already favorited,
+and can, in fact, favorite and unfavorite a restaurant extremely fast 
+by repeatedly clicking the button.
+
+![Adding a Review](static/img/welp/AddingReview.png)
+
+After loggin in, a user is also able to add reviews to any restaurant.
+Once a review is added, the user is unable to add another review,
+which is done to prevent users spamming reviews and causing a skew in the ratings.
+However, a user can also delete their review for a restaurant,
+and then they can add a new one again.
+
+![Deleting a Review](static/img/welp/DeletingReview.png)
 
 ## Launch Instructions
 
