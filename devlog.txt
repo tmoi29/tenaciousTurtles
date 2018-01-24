@@ -868,6 +868,26 @@ it switches them back again.
 Moved carousel <script> in index.html to welp.js.
 
 =======================================================
+tiffanyM -- 2018-01-21 16:52
+
+Added function to get all rated restaurants from the database
+- Used to calculate the overall rating 
+- Tried to merge our ratings with the Zomato ratings
+- Added to JS, but started breaking other things -- Khyber fixed
+
+=======================================================
+tiffanyM -- 2018-01-23 11:40
+
+Added titles to the pages
+    - needed to add it to the query string for restaurant_info
+Added remove favorited restaurant functionality
+    - Added function to database.py
+    - Added new route
+Added delete button for users to remove their old reviews 
+    - Added route to factilitate this
+    - will be implemented by JS
+
+=======================================================
 khyberS -- 2018-01-23 02:45:13
 
 Fixed all the rating stuff as far as I can tell.
@@ -959,3 +979,9 @@ No Saved Restaurants shown on profile page instead of
 No More Restaurants Available like on index page.
 
 =======================================================
+tiffanyM -- 2018-01-24 00:53
+
+Edited and published the demo video
+    - Added to the README.txt
+Updated the design.pdf 
+Emailed the API info
