@@ -985,3 +985,9 @@ Edited and published the demo video
     - Added to the README.txt
 Updated the design.pdf 
 Emailed the API info
+=======================================================
+ionkinaK -- 2018-01-24 1:03
+
+Edited site map in design doc to match current version
+of Welp 
+
