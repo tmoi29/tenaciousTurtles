@@ -959,3 +959,7 @@ No Saved Restaurants shown on profile page instead of
 No More Restaurants Available like on index page.
 
 =======================================================
+ionkinaK -- 2018-01-24 1:03
+
+Edited site map in design doc to match current version
+of Welp 
