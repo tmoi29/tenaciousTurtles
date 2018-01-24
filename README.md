@@ -16,6 +16,14 @@ A user may also log in to leave reviews\* for restaurants in addition to the exi
 
 \*Note: each user may only add one review per restaurant to prevent spamming and a skew in the ratings
 
+## How does it work?
+
+We use your GPS or IP address to find your location (with your permission of course) and pass it to the ***Zomato API*** to search for a list of restaurants around you. If you're uncomfortable with this or those results are inaccurate, you can also manually enter in your zip code. You can also filter your search with key words, which is also passed along to Zomato to get a refined list of restaurants.
+
+Zomato will give us information about the restaurants, including images of the restaurant. However, it sometimes does not give images for some restaurants, so we use the ***Google API*** to search for images related to the name of the restaurant. 
+
+Zomato also gives us reviews and ratings, which we merge with ones that we receive from our users. The information that we get from our users is stored in our own database.
+
 ## Launch Instructions
 
 ### 1. Clone this repository
@@ -101,3 +109,12 @@ In the repository for this site:
 In a browser, navigate to:
 
 `localhost:5000`
+
+## The Hardworkers
+
+|     Name      |    Role   |
+|:-------------:|:-------------:| 
+| Tiffany (PM)  | Flask, Database | 
+| Khyber        | JS, AJAX, API calls   |
+| Leo           | Database      | 
+| Karina        | Frontend, Logo|
